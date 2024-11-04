@@ -1,0 +1,79 @@
+.ditealProduct-Conteiner{
+    margin: 50px auto;
+    max-width: 90%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:24px;
+}
+.ditealProduct-Conteiner img {
+    margin: 0 auto;
+    max-height: 500px;
+    border: 10px solid #98cddf;
+    border-radius: 6px;
+}
+.product-Info-Conteiner{
+    margin-top: 20px;
+}
+.prduct-Title{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    border-bottom: 2px solid #98cddf ;
+}
+.prduct-Title h3{
+    display: flex;
+    font-size: 30px;
+    line-height: 30px;
+}
+.price{
+    display: flex;
+    justify-content: flex-end;
+}
+.broder-left{
+    border-left: 2px solid;
+    border-color: #e3e3e3;
+    padding-left: 10px;
+}
+.bottom-border{
+    border-bottom: 2px solid;
+    border-color: #e3e3e3;
+}
+.aboout-ProductDiv h5, .product-Details h3{
+    margin-bottom: 1rem;
+    text-decoration: underline;
+}
+.aboout-ProductDiv, .prduct-Title, .aboout-ProductDiv p, .product-Details, .button-Div{
+    margin-bottom: 10px;
+}
+.button-Div{
+    display: flex;
+    justify-content: space-around;
+}
+.details-div{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-bottom: 5px;
+}
+.spacer{
+    width: 50%;
+    border-bottom: 2px dashed #98cddf;
+}
+#addTocard, #addWishList, #toCheckout{    
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    cursor: pointer;
+    background: radial-gradient(circle, rgba(76,129,144,1) 28%, rgba(40,24,52,0.9360119047619048) 100%);
+    border: 0;
+    color: #ffffff;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 500;
+    height: 38px;
+    line-height: 18px;
+    padding: 10px 15px;
+    text-transform: uppercase;
+    cursor: pointer;
+    -webkit-transition: 0.3s;
+    transition: 0.3s;
+    border-radius: 3px;
+}

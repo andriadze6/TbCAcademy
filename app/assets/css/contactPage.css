@@ -1,0 +1,14 @@
+
+.contacPage-div{
+    margin: 50px auto;
+    width: 50%;
+}
+h1{
+    text-align: center;
+}
+.contac-form{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+
+}

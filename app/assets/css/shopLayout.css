@@ -1,0 +1,104 @@
+.shopLayout{
+    margin: 30px auto;
+    max-width: 90%;
+}
+
+.shop_toolbar_btn{
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 10px;
+}
+.shop_toolbar_btn button{
+    border: none;
+}
+.shop_toolbar_wrapper{
+    display: flex;
+    justify-content: space-between;
+    border: 3px solid #98cddf;
+    padding: 10px;
+    border-radius: 6px;
+}
+.page_amount{
+
+}
+.btn-grid-3{
+    background-image: url('../img/shopLayout/bkg_grid.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: scroll;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+.btn-grid-4{
+    background-image: url('../img/shopLayout/bkg_grid4.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: scroll;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+.btn-list{
+    background-image: url('../img//shopLayout/bkg_list.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: scroll;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+.cardList{
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    justify-content: center;
+    /* border: 1px solid #98cddf; */
+    gap: 10px;
+}
+.cardList p{
+    text-align: center;
+}
+.card{
+    margin: 10px auto;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+}
+.cardImg{
+    border: 3px solid #98cddf;
+    border-radius: 6px; ;
+}
+.product_content-header{
+    display: flex;
+    justify-content: space-between;
+    margin: 10px auto;
+    padding: 6px;
+}
+.heart-icon{
+    cursor: pointer;
+}
+.heart-icon:hover{
+    color: #98cddf;
+}
+.product_price_rating{
+    display: flex;
+    justify-content: space-between;
+    padding: 6px;
+}
+.product_price_rating h4{
+    color: #98cddf;
+}
+.product_rating ul{
+    list-style: none;
+    display: flex;
+}
+.product_rating li:hover{
+    cursor: pointer;
+}
+.product_rating li:hover{
+    color: #98cddf;
+}
+.SortProductDiv{
+    display: flex;
+    gap: 10px;
+}
