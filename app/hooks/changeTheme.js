@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 
 const useTheme = () => {
-    debugger
     const [theme, setTheme] = useState(() => {
         return localStorage.getItem('theme') || 
                (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");

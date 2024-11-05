@@ -19,54 +19,32 @@ export default function MainSwiper({data}){
     });
     function handleNextClick() {
         var width = 100 / sliderToShow;
-        let newFirstElement = sliderState.firstElement;
-        let lastElement = newFirstElement + 4;
-        let newArray = data.slice(newFirstElement, lastElement)
-        newFirstElement++; 
-        setSliderState((prev) => ({
-            array: newArray,
-            firstElement: newFirstElement,
-            transferX: prev.transferX -width,
-            middleSlider: 2,
-        }))
-        // if(clickAmount == sliderState.clickAmount){
-        //     let index1 = data.length -2
-        //     setSliderState((prev)=>({
-        //         array:[...prev.array.slice(index1, prev.array.length), ...prev.array.slice(0, index1)],
-        //         clickAmount: 0,
-        //         transferX: 0,
-        //         middleSlider: 1
-        //     }))
-        // }else{
-        //     setSliderState((prev) => ({
-        //         array: prev.array,
-        //         clickAmount: prev.clickAmount + 1,
-        //         transferX: prev.transferX - width,
-        //         middleSlider: prev.middleSlider + 1
-        //     }))
-        // }
-    }
+        // let newFirstElement = sliderState.firstElement;
+        // let lastElement = newFirstElement + 4;
+        // let newArray = data.slice(newFirstElement, lastElement)
+        // let newArray = data;
+        // newFirstElement++; 
+        // let test =  sliderState.transferX
+        // let t1 = sliderState.firstElement
 
-    function handlePrevClick() {
-        var width = 100 / sliderToShow;
-        if(false){
-            let index1 = data.length - 2
-            let array1 = [...data.slice(index1, imgArray1.length), ...data.slice(0, index1)]
-            setSliderState({
-                array:array1,
-                clickAmount: 0,
+        if (sliderState.middleSlider == sliderState.array.length - 2) {
+            debugger
+            let index1 = data.length - 2;
+            let newArray =  [...sliderState.array.slice(index1, sliderState.array.length), ...sliderState.array.slice(0, index1)];
+            setSliderState((prev)=>({
+                array:newArray,
                 transferX: 0,
                 middleSlider: 1
-            })
-        }else{
-            setSliderState({
-                array:data,
-                clickAmount: --sliderState.clickAmount,
-                transferX: sliderState.transferX + width,
-                middleSlider: --sliderState.middleSlider
-            })
+            }))
         }
-    } 
+        else{
+            setSliderState((prev) => ({
+                ...prev,
+                transferX: prev.transferX - width,
+                middleSlider: prev.middleSlider + 1,
+            }))
+        }
+    }
 
     return(
         <div className="main-Slider">
@@ -80,10 +58,10 @@ export default function MainSwiper({data}){
                         sliderState.array.length > 0 &&(
                             sliderState.array.map((element, index)=>{
                                 return(
-                                <div key={index}         
+                                <div key={index}
                                 className={`slider ${sliderState.middleSlider == index ? "centralSlide": "sideSlide"}`}>
-                                    <Image                                 
-                                        layout="fill" 
+                                    <Image 
+                                        layout="fill"
                                         className="home__img" src={element.images[0]}  alt="" />
                                 </div>)
                             })
