@@ -22,6 +22,34 @@ export default function MainSwiper({data}){
         middleSlider: 2,
         transitioning: false
     });
+
+    function handlePrevClick() {
+        if (sliderState.middleSlider === 1) {
+            debugger
+            setTimeout(() => {
+                let index1 = data.length - 2;
+                // let newArray =  [...sliderState.array.slice(index1 - 1, sliderState.array.length), ...sliderState.array.slice(0, index1)];
+                setSliderState((prev)=>({
+                    // array:newArray,
+                    ...prev,
+                    transferX:-width * (extendedArray.length - 3),
+                    middleSlider: extendedArray.length -2,
+                    transitioning: false,
+                }))
+            }, 500);
+
+        }
+        else{
+            setSliderState((prev) => ({
+                ...prev,
+                transferX: prev.transferX + width,
+                middleSlider: prev.middleSlider - 1,
+                transitioning: true
+            }))
+        }
+    }
+
+
     function handleNextClick() {
         if (sliderState.middleSlider == sliderState.array.length - 2) {
             debugger
