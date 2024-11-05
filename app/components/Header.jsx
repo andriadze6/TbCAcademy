@@ -14,51 +14,9 @@ import Link from 'next/link';
 import Search from './SearchInput';
 import UserDropDownList from './UserdropDownManue';
 import { useSearchParams } from 'next/navigation';
+import useTheme from '../hooks/changeTheme';
 function Header(){
-    const context = useContext(ThemeContext)
-    const [theme, setTheme] = useState(()=>{
-        document.documentElement.classList.toggle(
-            'dark',
-            localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-          )
-        // Otherwise, use the system theme as a fallback
-        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    });
-     function changeTheme(){
-        try {
-            debugger
-            if(theme){
-                if(theme === 'dark'){
-                    localStorage.setItem('theme', "light");
-                    let body = document.body.classList;
-                    body.remove("dark");
-                    body.add("light");
-                    setTheme("light")
-                }
-                else{
-                    localStorage.setItem('theme', "dark");
-                    let body = document.body.classList;
-                    body.remove("light");
-                    body.add("dark");
-                    setTheme("dark");
-                }
-            }
-            else{
-                const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-                let body = document.body.classList;
-                body.remove(systemTheme);
-                localStorage.setItem("theme", systemTheme);
-                setTheme(systemTheme);
-            }
-        } catch (error) {
-            localStorage.setItem('theme', "light");
-            let body = document.body.classList;
-            body.remove("dark");
-            body.add("light");
-            setTheme("light")
-        }
-     }
-
+    let {theme, changeTheme} = useTheme();
     return(
         <ThemeProvider>
         <header>
