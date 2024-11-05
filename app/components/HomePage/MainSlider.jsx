@@ -10,38 +10,40 @@ import img5 from '../../assets/img/homePageImg/clothing-5.png';
 const imgArray = [img1, img2, img3, img4, img5]
 export default function MainSwiper({data}){
     const sliderToShow = 3; // Number of slides to show
-    let clickAmount = data.length - 3;
+    var width = 100 / sliderToShow;
+    const extendedArray = [
+        data[data.length - 1],
+        ...data,
+        data[0]
+    ];
     const [sliderState, setSliderState] = useState({
-        array:data,
-        firstElement: 0,
-        transferX:0,
-        middleSlider: 1
+        array:extendedArray,
+        transferX:-width,
+        middleSlider: 2,
+        transitioning: false
     });
     function handleNextClick() {
-        var width = 100 / sliderToShow;
-        // let newFirstElement = sliderState.firstElement;
-        // let lastElement = newFirstElement + 4;
-        // let newArray = data.slice(newFirstElement, lastElement)
-        // let newArray = data;
-        // newFirstElement++; 
-        // let test =  sliderState.transferX
-        // let t1 = sliderState.firstElement
-
         if (sliderState.middleSlider == sliderState.array.length - 2) {
             debugger
-            let index1 = data.length - 2;
-            let newArray =  [...sliderState.array.slice(index1, sliderState.array.length), ...sliderState.array.slice(0, index1)];
-            setSliderState((prev)=>({
-                array:newArray,
-                transferX: 0,
-                middleSlider: 1
-            }))
+            setTimeout(() => {
+                let index1 = data.length - 2;
+                // let newArray =  [...sliderState.array.slice(index1 - 1, sliderState.array.length), ...sliderState.array.slice(0, index1)];
+                setSliderState((prev)=>({
+                    // array:newArray,
+                    ...prev,
+                    transferX:0,
+                    middleSlider: 1,
+                    transitioning: false,
+                }))
+            }, 500);
+
         }
         else{
             setSliderState((prev) => ({
                 ...prev,
                 transferX: prev.transferX - width,
                 middleSlider: prev.middleSlider + 1,
+                transitioning: true
             }))
         }
     }
@@ -53,7 +55,11 @@ export default function MainSwiper({data}){
                 <h1 className="home__title">GCG</h1>
             </div>
             <div className="swiper">
-                <div className="swiper-wrapper" style={{transform:`translate3d(${sliderState.transferX}%, 0, 0)`}}>
+                <div className="swiper-wrapper"
+                style={{
+                        transform: `translate3d(${sliderState.transferX}%, 0, 0)`,
+                        transition: sliderState.transitioning ? 'transform 0.5s ease' : 'none'
+                    }}>
                     {
                         sliderState.array.length > 0 &&(
                             sliderState.array.map((element, index)=>{
