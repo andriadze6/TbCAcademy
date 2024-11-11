@@ -1,5 +1,6 @@
 'use client'
 import '../assets/css/Header.css'
+import {useTranslations} from 'next-intl';
 // import  {useTheme}  from '../hooks/useTheme';
 import {useContext, useEffect, useState} from 'react';
 import {ThemeContext} from '../providers/ThemeProvider'
@@ -17,7 +18,10 @@ import { useSearchParams } from 'next/navigation';
 import useTheme from '../hooks/changeTheme';
 function Header(){
     let {theme, changeTheme} = useTheme();
-
+    const t = useTranslations('HomePage');
+    let test =  t("Home")
+    debugger
+    console.log(test)
     return(
         <ThemeProvider>
         <header>
@@ -63,10 +67,10 @@ function Header(){
             <div className='header3-div'>
                 <nav className='header3-content'>
                     <div className='navName-div'>
-                        <Link href="/" className='navName'>Home</Link>
+                        <Link href="/" className='navName'>{t('Home')}</Link>
                     </div>
                     <div className='navName-div'>
-                        <Link href='/ShopLayout/woman/' className='navName'>Women <i className="fa fa-angle-down"></i></Link>
+                        <Link href='/ShopLayout/woman/' className='navName'>{t('Woman')} <i className="fa fa-angle-down"></i></Link>
                         <div className='drop-down-manu'>
                             <div>
                                 <h3 className='category-name'>Clothing</h3>
@@ -98,7 +102,7 @@ function Header(){
                         </div>
                     </div>
                     <div className='navName-div'>
-                        <Link href='' className='navName'>Mens <i className="fa fa-angle-down"></i></Link>
+                        <Link href='' className='navName'>{t('Man')}<i className="fa fa-angle-down"></i></Link>
                         <div className='drop-down-manu'>
                             <div>
                                 <h3 className='category-name'>Clothing1</h3>
@@ -130,7 +134,7 @@ function Header(){
                         </div>
                     </div>
                     <div className='navName-div'>
-                        <Link href='' className='navName'>Kids <i className="fa fa-angle-down"></i></Link>
+                        <Link href='' className='navName'>{t('Kids')}<i className="fa fa-angle-down"></i></Link>
                         <div className='drop-down-manu'>
                             <div>
                                 <h3 className='category-name'>test</h3>
@@ -162,13 +166,13 @@ function Header(){
                         </div>
                     </div>
                     <div className='navName-div'>
-                        <Link href='/AboutUs' className='navName'>About us</Link>
+                        <Link href='/AboutUs' className='navName'>{t('AboutUs')}</Link>
                     </div>
                     <div className='navName-div'>
-                        <Link href='/Contact' className='navName'>Contact</Link>
+                        <Link href='/Contact' className='navName'>{t('Contact')}</Link>
                     </div>
                     <div className='navName-div'>
-                        <Link href='/BlogPage' className='navName'>Blog</Link>
+                        <Link href='/BlogPage' className='navName'>{t('Blog')}</Link>
                     </div>
                 </nav>
             </div>
