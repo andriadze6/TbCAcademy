@@ -94,7 +94,7 @@ export default function MainSwiper({data}){
                                 return(
                                 <div key={index}
                                 className={`slider ${sliderState.middleSlider == index ? "centralSlide": "sideSlide"}`}>
-                                    <Image 
+                                    <Image
                                         layout="fill"
                                         className="home__img" src={element.images[0]}  alt="" />
                                 </div>)

@@ -50,11 +50,14 @@
 }
 .cardList{
     display: grid;
-    grid-template-columns: repeat(4,1fr);
+    /* grid-template-columns: repeat(4,1fr); */
     justify-content: center;
     /* border: 1px solid #98cddf; */
     gap: 10px;
+    transform: translateX(0%);
+    transition: transform 10s ease
 }
+
 .cardList p{
     text-align: center;
 }

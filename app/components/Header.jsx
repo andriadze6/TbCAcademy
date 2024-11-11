@@ -17,6 +17,7 @@ import { useSearchParams } from 'next/navigation';
 import useTheme from '../hooks/changeTheme';
 function Header(){
     let {theme, changeTheme} = useTheme();
+
     return(
         <ThemeProvider>
         <header>

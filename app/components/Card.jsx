@@ -6,15 +6,14 @@ import { faHeart as faHeartOutline } from '@fortawesome/free-regular-svg-icons';
 import { useRouter } from 'next/navigation';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
+import { memo } from 'react';
 
 function Card (params){
     const router = useRouter();
-    function handleProductClick(id){
-        router.push(`/DetailedPage/${id}`)
-    } 
     var element = params.Product
     return(
     <>
+    {console.log("card render")}
         <Link href={`/DetailedPage/${element.id}`} className='card'>
             <div className='cardImg'>
                 <Image alt='' src={element.images[0]} width={268} height={400}/>
@@ -38,4 +37,4 @@ function Card (params){
         </Link>
     </>)
 }
-export default Card;
+export default memo(Card);
