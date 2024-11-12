@@ -19,9 +19,6 @@ import useTheme from '../hooks/changeTheme';
 function Header(){
     let {theme, changeTheme} = useTheme();
     const t = useTranslations('HomePage');
-    let test =  t("Home")
-    debugger
-    console.log(test)
     return(
         <ThemeProvider>
         <header>
