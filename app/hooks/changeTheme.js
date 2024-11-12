@@ -3,15 +3,23 @@ import { useState, useEffect } from 'react';
 
 const useTheme = () => {
     const [theme, setTheme] = useState(() => {
-        return localStorage.getItem('theme') || 
-               (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        debugger
+        if (typeof window !== "undefined") {
+            return (
+                localStorage.getItem("theme") ||
+                (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+            );
+        }
+        return "dark"; // Default theme for SSR
     });
 
+
     useEffect(() => {
+        debugger
         //using when page is reloaded
-        const bodyClass = document.body.classList;
-        bodyClass.remove("light", "dark");
-        bodyClass.add(theme);
+        const html = document.documentElement;
+        html.className = ""
+        html.classList.add(theme);
     }, [theme]);
 
     const changeTheme = () => {

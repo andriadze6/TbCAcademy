@@ -27,7 +27,7 @@ export default async function LocaleLayout({
   const messages = await getMessages();
   const t = await getTranslations('ProfilePage');
   return (
-    <html lang={locale}>
+    <html lang={locale} className='dark'>
       <UserProvider>
       <body>
         <NextIntlClientProvider messages={messages}>
