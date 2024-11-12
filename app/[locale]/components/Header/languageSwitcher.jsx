@@ -2,6 +2,8 @@
 import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import React from "react";
+import '../../assets/css/Header.css'
+
 
 export const LanguagePicker = () => {
   const locale = useLocale();
