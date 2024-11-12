@@ -1,9 +1,9 @@
 'use client'
 import '../assets/css/Header.css'
-import {useTranslations} from 'next-intl';
-// import  {useTheme}  from '../hooks/useTheme';
-import {useContext, useEffect, useState} from 'react';
-import {ThemeContext} from '../providers/ThemeProvider'
+import { useRouter } from 'next/navigation';
+import {useTranslations, useLocale } from 'next-intl';
+import { LanguagePicker } from './HomePage/Header/languageSwitcher';
+
 import { ThemeProvider } from '../providers/ThemeProvider';
 import instagramIcon from '../assets/img/InstagramIcon.png'
 import facebookIcon from '../assets/img/facebookIcon.png';
@@ -14,25 +14,20 @@ import Image from "next/image";
 import Link from 'next/link';
 import Search from './SearchInput';
 import UserDropDownList from './UserdropDownManue';
-import { useSearchParams } from 'next/navigation';
 import useTheme from '../hooks/changeTheme';
+
 function Header(){
     let {theme, changeTheme} = useTheme();
+    const router = useRouter();
     const t = useTranslations('HomePage');
+    const currentLanguage = useLocale(); // Get current language from next-intl
+    debugger
     return(
         <ThemeProvider>
         <header>
             <div className="header1-Div">
                 <div className='header1-content'>
-                    <div className='language'>
-                        <div>
-                            <Link href=''>ქართული</Link>
-                        </div>
-                        <div className='lang-divider'></div>
-                        <div>
-                            <Link href=''>English</Link>
-                        </div>
-                    </div>
+                    <LanguagePicker></LanguagePicker>
                     <div className='socialNetwork'>
                         <Image src={facebookIcon} alt="" />
                         <Image src={instagramIcon} alt=''/>
@@ -64,11 +59,11 @@ function Header(){
             <div className='header3-div'>
                 <nav className='header3-content'>
                     <div className='navName-div'>
-                        <Link href="/" className='navName'>{t('Home')}</Link>
+                        <Link href={`/${currentLanguage}`} className='navName'>{t('Home')}</Link>
                     </div>
                     <div className='navName-div'>
-                        <Link href='/ShopLayout/woman/' className='navName'>{t('Woman')} <i className="fa fa-angle-down"></i></Link>
-                        <div className='drop-down-manu'>
+                        <Link href={`/${currentLanguage}/ShopLayout/woman/`} className='navName'>{t('Woman')} <i className="fa fa-angle-down"></i></Link>
+                        {/* <div className='drop-down-manu'>
                             <div>
                                 <h3 className='category-name'>Clothing</h3>
                                 <ul>
@@ -96,11 +91,11 @@ function Header(){
                                     <li>View all</li>
                                 </ul>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                     <div className='navName-div'>
                         <Link href='' className='navName'>{t('Man')}<i className="fa fa-angle-down"></i></Link>
-                        <div className='drop-down-manu'>
+                        {/* <div className='drop-down-manu'>
                             <div>
                                 <h3 className='category-name'>Clothing1</h3>
                                 <ul>
@@ -128,7 +123,7 @@ function Header(){
                                     <li>View all</li>
                                 </ul>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                     <div className='navName-div'>
                         <Link href='' className='navName'>{t('Kids')}<i className="fa fa-angle-down"></i></Link>

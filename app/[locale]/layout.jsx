@@ -1,15 +1,10 @@
 import {NextIntlClientProvider} from 'next-intl';
 import {getTranslations} from 'next-intl/server';
-
 import {getMessages} from 'next-intl/server';
 import {notFound} from 'next/navigation';
-import {routing} from '@/i18n/routing';
-import localFont from "next/font/local";
+import {routing} from '../../i18n/routing';
 import "../globals.css";
-import Header from "../components/Header";
-import Head from 'next/head';
 import { UserProvider } from '@auth0/nextjs-auth0/client';
-import Link from 'next/link';
  
 
 export const metadata = {
@@ -36,7 +31,6 @@ export default async function LocaleLayout({
       <UserProvider>
       <body>
         <NextIntlClientProvider messages={messages}>
-            <Header></Header>
             {children}
         </NextIntlClientProvider>
       </body>

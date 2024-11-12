@@ -1,5 +1,5 @@
 import '../assets/css/myAccount.css';
-import MyAccountManue from '../components/MyAccountManue';
+import MyAccountManue from '../../components/MyAccountManue';
 
 function MyAccount(){
     return(

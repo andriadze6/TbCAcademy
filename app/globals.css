@@ -6,7 +6,7 @@ body {
   transition: background 1s linear, color 0.4s ease;
 }
 body.light {
-  background: radial-gradient(circle, rgba(243, 230, 132, 0.7819502801120448) 29%, rgba(22, 176, 212, 0.9360119047619048) 85%);;
+  --background: radial-gradient(circle, rgba(243, 230, 132, 0.7819502801120448) 29%, rgba(22, 176, 212, 0.9360119047619048) 85%);;
   --foreground: #171717;
 }
 
@@ -24,6 +24,13 @@ body.dark {
 @media (prefers-color-scheme: dark) {
   :root {
     --background: radial-gradient(circle, rgba(17,17,18,0.992) 0%, rgba(23,23,38,1) 35%, rgba(37,88,99,1) 100%);
+    --foreground: #ededed;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --background:radial-gradient(circle, rgba(243, 230, 132, 0.7819502801120448) 29%, rgba(22, 176, 212, 0.9360119047619048) 85%);;
     --foreground: #ededed;
   }
 }
