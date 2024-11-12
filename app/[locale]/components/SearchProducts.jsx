@@ -1,6 +1,6 @@
 import '../assets/css/shopLayout.css'
-import ShopLayoutDiv from '@/app/components/ShopLayout';
-import GetallWomanProduts from '../Functions/GeAllWomanProducts';
+import ShopLayoutDiv from '@/app/[locale]/components/ShopLayout';
+import GetallWomanProduts from '../../Functions/GeAllWomanProducts';
 async function getProduct(props) {
     let {category, nestedCategory} = props.params;
     let searchParams = props.searchParams.query

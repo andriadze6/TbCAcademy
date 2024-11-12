@@ -7,14 +7,15 @@ import { useRouter } from 'next/navigation';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 import { memo } from 'react';
+import { useLocale } from "next-intl";
+
 
 function Card (params){
-    const router = useRouter();
     var element = params.Product
+    const locale = useLocale();
     return(
     <>
-    {console.log("card render")}
-        <Link href={`/DetailedPage/${element.id}`} className='card'>
+        <Link href={`${locale}/DetailedPage/${element.id}`} className='card'>
             <div className='cardImg'>
                 <Image alt='' src={element.images[0]} width={268} height={400}/>
             </div>

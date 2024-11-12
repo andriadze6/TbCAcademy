@@ -2,7 +2,7 @@
 import Card from './Card';
 import '../assets/css/shopLayout.css';
 import { useEffect, useState } from "react";
-import FilterProduct from '../Functions/GetSortProducts';
+import FilterProduct from '../../Functions/GetSortProducts';
 
 function ShopLayout({Result}){
     const [productList, SetProductList] = useState(Result.Product);

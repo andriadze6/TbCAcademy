@@ -9,10 +9,8 @@ import { faShoppingBag } from '@fortawesome/free-solid-svg-icons';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as faHeartOutline } from '@fortawesome/free-regular-svg-icons';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import Header from "@/app/[locale]/components/Header";
 
-
-
-    
 export default function ProductPage({ params }) {
     // const productData = await GetProduct(params.id)
     const [productData, setProductData] = useState(null);
@@ -40,6 +38,7 @@ export default function ProductPage({ params }) {
 
     return (
         <>
+            <Header></Header>
             {productData &&
                 <div className='ditealProduct-Conteiner'>
                     <div>

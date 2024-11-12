@@ -9,7 +9,7 @@ export const LanguagePicker = () => {
 
   function handleLocaleChange(newLocale) {
     debugger
-    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
+    // document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
     // Redirect to the same page with the new locale
     const currentPath = window.location.pathname;
     router.push(`/${newLocale}`);

@@ -1,6 +1,6 @@
 import '../../assets/css/homePage.css';
-import Trending from '../../components/HomePage/TrendingCategory';
-import MainSwiper from '../../components/HomePage/MainSlider';
+import Trending from './TrendingCategory';
+import MainSwiper from './MainSlider';
 async function GetHomePageData(params) {
     const [woman, man] = await Promise.all([
         fetch('https://dummyjson.com/products/category/womens-dresses'),
