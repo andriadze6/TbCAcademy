@@ -108,7 +108,10 @@
     transition: all .3s ease-in-out;
     height: 32px;
 }
-
+.header2-wrapper{
+    box-shadow: 0px 5px 5px rgba(155, 177, 207, 0.685);
+    margin-bottom: 20px;
+}
 .header2-Div{
     margin: 0 auto;
     max-width: 85%;
@@ -117,6 +120,7 @@
     padding: 10px;
     justify-content: center;
     align-items: center;
+
 }
 
 .Header-Logo-Div{
@@ -125,7 +129,7 @@
     justify-content: center;
 }
 .logo{
-    width: 90px;
+    width: 116px;
     height: 60px;
 }
 nav{

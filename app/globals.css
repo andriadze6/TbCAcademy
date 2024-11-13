@@ -7,11 +7,11 @@ body {
 }
 body.light {
   --background: white;
-  --foreground: #171e48;
+  --foreground: #124554;
 }
 
 body.dark {
-  --background: radial-gradient(circle, rgba(17,17,18,0.992) 0%, rgba(23,23,38,1) 35%, rgba(37,88,99,1) 100%);
+  --background: radial-gradient(circle, rgba(17,17,18,0.992) 0%, rgb(53, 53, 83) 0%, rgba(37,88,99,1) 100%);
   --foreground: #ededed;
 
 }
