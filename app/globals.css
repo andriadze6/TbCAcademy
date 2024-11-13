@@ -6,8 +6,8 @@ body {
   transition: background 1s linear, color 0.4s ease;
 }
 body.light {
-  --background: radial-gradient(circle, rgba(243, 230, 132, 0.7819502801120448) 29%, rgba(22, 176, 212, 0.9360119047619048) 85%);;
-  --foreground: #171717;
+  --background: white;
+  --foreground: #171e48;
 }
 
 body.dark {
