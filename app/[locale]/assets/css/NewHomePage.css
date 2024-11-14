@@ -1,3 +1,4 @@
+
 :root{
     --billboardGap: 20px;
     --billboardMaxHeight:700px;
@@ -21,6 +22,7 @@
     margin:0 auto;
     width: 95%;
     max-height: 700px;
+    box-shadow: var(--BoxTrendingShadow);
 }
 .mainBillboard-1Column{
     max-height: var(--billboardMaxHeight);
@@ -43,7 +45,7 @@
     border-radius: 15px;
     box-sizing: border-box;
     opacity: 0;
-    animation: showImgDiv 0.5s ease forwards 1.2s;
+    animation: showImgDiv 0.5ms ease forwards 1.2s;
 }
 
 @keyframes showImgDiv {
@@ -104,9 +106,9 @@
 }
 .lineButton{
     cursor: pointer;
+    color: var(--foreground);
     background-color: transparent;
     border: none;
-    color: white;
     text-decoration: underline;
     text-transform: uppercase;
     transition: all 0.25s linear;
@@ -117,9 +119,9 @@
 
 
 .TrendingWrapper{
-    background-color: #f2f1f0;
+    background-color: var(--TWrapperBackGround);
     padding: var(--TrendingDivPadding);
-    margin-top: 20px;
+    margin-top: 50px;
 }
 .TrendingContainer{
     margin: 0 auto;
@@ -133,7 +135,7 @@
     font-size: 30px;
 }
 .TrendingDiv-header button{
-    color: #247f9e;
+    color: var(--foreground);
     font-size: 15px;
     font-weight: bold;
 }
@@ -148,7 +150,7 @@
     transition: all 0.25s linear;
     display: flex;
     align-items: center ;
-    box-shadow: 0 4px 8px rgba(155, 177, 207, 0.685);;
+    box-shadow: 0 4px 8px rgba(155, 177, 207, 0.685);
 }
 .slider-Button:hover{
     background-color: var(--RedColor);
@@ -158,23 +160,23 @@
     width: 30px;
 }
 .Trending-Wrapper{
-    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    padding:20px 0px;
 }
 .Trending-Container{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    overflow: hidden;
+    display: flex;
+    transition: all .5s ease-out;
 }
 .Item{
-    flex: 0 0 calc(100% / 3);
+    padding: 20px;
 }
 
 .T-Img, .T-Img2{
     cursor: pointer;
     width: 100%;
     border-radius: 10px;
-    object-fit: cover;
+    object-fit: fill;
 }
 .T-Img2{
     position: absolute;
@@ -189,4 +191,7 @@
 }
 .Item:hover .T-Img2{
     opacity: 1;
+}
+.Active{
+    color: var(--RedColor);
 }

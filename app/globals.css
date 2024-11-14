@@ -2,18 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+:root{
+  
+}
 body {
   transition: background 1s linear, color 0.4s ease;
 }
 body.light {
   --background: white;
-  --foreground: #124554;
+  --foreground: #0a4b61;
+  --TWrapperBackGround:#f2f1f0;
+  --BoxTrendingShadow:'';
 }
 
 body.dark {
-  --background: radial-gradient(circle, rgba(17,17,18,0.992) 0%, rgb(53, 53, 83) 0%, rgba(37,88,99,1) 100%);
+  --background: radial-gradient(circle, rgba(17,17,18,0.992) 0%, rgb(53, 53, 83) 0%, rgb(20, 88, 103) 100%);
   --foreground: #ededed;
-
+  --TWrapperBackGround:radial-gradient(circle, rgba(5, 5, 55, 0.992) 0%, rgba(18, 18, 28, 0.451) 0%, rgb(35, 168, 198) 100%);
+  --BoxTrendingShadow:rgba(155, 177, 207, 0.685) 0px 25px 20px -20px;
 }
 body {
   color: var(--foreground);
