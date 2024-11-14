@@ -72,8 +72,13 @@ async function HomePage(){
                 </div>
 
             </div>
-            <div>
-
+            <div className="TrendingWrapper">
+                <div className="TrendingContainer">
+                    <div className="TrendingDiv-header">
+                        <h3>trend collection</h3>
+                        <button className="lineButton">view all collections</button>
+                    </div>
+                </div>
             </div>
         </>
     )

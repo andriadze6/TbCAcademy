@@ -1,6 +1,11 @@
 :root{
     --billboardGap: 20px;
     --billboardMaxHeight:700px;
+    --header1Height:60px;
+    --header2Height:110;
+    --BillboardHeight:100vw;
+    --TrendingDivPadding: 90px 0px;
+    --RedColor:#c1121f;
 }
 img{
     width: 100%;
@@ -30,15 +35,27 @@ img{
 }
 
 .mainBillboard-row{
-    height: calc((--billboardMaxHeight / 2) - (--billboardGap / 2));
+    height: calc((var(--billboardMaxHeight) / 2) - (var(--billboardGap) / 2));
 }
 .mainBillboard-ImgDiv{
     position: relative;
     overflow: hidden;
     border-radius: 15px;
     box-sizing: border-box;
+    opacity: 0;
+    animation: showImgDiv 0.5s ease forwards 1.2s;
 }
 
+@keyframes showImgDiv {
+    from {
+        transform: translateY(-60px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0px);
+        opacity: 1;
+    }
+}
 .mainBillboard-ImgDiv:hover .mainBillboard-Img{
     scale: 1.08;
 }
@@ -52,10 +69,23 @@ img{
     z-index: 100;
     top: 30%;
     padding: 30px;
+    opacity: 0;
+    animation: revealFromBottom 1s ease forwards 1.2s;
 }
 .text-Div h3{
     font-size: 58px;
     font-family: Jost;
+}
+
+@keyframes revealFromBottom {
+    from {
+        transform: translateY(60px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 .roundButton{
     cursor: pointer;
@@ -69,7 +99,7 @@ img{
     transition: all 0.25s linear;
 }
 .roundButton:hover{
-    background-color: #c1121f;
+    background-color: var(--RedColor);
     color: white;
 }
 .lineButton{
@@ -82,5 +112,31 @@ img{
     transition: all 0.25s linear;
 }
 .lineButton:hover{
-    color: #c1121f;
+    color: var(--RedColor);
+}
+
+
+.TrendingWrapper{
+    background-color: #f2f1f0;
+    padding: var(--TrendingDivPadding);
+    margin-top: 20px;
+}
+.TrendingContainer{
+    margin: 0 auto;
+    max-width: 70vw;
+}
+.TrendingDiv-header{
+    display: flex;
+    justify-content: space-between;
+}
+.TrendingDiv-header h3{
+    font-size: 30px;
+}
+.TrendingDiv-header button{
+    color: #247f9e;
+    font-size: 15px;
+    font-weight: bold;
+}
+.TrendingDiv-header h3, button {
+    text-transform: capitalize !important;
 }

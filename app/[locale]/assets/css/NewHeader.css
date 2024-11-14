@@ -1,3 +1,8 @@
+:root{
+    --header1Height:60px;
+    --header2Height:110;
+}
+
 .Mode-ChangeDiv svg{
     height: 30px;
     cursor: pointer;
@@ -13,6 +18,7 @@
     background: radial-gradient(circle, rgba(76,129,144,1) 28%, rgba(40,24,52,0.9360119047619048) 100%);
     color: white;
     box-shadow: 10px 5px 5px rgba(155, 177, 207, 0.685);
+    max-height: var(--header1Height);
 }
 .header1-content, .header2-Div{
     margin: 0 auto;
@@ -111,6 +117,7 @@
 .header2-wrapper{
     box-shadow: 0px 5px 5px rgba(155, 177, 207, 0.685);
     margin-bottom: 20px;
+    max-height: var(--header2Height);
 }
 .header2-Div{
     margin: 0 auto;
@@ -120,7 +127,6 @@
     padding: 10px;
     justify-content: center;
     align-items: center;
-
 }
 
 .Header-Logo-Div{
@@ -156,3 +162,5 @@ nav{
 .bag-Item-Div:hover svg{
     color: red;
 }
+
+
