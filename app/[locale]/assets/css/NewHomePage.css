@@ -7,7 +7,7 @@
     --TrendingDivPadding: 90px 0px;
     --RedColor:#c1121f;
 }
-img{
+.mainBillboard-Img{
     width: 100%;
     object-fit: cover;
     transition: scale 0.5s linear;
@@ -139,4 +139,54 @@ img{
 }
 .TrendingDiv-header h3, button {
     text-transform: capitalize !important;
+}
+.slider-Button{
+    border-color: transparent;
+    background-color:white;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.25s linear;
+    display: flex;
+    align-items: center ;
+    box-shadow: 0 4px 8px rgba(155, 177, 207, 0.685);;
+}
+.slider-Button:hover{
+    background-color: var(--RedColor);
+    color: #f2f1f0;
+}
+.slider-Button svg{
+    width: 30px;
+}
+.Trending-Wrapper{
+    padding: 20px;
+}
+.Trending-Container{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    overflow: hidden;
+}
+.Item{
+    flex: 0 0 calc(100% / 3);
+}
+
+.T-Img, .T-Img2{
+    cursor: pointer;
+    width: 100%;
+    border-radius: 10px;
+    object-fit: cover;
+}
+.T-Img2{
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; /* Ensure it covers the parent */
+    border-radius: 10px; /* Match border radius */
+    object-fit: cover;
+    transition: opacity 0.5s linear; /* Smooth transition */
+}
+.Item:hover .T-Img2{
+    opacity: 1;
 }
