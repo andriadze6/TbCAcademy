@@ -159,12 +159,12 @@
 .slider-Button svg{
     width: 30px;
 }
-.TSlider-Wrapper{
+.Trending-Wrapper{
     position: relative;
     overflow: hidden;
     padding:20px 0px;
 }
-.TSlider-Container{
+.Trending-Container{
     display: flex;
     transition: all .5s ease-out;
 }
@@ -194,61 +194,4 @@
 }
 .Active{
     color: var(--RedColor);
-}
-
-
-
-
-.BannerContainer{
-    margin: 0 auto;
-    max-width: 75%;
-    display: grid;
-    gap: 30px;
-    padding: 50px;
-    grid-template-columns: 1fr 2fr;
-}
-.mainBanner{
-    overflow: hidden;
-    border-radius: 15px;
-    position: relative;
-}
-.mainBanner-ImgDiv{
-    display: flex;
-    flex-grow: 0;
-    flex-shrink: 0;
-}
-.mainBanner img{
-    border-radius: 15px;
-    height: 700px;
-    transition: scale 0.5s linear;
-}
-.mainBanner:hover img{
-    scale: 1.08;
-}
-.exploreButton{
-    cursor: pointer;
-    padding: 20px;
-    width: 30%;
-    border-radius: 20px;
-    background-color: white;
-    border: none;
-    color: #247f9e;
-    text-transform: uppercase;
-    transition: all 0.25s linear;
-    position: absolute;
-    z-index: 50;
-    left: 25%;
-    bottom: 7%;
-}
-.exploreButton:hover{
-    background-color: var(--RedColor);
-    color: white;
-}
-.sliderWrapper{
-    display: flex;
-    align-items: center;
-}
-.sliderContainer{
-    width: 100%;
-    height: 70%;
 }
