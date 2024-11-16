@@ -30,8 +30,8 @@ export default function Slider(){
                     <button className="lineButton">view all collections</button>
                 </div>
             </div>
-            <div className="Trending-Wrapper">
-                <div className="Trending-Container"
+            <div className="TSlider-Wrapper">
+                <div className="TSlider-Container"
                     style={{transform:`translate3d(-${sliderState.transferX}%, 0, 0)`}}>
                     <div style={{flex: `0 0 calc(100% / ${3})`}} className="Item">
                         <div style={{position:"relative"}}>
