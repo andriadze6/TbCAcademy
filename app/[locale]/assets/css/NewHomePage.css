@@ -176,7 +176,7 @@
     cursor: pointer;
     width: 100%;
     border-radius: 10px;
-    object-fit: fill;
+    object-fit: contain;
 }
 .T-Img2{
     position: absolute;
@@ -244,11 +244,98 @@
     background-color: var(--RedColor);
     color: white;
 }
+
+.strike-center {
+    position: relative;
+    white-space: nowrap; /* would center line-through in the middle of the wrapped lines */
+}
+
+.strike-center:after {
+    border-top: 1px solid #000;
+    position: absolute;
+    content: "";
+    right: 0;
+    top:50%;
+    left: 0;
+}
+
+/* დავიმახსოვრო როგორ მოვარგო სურათები  */
 .sliderWrapper{
-    display: flex;
     align-items: center;
+    overflow: hidden;
 }
 .sliderContainer{
     width: 100%;
-    height: 70%;
+    height: 70%; /* Or set a specific pixel height, e.g., height: 500px; */
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
 }
+.S-Img{
+    border-radius: 15px;
+    object-fit: cover; /* Ensures the image scales to fit the container */
+    height: 100%; /* Match the sliderContainer height */
+    width: 100%;
+}
+.S-Img2{
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; /* Ensure it covers the parent */
+    border-radius: 10px; /* Match border radius */
+    object-fit: cover;
+    transition: opacity 0.5s linear; /* Smooth transition */
+}
+.SliderItem{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%; /* Match sliderContainer height */
+    overflow: hidden;
+    padding: 10px;
+}
+.popUpContent{
+    position: absolute;
+    opacity: 0;
+    display: flex;
+    gap:20px;
+    left: 30%;
+    bottom: 20px;
+    z-index: 5;
+    transition: all 1s linear ;
+}
+.SliderItem:hover .popUpContent{
+    opacity: 1;
+    transform: translateY(-40px);
+}
+.cardButton{
+    width: 40px;
+    height: 40px;
+    border-color: transparent;
+    background-color:white;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.25s linear;
+    display: flex;
+    align-items: center ;
+    box-shadow: 0 4px 8px rgba(155, 177, 207, 0.685);
+}
+.cardButton:hover{
+    background-color: var(--RedColor);
+    color: white;
+}
+
+/* @keyframes showButton{
+    from{
+        transform: translateY(-60px);
+        opacity: 0;
+    }
+    to{
+        transform: translateY(0px);
+        opacity: 0;
+    }
+} */
