@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
-const useSlider = (sliderToShow) => {
+const useSlider = (sliderToShow, sliderAmount = 4) => {
     const [sliderState, setSliderState] = useState({
         clickAmount: 0,
         transferX: 0,
     });
 
-    const clickAmount = 4 - sliderToShow;
+    const clickAmount = sliderAmount - sliderToShow;
 
     const changeSlider = (con) => {
         debugger

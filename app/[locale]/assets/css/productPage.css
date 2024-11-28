@@ -4,7 +4,8 @@
      :root{
         ---navImgWidth: 100px;
         ---navImHeight:calc(var(---SliderImgHeight) / 5);
-        ---SliderImgHeight: 700px
+        ---SliderImgHeight: 700px;
+        ---SliderImgWidth:700px;
      }
   }
 .wrapper{
@@ -27,7 +28,7 @@
 .image-nav img{
     width: var(---navImgWidth);
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     border-radius: 16px;
 }
 
@@ -39,10 +40,17 @@
     border-radius: 16px;
 }
 
+.Slider-container{
+    width: var(---SliderImgWidth);
+    position: relative;
+    transition: all 0.5s linear;
+}
+
 .sliderImg {
     height: var(---SliderImgHeight);
     border-radius: 16px;
     object-fit: fill;
+    cursor: pointer;
 }
 .slider-ButtonDiv{
     padding-left: 20px;
@@ -63,4 +71,13 @@
     color: white;
     cursor: pointer;
     transition: background-color 0.5s linear;
+}
+.slider-wrapper{
+    position: relative;
+    overflow: hidden;
+}
+
+.border{
+    border: 1px solid var(---redColor);
+    transition: all 0.5s linear;
 }
