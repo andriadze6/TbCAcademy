@@ -103,7 +103,9 @@ async function HomePage(){
                         </div>
                         <button className="exploreButton">Explore</button>
                     </Link>
-                <Slider></Slider>
+                <div style={{display:"flex", gap:"20px", alignItems:"center", width:"70%"}}>
+                    <Slider></Slider>
+                </div>
                 </div>
             </div>
         </>

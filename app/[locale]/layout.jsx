@@ -5,7 +5,7 @@ import {notFound} from 'next/navigation';
 import {routing} from '../../i18n/routing';
 import "../globals.css";
 import { UserProvider } from '@auth0/nextjs-auth0/client';
- 
+import Header from './components/Header/NewHeader';
 
 export const metadata = {
   title: "Shopping site",
@@ -31,6 +31,7 @@ export default async function LocaleLayout({
       <UserProvider>
       <body>
         <NextIntlClientProvider messages={messages}>
+            <Header/>
             {children}
         </NextIntlClientProvider>
       </body>

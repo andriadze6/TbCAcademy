@@ -16,11 +16,9 @@ import Image from "next/image";
 export default function Slider(){
     let { sliderState, changeSlider } = useSlider(3);
     return(
-        <div>
-            <div className="sliderWrapper">
-
-                <div className="sliderContainer"
-                style={{transform:`translate3d(-${sliderState.transferX}%, 0, 0)`}}>
+        <div className="sliderWrapper">
+            <div className="sliderContainer"
+            style={{transform:`translate3d(-${sliderState.transferX}%, 0, 0)`}}>
                 <div style={{display:"flex"}}>
                     <div className="SliderItem" style={{flex: `0 0 calc(100% / ${3})`}}>
                         <div className='SliderImgDiv' style={{position:"relative"}}>
@@ -146,7 +144,6 @@ export default function Slider(){
                             </div>
                         </div>
                     </div>
-                </div>
                 </div>
             </div>
         </div>

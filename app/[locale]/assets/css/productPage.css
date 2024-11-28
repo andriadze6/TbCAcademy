@@ -1,0 +1,66 @@
+
+/* Styles for screens wider than 1024px */
+@media (min-width: 1024px) {
+     :root{
+        ---navImgWidth: 100px;
+        ---navImHeight:calc(var(---SliderImgHeight) / 5);
+        ---SliderImgHeight: 700px
+     }
+  }
+.wrapper{
+    padding: 50px;
+}
+.container{
+    background-color: #f2f1f0;
+    display: flex;
+    padding: 16px;
+}
+.Image-Div{
+    display: flex;
+    gap: 20px;
+}
+.navImgDiv{
+    height: var(---navImHeight);
+    padding-bottom: 10px;
+    border-radius : 16px;
+}
+.image-nav img{
+    width: var(---navImgWidth);
+    height: 100%;
+    object-fit: contain;
+    border-radius: 16px;
+}
+
+.navImgDiv:last-child{
+    padding-bottom: 0;
+}
+
+.SliderDiv{
+    border-radius: 16px;
+}
+
+.sliderImg {
+    height: var(---SliderImgHeight);
+    border-radius: 16px;
+    object-fit: fill;
+}
+.slider-ButtonDiv{
+    padding-left: 20px;
+    padding-right: 20px;
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    bottom:40%;
+}
+.slider-ButtonDiv button{
+    width: 50px;
+    border-radius: 50%;
+    border: none;
+}
+.slider-ButtonDiv button:hover{
+    background-color: var(---redColor);
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.5s linear;
+}

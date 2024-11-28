@@ -9,7 +9,6 @@ export default function HomePage() {
   const t = useTranslations('HomePage');
   return (
     <>
-      <NewHeader></NewHeader>
       <NewHomePage></NewHomePage>
       {/* <Header></Header>
       <HomePageComponents></HomePageComponents> */}

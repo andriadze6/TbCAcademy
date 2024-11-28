@@ -186,7 +186,6 @@
     width: 100%;
     height: 100%; /* Ensure it covers the parent */
     border-radius: 10px; /* Match border radius */
-    object-fit: cover;
     transition: opacity 0.5s linear; /* Smooth transition */
 }
 .Item:hover .T-Img2{
@@ -201,11 +200,10 @@
 
 .BannerContainer{
     margin: 0 auto;
-    max-width: 75%;
-    display: grid;
+    max-width: 90%;
+    display: flex;
     gap: 30px;
     padding: 50px;
-    grid-template-columns: 1fr 2fr;
 }
 .mainBanner{
     overflow: hidden;
