@@ -28,7 +28,16 @@ const useSlider = (sliderToShow, sliderAmount = 4) => {
         }
     };
 
-    return { sliderState, changeSlider };
+    function skipSlider(slider) {
+        const width = 100 / sliderToShow;
+        var coordinate = width * slider;
+        setSliderState((prevState) => ({
+            clickAmount: slider,
+            transferX: coordinate,
+        }));
+    }
+
+    return { sliderState, changeSlider,  skipSlider};
 };
 
 export default useSlider;

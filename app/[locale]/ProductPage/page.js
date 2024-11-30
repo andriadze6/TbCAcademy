@@ -12,12 +12,8 @@ import img5 from '../assets/img/homePageImg/NewArrival/NewArrival3-1.png';
 let imgArray = [img, img2, img3, img4, img5]
 
 export default function ProductPage() {
-    let { sliderState, changeSlider } = useSlider(1, 5);
+    let {  sliderState, changeSlider,  skipSlider } = useSlider(1, 5);
 
-    function clickOnNavImg(){
-
-        
-    }
     return (
         <div className="wrapper">
             <div className="container">
@@ -26,7 +22,7 @@ export default function ProductPage() {
                         {
                             imgArray.map((item, index) => {
                                 return (
-                                    <div key={index} onClick={() => { clickOnNavImg(index) }} className='navImgDiv'>
+                                    <div key={index} onClick={() => { skipSlider(index) }} className='navImgDiv'>
                                         <Image className={`sliderImg ${index === sliderState.clickAmount ? "border" : ""}`} width={500} height={500} src={item} alt="" />
                                     </div>
                                 )
