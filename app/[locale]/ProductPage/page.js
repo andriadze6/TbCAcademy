@@ -1,7 +1,7 @@
 
 'use client'
 import '../assets/css/productPage.css'
-import useSlider from '@/app/hooks/changeSlider'
+import useSlider from '../hooks/changeSlider'
 import Image from 'next/image'
 import img from '../assets/img/homePageImg/NewArrival/NewArrival1-1.png';
 import img2 from '../assets/img/homePageImg/NewArrival/NewArrival1-2.png';

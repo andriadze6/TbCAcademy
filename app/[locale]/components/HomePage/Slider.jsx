@@ -9,7 +9,7 @@ import NewArrival32 from '../../assets/img/homePageImg/NewArrival/NewArrival3-2.
 import NewArrival41 from '../../assets/img/homePageImg/NewArrival/NewArrival4-1.png'
 import NewArrival42 from '../../assets/img/homePageImg/NewArrival/NewArrival4-2.png'
 
-import useSlider from '@/app/hooks/changeSlider'
+import useSlider from '../../hooks/changeSlider'
 import Image from "next/image";
 
 

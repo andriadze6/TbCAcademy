@@ -2,7 +2,7 @@
 'use client'
 import Image from "next/image";
 import { useState } from "react";
-import useSlider from '@/app/hooks/changeSlider'
+import useSlider from '../../hooks/changeSlider'
 
 
 import ManTrending from "../../assets/img/homePageImg/Trending/Man/ManTrending.png"

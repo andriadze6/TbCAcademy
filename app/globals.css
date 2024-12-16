@@ -38,7 +38,7 @@ body {
 
 @media (prefers-color-scheme: light) {
   :root {
-    --background: white;    
+    --background: white;
     --foreground: #ededed;
   }
 }

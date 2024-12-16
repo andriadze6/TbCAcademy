@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import {useTranslations, useLocale } from 'next-intl';
 import { LanguagePicker } from '../Header/languageSwitcher';
 
-import { ThemeProvider } from '@/app/providers/ThemeProvider';
+import { ThemeProvider } from '../../../providers/ThemeProvider';
 import instagramIcon from '../../assets/img/InstagramIcon.png'
 import facebookIcon from '../../assets/img/facebookIcon.png';
 import twitterIcon from '../../assets/img/twitterIcon.png';
@@ -14,7 +14,7 @@ import Image from "next/image";
 import Link from 'next/link';
 import Search from '../SearchInput';
 import UserDropDownList from '../UserdropDownManue';
-import useTheme from '@/app/hooks/changeTheme';
+import useTheme from '../../hooks/changeTheme';
 import { MdOutlineDarkMode } from "react-icons/md";
 
 function Header(){
