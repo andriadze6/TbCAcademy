@@ -113,6 +113,31 @@ export default function AddNewProduct() {
     ];
     setCatalog(newCatalog);
   }
+
+  async function submitProduct() {
+    debugger
+    try {
+      const response = await fetch('/api/create-product', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          globalInfo: globalInfo,
+          catalogArray: catalogArray,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+      const data = await response.json();
+      alert(`Product created with ID: ${data.product.id}`);
+    } catch (error) {
+      console.error(error);
+      alert('Failed to create product');
+    }
+  }
   return (
     <div className="addNewProduct-container">
       <h4>add new product</h4>
@@ -574,6 +599,13 @@ export default function AddNewProduct() {
           <path d="M12 4.5v15m7.5-7.5h-15" />
         </svg>
       </div>
+      <button
+        onClick={submitProduct}
+        style={{ padding: '10px', marginTop: '20px', backgroundColor: '#0070f3', color: '#fff', border: 'none', borderRadius: '5px' }}
+      >
+        Add Product to Stripe
+      </button>
+
     </div>
   );
 }
