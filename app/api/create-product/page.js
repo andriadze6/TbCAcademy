@@ -2,113 +2,102 @@
 import Stripe from 'stripe';
 import { supabase } from 'app/lib/supaBase/supabaseClient';
 import { createClient } from 'app/lib/supaBase/server';
-import { title } from 'process';
-import { json } from 'stream/consumers';
-
 
 export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    try {
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-      const supaBase = await createClient()
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', ['POST']);
+    return res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
 
-      const { globalInfo, catalogArray } = req.body;
+  try {
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    const supaBase = await createClient();
+    const { globalInfo, catalogArray } = req.body;
 
-      /// 1.addr  product in SupBase Product Table
-      const {productData, error} = await supaBase.from('products').insert([{
+    // 1. Add product to Supabase Product Table
+    const { data: productData, error: productError } = await supaBase
+      .from('products')
+      .insert([{
         title_en: globalInfo.title_en,
         title_ge: globalInfo.title_ge,
         description_en: globalInfo.description_en,
         description_ge: globalInfo.description_ge,
-        category_id: globalInfo.gender, /// უნდა შვეცვალო გენდერ ID
-      }]).select('product_id').single();
+        category_id: globalInfo.gender,
+      }])
+      .select('product_id')
+      .single();
 
-      /// 2.add  productColor
-      catalogArray.forEach( async (catalog) => {
-        /// 2.1 add productColor table
-        const {colorData,error} = supaBase.from('productColor').insert([{
+    if (productError) throw new Error(`Failed to add product: ${productError.message}`);
+
+    // 2. Process each catalog item
+    for (const catalog of catalogArray) {
+      // 2.1 Add product color to Supabase
+      const { data: colorData, error: colorError } = await supaBase
+        .from('productColor')
+        .insert([{
           product_id: productData.product_id,
           color_code: catalog.color,
           color_en: catalog.color_en,
           color_ge: catalog.color_ge,
-        }]).select('productColorID').single();
+        }])
+        .select('productColorID')
+        .single();
 
-        /// 2.2 upload productImages
-        const uploadPromises = catalog.img.map((file) => {
-          const fileName = file.fileName;
-          return supabase
+      if (colorError) throw new Error(`Failed to add product color: ${colorError.message}`);
+
+      // 2.2 Upload product images
+      const uploadResults = await Promise.all(
+        catalog.img.map(async (file) => {
+          const { data, error } = await supabase
             .storage
             .from('product_images')
-            .upload(fileName, file, {
-              cacheControl: '3600',
-              upsert: false,
-            })
-            .then(({ data, error }) => {
-              if (error) {
-                console.error(`Error uploading ${fileName}:`, error);
-                throw error; // Optional: throw to handle errors in Promise.all
-              }
-              console.log(`File uploaded:`, data);
-              return data; // Return the successful result
-            });
-        });
-        try {
-          const results = await Promise.all(uploadPromises);
-          try{
-            /// 2.3 add Images Url in SupBase ProductImages Table
-            const {imgTableData, error} = await supaBase.from('productImages').insert([{
-              productColorId: colorData.productColorID,
-              image_url: JSON.stringify(results),
-            }])
-            const sizePromises = catalog.sizeObj.map(async(obj) => {
-                /// create stripe product
-                const stripeProduct = await stripe.products.create({
-                  name: `${globalInfo.title_ge}-size${obj.size}`,
-                  attributes: [productData.product_id, colorData.productColorID, obj.size],
-                  images:results[0].path,
-                });
-                /// create stripe price
-                const stripePrice = await stripe.prices.create({
-                  unit_amount: obj.price,
-                  currency: 'GEL',
-                  product: stripeProduct.id,
-                });
-                /// create promise productStock
-                return supabase.from('productStock').insert([{
-                  productColorID: colorData.productColorID,
-                  size: obj.size,
-                  quantity: obj.count,
-                  price_lari: obj.price,
-                  stripe_ProductID: stripeProduct.id,
-                }])
-                .then(({ data, error }) => {
-                  if (error) {
-                    console.error(`Error creating stocking promise:`, error);
-                    throw error; // Optional: throw to handle errors in Promise.all
-                  }
-                  return data; // Return the successful result
-                });
-            })
-            try {
-              /// 2.4 add productStock
-              const results = await Promise.all(sizePromises);
-            } catch (error) {
-              console.error('product Stock table was not updated:', err);
-            }
-          }
-          catch(err){
-            console.error('Error uploading colorTable:', err);
-          }
-          console.log('All files uploaded:', results);
-        } catch (err) {
-          console.error('One or more uploads failed:', err);
-        }
-      });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+            .upload(file.fileName, file, { cacheControl: '3600', upsert: false });
+          if (error) throw new Error(`Failed to upload image ${file.fileName}: ${error.message}`);
+          return data.path; // Return the uploaded file path
+        })
+      );
+
+      // 2.3 Add image URLs to Supabase ProductImages Table
+      const { error: imgError } = await supaBase.from('productImages').insert([{
+        productColorId: colorData.productColorID,
+        image_urls: JSON.stringify(uploadResults),
+      }]);
+
+      if (imgError) throw new Error(`Failed to add product images: ${imgError.message}`);
+
+      // 2.4 Add product sizes, create Stripe products, and update stock
+      await Promise.all(
+        catalog.sizeObj.map(async (size) => {
+          // Create Stripe product
+          const stripeProduct = await stripe.products.create({
+            name: `${globalInfo.title_ge} - Size ${size.size}`,
+            images: [uploadResults[0]], // Use the first image as a representative
+          });
+
+          // Create Stripe price
+          const stripePrice = await stripe.prices.create({
+            unit_amount: size.price * 100, // Convert to cents
+            currency: 'GEL',
+            product: stripeProduct.id,
+          });
+
+          // Add size and stock to Supabase
+          const { error: stockError } = await supaBase.from('productStock').insert([{
+            productColorID: colorData.productColorID,
+            size: size.size,
+            quantity: size.count,
+            price_lari: size.price,
+            stripe_ProductID: stripeProduct.id,
+          }]);
+
+          if (stockError) throw new Error(`Failed to update stock for size ${size.size}: ${stockError.message}`);
+        })
+      );
     }
-  } else {
-    res.setHeader('Allow', ['POST']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+
+    res.status(200).json({ success: true, message: 'Product created successfully!' });
+  } catch (error) {
+    console.error('Error creating product:', error.message);
+    res.status(500).json({ error: error.message });
   }
 }
