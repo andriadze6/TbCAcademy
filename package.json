@@ -17,6 +17,7 @@
     "@stripe/stripe-js": "^5.4.0",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.47.10",
+    "@types/base64-arraybuffer": "^0.2.4",
     "next": "^14.2.14",
     "next-auth": "^4.24.10",
     "next-intl": "^3.25.0",

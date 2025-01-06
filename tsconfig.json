@@ -28,7 +28,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "app/[locale]/AddNewProduct/page.jsx"  ],
+, "app/[locale]/AddNewProduct/page.tsx"  ],
   "exclude": [
     "node_modules"
   ]
