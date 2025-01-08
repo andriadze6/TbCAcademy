@@ -3,12 +3,23 @@ import React from "react";
 import { useState } from "react";
 import Image from "next/image";
 import "./style.css";
-import { get } from "http";
+import { globalInfoType, catalogType} from '../../Type/type'
 
 let sizeArray = ["XS", "S", "M", "L", "XL", "XXL"];
 
 export default function AddNewProduct() {
-  const [globalInfo, setGlobalInfo] = useState({
+
+  var size={
+
+  }
+  sizeArray.map((item, index) => {
+    size[item]={
+      count: 0,
+      price: 0,
+    }
+  });
+  console.log(size);
+  const [globalInfo, setGlobalInfo] = useState<globalInfoType>({
     title_en: "",
     title_ge: "",
     description_ge: "",
@@ -17,31 +28,27 @@ export default function AddNewProduct() {
     tag: [],
     category:"",
   });
-  const [catalogArray, setCatalog] = useState([
+  const [catalogArray, setCatalog] = useState<catalogType[]>([
     {
       color: "#0a4b61",
       color_ge: "",
       color_en: "",
-      sizeObj: new Array(sizeArray.length).fill({
-        size: "",
-        count: 0,
-        price: 0,
-      }),
+      sizObj: size,
       img: [],
       base64Img:[],
     },
   ]);
 
-  function handleSizeClick(checked, size, catalogIndex, sizeIndex) {
+  function handleSizeClick(checked:boolean, size:string, catalogIndex:number, sizeIndex:number) {
     let updatedCatalog = [...catalogArray];
     if (checked) {
-      updatedCatalog[catalogIndex].sizeObj[sizeIndex] = {
-        ...updatedCatalog[catalogIndex].sizeObj[sizeIndex], // Preserve other properties
+      updatedCatalog[catalogIndex].sizObj[sizeIndex] = {
+        ...updatedCatalog[catalogIndex].sizObj[sizeIndex], // Preserve other properties
         size: size, // Update size
       };
     } else {
-      updatedCatalog[catalogIndex].sizeObj[sizeIndex] = {
-        ...updatedCatalog[catalogIndex].sizeObj[sizeIndex], // Preserve other properties
+      updatedCatalog[catalogIndex].sizObj[sizeIndex] = {
+        ...updatedCatalog[catalogIndex].sizObj[sizeIndex], // Preserve other properties
         size: "", // Update size
       };
     }
@@ -49,7 +56,7 @@ export default function AddNewProduct() {
     setCatalog(updatedCatalog);
   }
 
-  function ChangeInput(catalogIndex, value, name) {
+  function ChangeInput(catalogIndex:number, value:string, name:string) {
     let updatedCatalog = [...catalogArray];
     if (name == "img") {
       updatedCatalog[catalogIndex][name].push(value);
@@ -58,7 +65,7 @@ export default function AddNewProduct() {
     }
     setCatalog(updatedCatalog);
   }
-  async function handleImageUpload(file, catalogIndex) {
+  async function handleImageUpload(file:File, catalogIndex:number) {
     // Create a deep copy of the catalogArray
     const updatedCatalogArray = [...catalogArray];
 debugger
@@ -66,7 +73,7 @@ debugger
     const url = URL.createObjectURL(file);
 
     // Convert the file to a base64 string
-    const newBase64 = await fileToBase64(file);
+    const newBase64: string = await fileToBase64(file);
 
     // Update the specific element's img and base64Img arrays
     updatedCatalogArray[catalogIndex] = {
@@ -80,7 +87,7 @@ debugger
     setCatalog(updatedCatalogArray);
   }
 
-  function deleteImage(index, catalogIndex) {
+  function deleteImage(index:number, catalogIndex:number) {
     let updatedCatalog = [...catalogArray]; // Create a copy of the catalogArray
     updatedCatalog[catalogIndex].img.splice(index, 1); // Remove the image at the specified index from the img array  
     updatedCatalog[catalogIndex].base64Img.splice(index, 1);  // Remove the image at the specified index from the base64Img array 
@@ -88,26 +95,26 @@ debugger
     setCatalog(updatedCatalog); // Update the state with the modified array 
   } 
 
-  function fileToBase64(file) {
+  function fileToBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-
-        // Event triggered when the file is successfully read
-        reader.onload = () => {
-            resolve(reader.result); // The Base64 string is in reader.result
-        };
-
-        // Event triggered on an error
-        reader.onerror = (error) => {
-            reject(error);
-        };
-        debugger
-        // Read the file as a Data URL (Base64 string)
-        reader.readAsDataURL(file);
+      const reader = new FileReader();
+  
+      // Event triggered when the file is successfully read
+      reader.onload = () => {
+        resolve(reader.result as string); // Ensure `result` is treated as a string
+      };
+  
+      // Event triggered on an error
+      reader.onerror = (error) => {
+        reject(error);
+      };
+  
+      // Read the file as a Data URL (Base64 string)
+      reader.readAsDataURL(file);
     });
-}
+  }
 
-  function changeTags(index, value) {
+  function changeTags(index:number, value:string) {
     let updateTag = [...globalInfo.tag];
     updateTag[index] = value;
     setGlobalInfo((prev)=>({
@@ -115,7 +122,7 @@ debugger
         tag:updateTag
     }));
   }
-  const removeTag = (index) => {
+  const removeTag = (index:number) => {
     const updatedTags = [...globalInfo.tag];
     updatedTags.splice(index, 1); // Remove the tag at the specified index
     setGlobalInfo((pre) => ({
@@ -126,13 +133,14 @@ debugger
 
   ///Size
 
-  function changeSizeObj(catalogIndex, value, name) {
+  function changeSizeObj(catalogIndex:number, size:string,value:string, name:string) {
+    debugger
     let updatedCatalog = [...catalogArray];
-    let sizeObj = updatedCatalog[catalogIndex].sizeObj;
-    sizeObj[name] = value;
+    let sizeObj = updatedCatalog[catalogIndex].sizObj;
+    sizeObj[size][name] = value;
     setCatalog(updatedCatalog);
   }
-  function removeCatalog(index) {
+  function removeCatalog(index:number) {
     if (catalogArray.length > 0) {
       let updateCatalog = [...catalogArray];
       updateCatalog.splice(index, 1);
@@ -147,43 +155,37 @@ debugger
         color: "#0a4b61",
         color_ge: "",
         color_en: "",
-        sizeObj: [
-          {
-            size: "",
-            count: 0,
-            price: 0,
-          },
-        ],
+        sizObj:size,
         img: [],
+        base64Img: [], // Add this property
       },
     ];
     setCatalog(newCatalog);
   }
 
   async function submitProduct() {
-    debugger
-          // Send the product data to the API
-          let formData = new FormData();
-          formData.append("title_en", globalInfo.title_en);
-          formData.append("title_ge", globalInfo.title_ge);
-          formData.append("description_en", globalInfo.description_en);
-          formData.append("description_ge", globalInfo.description_ge);
-          formData.append("gender", globalInfo.gender);
-          formData.append("category", globalInfo.category);
-          formData.append("tag", JSON.stringify(globalInfo.tag));
-          formData.append("catalogArray", JSON.stringify(catalogArray));
-          
-          const response = await fetch("/api/addProduct", {
-            method: "POST",
-            body: formData, // FormData sets the correct Content-Type
-          });
+    try{
+        // Send the product data to the API
+        let formData = new FormData();
+        formData.append("globalInfo", JSON.stringify(globalInfo));
+        formData.append("catalogArray", JSON.stringify(catalogArray));
+        const response = await fetch("/api/AddNewProduct", {
+          method: "POST",
+          body: formData, // FormData sets the correct Content-Type
+        });
+    }
+    catch(error){
+      console.log(error)
+    }
   }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); // Prevent default form submission
-    debugger
-    // Check if there is an image file in the state
-    submitProduct(); // Pass form element to clear inputs
+    try{
+      event.preventDefault(); // Prevent default form submission
+      submitProduct(); // Pass form element to clear inputs
+    }catch(error){
+      console.log(error)
+    }
   };
   return (
     <form onSubmit={handleSubmit} className="addNewProduct-container">
@@ -242,7 +244,6 @@ debugger
                 style={{ height: "100px", padding: "10px" }}
                 id="description_en"
                 placeholder="Description"
-                type="text"
                 onChange={(e) => {
                   setGlobalInfo((prevState) => ({
                     ...prevState,
@@ -258,7 +259,6 @@ debugger
                 style={{ height: "100px", padding: "10px" }}
                 id="description_ge"
                 placeholder="აღწერა"
-                type="text"
                 onChange={(e) => {
                   setGlobalInfo((prevState) => ({
                     ...prevState,
@@ -282,8 +282,7 @@ debugger
                   }));
                 }}
                 id="gender"
-                style={{ padding: "10px" }}
-                type="text">
+                style={{ padding: "10px" }}>
                 <option selected value="woman">ქალი</option>
                 <option value="man">კაცი</option>
                 <option value="girl">გოგო</option>
@@ -300,8 +299,7 @@ debugger
                   }));
                 }}
                 style={{ padding: "10px" }}
-                id="category"
-                type="text">
+                id="category">
                 <option selected value="pants">შარვალი</option>
                 <option value="jeans">ჯინსი</option>
                 <option value="shorts">შორტები</option>
@@ -462,25 +460,6 @@ debugger
                           <td className="sizeB">
                             <div className="sizeDiv"
                               style={{ position: "relative" }}>
-                              <input
-                                id={`checkbox-${sizeElement}-${catalogIndex}`}
-                                name="size" // Group radio buttons by name
-                                style={{
-                                  position: "absolute",
-                                  top: "0",
-                                  left: "0",
-                                  width: "100%",
-                                  height: "100%",
-                                  cursor: "pointer",
-                                  backgroundColor: "transparent",
-                                  opacity: "0",
-                                }}
-                                checked={sizeElement === catalog.sizeObj[sizeIndex].size}
-                                type="checkbox"
-                                onChange={(e) => {
-                                  handleSizeClick(e.target.checked, sizeElement, catalogIndex, sizeIndex);
-                                }}
-                              />
                               <label style={{
                                   width: "100%",
                                   height: "20px",
@@ -497,9 +476,9 @@ debugger
                             <input
                               id={`${sizeElement}count`}
                               value={
-                                sizeElement === catalog.sizeObj.size
-                                  ? catalog.sizeObj.count
-                                  : ""}
+                                sizeElement === catalog.sizObj[sizeElement].size
+                                  ? catalog.sizObj[sizeIndex].count
+                                  : 0}
                               style={{
                                 width: "100%",
                                 height: "100%",
@@ -508,10 +487,10 @@ debugger
                               }}
                               name="count"
                               type="number"
-                              disabled={sizeElement != catalog.sizeObj[sizeIndex].size}
                               onChange={(e) => {
                                 changeSizeObj(
                                   catalogIndex,
+                                  sizeElement,
                                   e.target.value,
                                   e.target.name
                                 );
@@ -522,9 +501,9 @@ debugger
                             <input
                               id={`${sizeElement}price`}
                               value={
-                                sizeElement === catalog.sizeObj.size
-                                  ? catalog.sizeObj.price
-                                  : ""
+                                sizeElement === catalog.sizObj[sizeElement]
+                                  ? catalog.sizObj[sizeElement].price
+                                  : 0
                               }
                               style={{
                                 width: "100%",
@@ -533,10 +512,10 @@ debugger
                                 textAlign: "center",
                               }}
                               type="number"
-                              disabled={sizeElement != catalog.sizeObj[sizeIndex].size}
                               onChange={(e) => {
                                 changeSizeObj(
                                   catalogIndex,
+                                  sizeElement,
                                   e.target.value,
                                   e.target.name
                                 );

@@ -4,7 +4,7 @@ import { createClient } from '../../lib/supaBase/server'
 import { NextResponse } from "next/server";
 import type { NextRequest } from 'next/server'
 import { decode } from 'base64-arraybuffer'
-
+import { globalInfoType, catalogType} from '../../Type/type'
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 /**
@@ -17,7 +17,9 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
     const body = await request.json(); // Parse the JSON body
-
+    const formData = await request.formData();
+    const globalInfo:globalInfoType = JSON.parse(formData.get('globalInfo') as string);
+    const catalogArray:globalInfoType = JSON.parse(formData.get('catalogArray') as string);
     const {
       title_en,
       title_ge,
@@ -33,7 +35,7 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Validate required fields
-    if (!title_en || !title_ge || !price || !category || !size) {
+    if (!globalInfo.title_en || !globalInfo.title_ge  || !globalInfo.category) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -42,17 +44,8 @@ export async function POST(request: NextRequest) {
 
     // Create a product in Stripe
     const product = await stripe.products.create({
-      name: title_en,
-      description: description_en,
-      metadata: {
-        title_ge,
-        description_ge,
-        gender,
-        category,
-        price: price.toString(), // Ensure price is a string
-        size,
-        tags: tags.join(","), // Convert tags array to a comma-separated string
-      },
+      name: globalInfo.title_en,
+      description: globalInfo.description_en,
     });
 
     // Create a price for the product
