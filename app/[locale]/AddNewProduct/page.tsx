@@ -68,7 +68,6 @@ export default function AddNewProduct() {
   async function handleImageUpload(file:File, catalogIndex:number) {
     // Create a deep copy of the catalogArray
     const updatedCatalogArray = [...catalogArray];
-debugger
     // Generate the URL for the image
     const url = URL.createObjectURL(file);
 
@@ -98,17 +97,14 @@ debugger
   function fileToBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-  
       // Event triggered when the file is successfully read
       reader.onload = () => {
         resolve(reader.result as string); // Ensure `result` is treated as a string
       };
-  
       // Event triggered on an error
       reader.onerror = (error) => {
         reject(error);
       };
-  
       // Read the file as a Data URL (Base64 string)
       reader.readAsDataURL(file);
     });
@@ -181,8 +177,11 @@ debugger
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     try{
-      event.preventDefault(); // Prevent default form submission
-      submitProduct(); // Pass form element to clear inputs
+      if(globalInfo.gender || globalInfo.category){
+        event.preventDefault(); // Prevent default form submission
+        submitProduct(); // Pass form element to clear inputs
+      }
+
     }catch(error){
       console.log(error)
     }
@@ -275,7 +274,9 @@ debugger
             }}>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <label style={{ marginBottom: "10px" }} htmlFor="title_en">სქესი</label>
-              <select onChange={(e) => {
+              <select 
+              required
+              onChange={(e) => {
                   setGlobalInfo((prevState) => ({
                     ...prevState,
                     gender: e.target.value,
@@ -283,7 +284,8 @@ debugger
                 }}
                 id="gender"
                 style={{ padding: "10px" }}>
-                <option selected value="woman">ქალი</option>
+                <option value="">აირჩიე სქესი</option>
+                <option value="woman">ქალი</option>
                 <option value="man">კაცი</option>
                 <option value="girl">გოგო</option>
                 <option value="boy">ბიჭი</option>
@@ -292,6 +294,7 @@ debugger
             <div style={{ display: "flex", flexDirection: "column" }}>
               <label style={{ marginBottom: "auto" }} htmlFor="title_en">კატეგორია</label>
               <select
+              required
                 onChange={(e) => {
                   setGlobalInfo((prevState) => ({
                     ...prevState,
@@ -300,7 +303,8 @@ debugger
                 }}
                 style={{ padding: "10px" }}
                 id="category">
-                <option selected value="pants">შარვალი</option>
+                <option value="">აირჩიე კატეგორია</option>
+                <option value="pants">შარვალი</option>
                 <option value="jeans">ჯინსი</option>
                 <option value="shorts">შორტები</option>
                 <option value="coat">ქურთუკი</option>
