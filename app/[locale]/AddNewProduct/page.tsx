@@ -304,10 +304,10 @@ export default function AddNewProduct() {
                 style={{ padding: "10px" }}
                 id="category">
                 <option value="">აირჩიე კატეგორია</option>
-                <option value="pants">შარვალი</option>
-                <option value="jeans">ჯინსი</option>
-                <option value="shorts">შორტები</option>
-                <option value="coat">ქურთუკი</option>
+                <option value="1">შარვალი</option>
+                <option value="2">ჯინსი</option>
+                <option value="3">შორტები</option>
+                <option value="4">ქურთუკი</option>
               </select>
             </div>
           </div>

@@ -16,76 +16,67 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const body = await request.json(); // Parse the JSON body
     const formData = await request.formData();
     const globalInfo:globalInfoType = JSON.parse(formData.get('globalInfo') as string);
-    const catalogArray:globalInfoType = JSON.parse(formData.get('catalogArray') as string);
-    const {
-      title_en,
-      title_ge,
-      description_en,
-      description_ge,
-      gender,
-      category,
-      price,
-      size,
-      tags,
-      image,
-      name
-    } = body;
-
-    // Validate required fields
-    if (!globalInfo.title_en || !globalInfo.title_ge  || !globalInfo.category) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
-    }
-
-    // Create a product in Stripe
-    const product = await stripe.products.create({
-      name: globalInfo.title_en,
-      description: globalInfo.description_en,
-    });
-
-    // Create a price for the product
-    await stripe.prices.create({
-      product: product.id,
-      unit_amount: parseInt(price) * 100, // Ensure price is an integer
-      currency: "usd",
-    });
-
-   const base64String = image.replace(/^data:image\/\w+;base64,/, '');
-
-    /// Store Images
-    const UploadImage = await supabase
-      .storage
-      .from('product_images')
-      .upload(`public/${product.id}`, decode(base64String), {
-        contentType: 'image/png'
-      })
-      const { data: publicUrl } = supabase.storage
-      .from('product_images') // Replace with your bucket name
-      .getPublicUrl(UploadImage.data?.path as string)
+    
+    let title_en = globalInfo.title_en;
+    let title_ge = globalInfo.title_ge;
+    let description_en = globalInfo.description_en;
+    let description_ge = globalInfo.description_ge;
+    let gender = globalInfo.gender;
+    let category_ID = globalInfo.category;
+    let tags = globalInfo.tag;
 
     // Add product to Supabase
-    const { error: productError } = await supabase.from("products").insert({
-      title_en,
-      title_ge,
-      description_en,
-      description_ge,
-      gender,
-      category,
-      price,
-      size,
-      tags,
-      stripe_product_id: product.id,
-      image: publicUrl.publicUrl
-    });
+    const { data: productData,error: productError } = await supabase.from("GlobalProductInfo").insert([{
+      title_en: title_en,
+      title_ge: title_ge,
+      description_en: description_en,
+      description_ge: description_ge,
+      gender: gender,
+      category_ID: category_ID,
+      tags: tags
+    }]).select("product_id");
 
     if (productError) {
       throw new Error(`Supabase Error: ${productError.message}`);
     }
+    const catalogArray:globalInfoType = JSON.parse(formData.get('catalogArray') as string);
+    // Validate required fields
+  //   if (!globalInfo.title_en || !globalInfo.title_ge  || !globalInfo.category) {
+  //     return NextResponse.json(
+  //       { error: "Missing required fields" },
+  //       { status: 400 }
+  //     );
+  //   }
+
+  //   // Create a product in Stripe
+  //   const product = await stripe.products.create({
+  //     name: globalInfo.title_en,
+  //     description: globalInfo.description_en,
+  //   });
+
+  //   // Create a price for the product
+  //   await stripe.prices.create({
+  //     product: product.id,
+  //     unit_amount: parseInt(price) * 100, // Ensure price is an integer
+  //     currency: "usd",
+  //   });
+
+  //  const base64String = image.replace(/^data:image\/\w+;base64,/, '');
+
+  //   /// Store Images
+  //   const UploadImage = await supabase
+  //     .storage
+  //     .from('product_images')
+  //     .upload(`public/${product.id}`, decode(base64String), {
+  //       contentType: 'image/png'
+  //     })
+  //     const { data: publicUrl } = supabase.storage
+  //     .from('product_images') // Replace with your bucket name
+  //     .getPublicUrl(UploadImage.data?.path as string)
+
+
 
     return NextResponse.json(
       { message: "Product added successfully" },
