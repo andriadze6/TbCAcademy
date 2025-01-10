@@ -14,10 +14,20 @@ export default function AddNewProduct() {
   }
   sizeArray.map((item, index) => {
     size[item]={
+      name:item,
       count: 0,
       price: 0,
     }
   });
+
+  ///Size
+  function changeSizeObj(catalogIndex:number, size:string,value:string, name:string) {
+    debugger
+    let updatedCatalog = [...catalogArray];
+    let sizeObj = updatedCatalog[catalogIndex].sizeObj;
+    sizeObj[size][name] = value;
+    setCatalog(updatedCatalog);
+  }
   console.log(size);
   const [globalInfo, setGlobalInfo] = useState<globalInfoType>({
     title_en: "",
@@ -33,7 +43,7 @@ export default function AddNewProduct() {
       color: "#0a4b61",
       color_ge: "",
       color_en: "",
-      sizObj: size,
+      sizeObj: {},
       img: [],
       base64Img:[],
     },
@@ -41,16 +51,15 @@ export default function AddNewProduct() {
 
   function handleSizeClick(checked:boolean, size:string, catalogIndex:number, sizeIndex:number) {
     let updatedCatalog = [...catalogArray];
+    let sizeObj = updatedCatalog[catalogIndex].sizeObj
     if (checked) {
-      updatedCatalog[catalogIndex].sizObj[sizeIndex] = {
-        ...updatedCatalog[catalogIndex].sizObj[sizeIndex], // Preserve other properties
-        size: size, // Update size
-      };
+      sizeObj[size] = {
+        name:size,
+        count: 0,
+        price: 0,
+      }
     } else {
-      updatedCatalog[catalogIndex].sizObj[sizeIndex] = {
-        ...updatedCatalog[catalogIndex].sizObj[sizeIndex], // Preserve other properties
-        size: "", // Update size
-      };
+      delete sizeObj[size]
     }
     // Update the state
     setCatalog(updatedCatalog);
@@ -92,7 +101,7 @@ export default function AddNewProduct() {
     updatedCatalog[catalogIndex].base64Img.splice(index, 1);  // Remove the image at the specified index from the base64Img array 
     console.log(updatedCatalog);
     setCatalog(updatedCatalog); // Update the state with the modified array 
-  } 
+  }
 
   function fileToBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -127,15 +136,7 @@ export default function AddNewProduct() {
     }));
   };
 
-  ///Size
 
-  function changeSizeObj(catalogIndex:number, size:string,value:string, name:string) {
-    debugger
-    let updatedCatalog = [...catalogArray];
-    let sizeObj = updatedCatalog[catalogIndex].sizObj;
-    sizeObj[size][name] = value;
-    setCatalog(updatedCatalog);
-  }
   function removeCatalog(index:number) {
     if (catalogArray.length > 0) {
       let updateCatalog = [...catalogArray];
@@ -151,7 +152,7 @@ export default function AddNewProduct() {
         color: "#0a4b61",
         color_ge: "",
         color_en: "",
-        sizObj:size,
+        sizeObj:size,
         img: [],
         base64Img: [], // Add this property
       },
@@ -274,7 +275,7 @@ export default function AddNewProduct() {
             }}>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <label style={{ marginBottom: "10px" }} htmlFor="title_en">სქესი</label>
-              <select 
+              <select
               required
               onChange={(e) => {
                   setGlobalInfo((prevState) => ({
@@ -464,6 +465,25 @@ export default function AddNewProduct() {
                           <td className="sizeB">
                             <div className="sizeDiv"
                               style={{ position: "relative" }}>
+                              <input
+                                id={`checkbox-${sizeElement}-${catalogIndex}`}
+                                name="size" // Group radio buttons by name
+                                style={{
+                                  position: "absolute",
+                                  top: "0",
+                                  left: "0",
+                                  width: "100%",
+                                  height: "100%",
+                                  cursor: "pointer",
+                                  backgroundColor: "transparent",
+                                  opacity: "0",
+                                }}
+                                checked={catalog.sizeObj[sizeElement] != undefined}
+                                type="checkbox"
+                                onChange={(e) => {
+                                  handleSizeClick(e.target.checked, sizeElement, catalogIndex, sizeIndex);
+                                }}
+                              />
                               <label style={{
                                   width: "100%",
                                   height: "20px",
@@ -479,9 +499,10 @@ export default function AddNewProduct() {
                           <td>
                             <input
                               id={`${sizeElement}count`}
+                              disabled={(catalog.sizeObj[sizeElement] == undefined)}
                               value={
-                                sizeElement === catalog.sizObj[sizeElement].size
-                                  ? catalog.sizObj[sizeIndex].count
+                                 catalog.sizeObj?.[sizeElement]!= undefined
+                                  ? catalog.sizeObj[sizeElement].count
                                   : 0}
                               style={{
                                 width: "100%",
@@ -504,9 +525,10 @@ export default function AddNewProduct() {
                           <td>
                             <input
                               id={`${sizeElement}price`}
+                              disabled={(catalog.sizeObj[sizeElement] == undefined)}
                               value={
-                                sizeElement === catalog.sizObj[sizeElement]
-                                  ? catalog.sizObj[sizeElement].price
+                                catalog.sizeObj?.[sizeElement]!= undefined
+                                  ? catalog.sizeObj[sizeElement].price
                                   : 0
                               }
                               style={{
@@ -516,6 +538,7 @@ export default function AddNewProduct() {
                                 textAlign: "center",
                               }}
                               type="number"
+                              name="price"
                               onChange={(e) => {
                                 changeSizeObj(
                                   catalogIndex,

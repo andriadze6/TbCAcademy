@@ -12,7 +12,12 @@ export type catalogType = {
     color: string;
     color_ge: string;
     color_en: string;
-    sizObj: any;
+    sizeObj: any;
     img: string[];
     base64Img: string[];
 };
+
+export type sizeType = {
+    count: number;
+    price: number;
+}

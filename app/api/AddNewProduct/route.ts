@@ -4,7 +4,7 @@ import { createClient } from '../../lib/supaBase/server'
 import { NextResponse } from "next/server";
 import type { NextRequest } from 'next/server'
 import { decode } from 'base64-arraybuffer'
-import { globalInfoType, catalogType} from '../../Type/type'
+import { globalInfoType, catalogType, sizeType} from '../../Type/type'
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 /**
@@ -17,7 +17,10 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
     const formData = await request.formData();
-    const globalInfo:globalInfoType = JSON.parse(formData.get('globalInfo') as string);
+    // Fetch Exchange Rate from USD to GEL
+    const response = await fetch(`https://v6.exchangerate-api.com/v6/${process.env.EXCHANGE_RATE_API_KEY}/latest/USD`);
+    const exchangeRateData = await response.json();
+    const usdToGelRate = exchangeRateData.conversion_rates.GEL;    const globalInfo:globalInfoType = JSON.parse(formData.get('globalInfo') as string);
     
     let title_en = globalInfo.title_en;
     let title_ge = globalInfo.title_ge;
@@ -28,7 +31,7 @@ export async function POST(request: NextRequest) {
     let tags = globalInfo.tag;
 
     // Add product to Supabase
-    const { data: productData,error: productError } = await supabase.from("GlobalProductInfo").insert([{
+    const { data: productData,error: productError } = await supabase.from("GlobalProductInfo").insert({
       title_en: title_en,
       title_ge: title_ge,
       description_en: description_en,
@@ -36,45 +39,84 @@ export async function POST(request: NextRequest) {
       gender: gender,
       category_ID: category_ID,
       tags: tags
-    }]).select("product_id");
+    }).select("product_id");
 
     if (productError) {
-      throw new Error(`Supabase Error: ${productError.message}`);
+      throw new Error(`Up dating GlobalProductInfo table error Error: ${productError.message}`);
     }
-    const catalogArray:globalInfoType = JSON.parse(formData.get('catalogArray') as string);
-    // Validate required fields
-  //   if (!globalInfo.title_en || !globalInfo.title_ge  || !globalInfo.category) {
-  //     return NextResponse.json(
-  //       { error: "Missing required fields" },
-  //       { status: 400 }
-  //     );
-  //   }
+    const catalogArray:catalogType[] = JSON.parse(formData.get('catalogArray') as string);
 
-  //   // Create a product in Stripe
-  //   const product = await stripe.products.create({
-  //     name: globalInfo.title_en,
-  //     description: globalInfo.description_en,
-  //   });
 
-  //   // Create a price for the product
-  //   await stripe.prices.create({
-  //     product: product.id,
-  //     unit_amount: parseInt(price) * 100, // Ensure price is an integer
-  //     currency: "usd",
-  //   });
+    for (let i = 0; i < catalogArray.length; i++) {
+      const catalog:catalogType = catalogArray[i];
+      try {
+        const { data: catalogData, error: catalogError } = await supabase.from("productColors").insert({
+          product_id: productData[0].product_id,
+          color_Code: catalog.color,
+          color_ge: catalog.color_ge,
+          color_en: catalog.color_en,
+        }).select("productColorID")
+        if (catalogError) {
+          throw new Error(`Up dating productColors table error: ${catalogError.message}`);
+        }
+        for(const[key, value] of Object.entries(catalog.sizeObj)){
+            const sizeValue = value as sizeType;
+            if(sizeValue.count != 0 && sizeValue.price != 0){
+            // Create a product in Stripe
+            const stripeProduct = await stripe.products.create({
+              name: globalInfo.title_en,
+              description: globalInfo.description_en,
+              metadata: {
+                productID: productData[0].product_id,
+                colorID: catalogData[0].productColorID,
+                size: key,
+              },
+            });
+            // Create a price for the product
+          const stripePrice = await stripe.prices.create({
+              product: stripeProduct.id,
+              unit_amount: sizeValue.price * 100,
+              currency: "usd",
+            });
 
-  //  const base64String = image.replace(/^data:image\/\w+;base64,/, '');
+            const { data: product, error: productError } = await supabase
+              .from('productStock')
+              .insert([
+                { size: key,
+                  count: sizeValue.count,
+                  stripe_ProductID: stripeProduct.id,
+                  product_ColorID: catalogData[0].productColorID,
+                  price_usd:sizeValue.price,
+                  price_lari: sizeValue.price * usdToGelRate
+                },
+              ])
+              if(productError){
+                throw new Error(`Up dating productStock table error: ${catalogError.message}`);
+              }
+            }
+        }
+        const imageArray:string[] = catalog.base64Img
+        for(let k = 0; k < catalog.base64Img.length; k++){
+          const image = imageArray[k]
+          const base64String = image.replace(/^data:image\/\w+;base64,/, '');
+          /// Store Images
+          const UploadImage = await supabase
+            .storage
+            .from('product_images')
+            .upload(`public/${catalogData[0].productColorID}`, decode(base64String), {
+              contentType: 'image/png'
+            })
+            const { data: publicUrl } = supabase.storage
+                  .from('product_images') // Replace with your bucket name
+                  .getPublicUrl(UploadImage.data?.path as string)
+            console.log(publicUrl)
+        }
+      }catch (error) {
+        console.log(error);
+      }
+    }
 
-  //   /// Store Images
-  //   const UploadImage = await supabase
-  //     .storage
-  //     .from('product_images')
-  //     .upload(`public/${product.id}`, decode(base64String), {
-  //       contentType: 'image/png'
-  //     })
-  //     const { data: publicUrl } = supabase.storage
-  //     .from('product_images') // Replace with your bucket name
-  //     .getPublicUrl(UploadImage.data?.path as string)
+
 
 
 
