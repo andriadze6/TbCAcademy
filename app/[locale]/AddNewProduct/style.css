@@ -86,7 +86,9 @@ th, td {
   transition: border-color 0.3s;
 }
 .sizeB:has(input[type="checkbox"]:checked) {
-    border: 1px solid red !important;
+    color:red !important;
+    font-size: medium;
+    font-weight: bolder;
 }
 
 

@@ -57,6 +57,7 @@ export default function AddNewProduct() {
         name:size,
         count: 0,
         price: 0,
+        required: true
       }
     } else {
       delete sizeObj[size]
@@ -500,6 +501,7 @@ export default function AddNewProduct() {
                             <input
                               id={`${sizeElement}count`}
                               disabled={(catalog.sizeObj[sizeElement] == undefined)}
+                              required={catalog.sizeObj[sizeElement]?.required}
                               value={
                                  catalog.sizeObj?.[sizeElement]!= undefined
                                   ? catalog.sizeObj[sizeElement].count
@@ -526,6 +528,7 @@ export default function AddNewProduct() {
                             <input
                               id={`${sizeElement}price`}
                               disabled={(catalog.sizeObj[sizeElement] == undefined)}
+                              required={catalog.sizeObj[sizeElement]?.required}
                               value={
                                 catalog.sizeObj?.[sizeElement]!= undefined
                                   ? catalog.sizeObj[sizeElement].price
