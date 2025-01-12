@@ -20,15 +20,14 @@ export async function POST(request: NextRequest) {
     // Fetch Exchange Rate from USD to GEL
     const response = await fetch(`https://v6.exchangerate-api.com/v6/${process.env.EXCHANGE_RATE_API_KEY}/latest/USD`);
     const exchangeRateData = await response.json();
-    const usdToGelRate = exchangeRateData.conversion_rates.GEL;    
+    const usdToGelRate = exchangeRateData.conversion_rates.GEL;
     const globalInfo:globalInfoType = JSON.parse(formData.get('globalInfo') as string);
-    
     let title_en = globalInfo.title_en;
     let title_ge = globalInfo.title_ge;
     let description_en = globalInfo.description_en;
     let description_ge = globalInfo.description_ge;
     let gender = globalInfo.gender;
-    let category_ID = globalInfo.category;
+    let category_ID = globalInfo.selectedCategory;
     let tags = globalInfo.tag;
 
     // Add product to Supabase

@@ -6,9 +6,17 @@ export type globalInfoType = {
     description_en: string;
     gender: string;
     tag: string[];
-    category: string;
+    category: categoryType[];
     selectedCategory: string;
 };
+
+export type categoryType = {
+    id: number;
+    gender: string;
+    label_en: string;
+    label_ge: string;
+}
+
 export type catalogType = {
     color: string;
     color_ge: string;

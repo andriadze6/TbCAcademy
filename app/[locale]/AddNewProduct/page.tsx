@@ -3,7 +3,7 @@ import React from "react";
 import { useState } from "react";
 import Image from "next/image";
 import "./style.css";
-import { globalInfoType, catalogType} from '../../Type/type'
+import { globalInfoType, catalogType, categoryType} from '../../Type/type'
 let sizeArray = ["XS", "S", "M", "L", "XL", "XXL"];
 
 export default function AddNewProduct() {
@@ -19,7 +19,6 @@ export default function AddNewProduct() {
     }
   });
   const [message, setMessage] = useState<string | null>(null);
-  const [category, setCategory] = useState(null);
   const [globalInfo, setGlobalInfo] = useState<globalInfoType>({
     title_en: "",
     title_ge: "",
@@ -28,7 +27,7 @@ export default function AddNewProduct() {
     gender: "",
     tag: [],
     selectedCategory:"",
-    category:""
+    category:[]
   });
   const [catalogArray, setCatalog] = useState<catalogType[]>([
     {
@@ -43,6 +42,7 @@ export default function AddNewProduct() {
   ]);
 
  async function changeGender(gender: string) {
+    try{
       let formData = new FormData();
       formData.append("gender", gender);
       const response = await fetch("/api/GetCategory", {
@@ -50,9 +50,19 @@ export default function AddNewProduct() {
         body: formData, // FormData sets the correct Content-Type
       });
       debugger
-      const data = await response.json();
-      console.log(data)
-      setCategory(data);
+      const data = await response.json() as categoryType[];
+      if (data.length == 0) {
+        setMessage("კატეგორია არ მოიძებნა");
+        return
+      }
+      setGlobalInfo((prevState) => ({
+        ...prevState,
+        gender: gender,
+        category:data
+      }));
+    }catch(error){
+      console.log(error)
+    }
   }
 
 
@@ -339,11 +349,12 @@ export default function AddNewProduct() {
                     selectedCategory: e.target.value,
                   }));
                 }}
+                disabled={globalInfo.category.length === 0}
                 style={{ padding: "10px" }}
                 id="category">
                 <option value="">აირჩიე კატეგორია</option>
-                {category &&
-                category.map((item, index) => {
+                {globalInfo.category.length &&
+                globalInfo.category.map((item, index) => {
                   return (
                     <option key={item.id} value={item.id}>
                       {item.label_ge}
