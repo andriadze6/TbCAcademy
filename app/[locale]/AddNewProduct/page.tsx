@@ -4,7 +4,6 @@ import { useState } from "react";
 import Image from "next/image";
 import "./style.css";
 import { globalInfoType, catalogType} from '../../Type/type'
-
 let sizeArray = ["XS", "S", "M", "L", "XL", "XXL"];
 
 export default function AddNewProduct() {
@@ -20,6 +19,7 @@ export default function AddNewProduct() {
     }
   });
   const [message, setMessage] = useState<string | null>(null);
+  const [category, setCategory] = useState(null);
   const [globalInfo, setGlobalInfo] = useState<globalInfoType>({
     title_en: "",
     title_ge: "",
@@ -27,7 +27,8 @@ export default function AddNewProduct() {
     description_en: "",
     gender: "",
     tag: [],
-    category:"",
+    selectedCategory:"",
+    category:""
   });
   const [catalogArray, setCatalog] = useState<catalogType[]>([
     {
@@ -40,6 +41,21 @@ export default function AddNewProduct() {
       imageUploaded: false
     },
   ]);
+
+ async function changeGender(gender: string) {
+      let formData = new FormData();
+      formData.append("gender", gender);
+      const response = await fetch("/api/GetCategory", {
+        method: "POST",
+        body: formData, // FormData sets the correct Content-Type
+      });
+      debugger
+      const data = await response.json();
+      console.log(data)
+      setCategory(data);
+  }
+
+
   ///Size
   function changeSizeObj(catalogIndex:number, size:string,value:string, name:string) {
     debugger
@@ -302,10 +318,7 @@ export default function AddNewProduct() {
               <select
               required
               onChange={(e) => {
-                  setGlobalInfo((prevState) => ({
-                    ...prevState,
-                    gender: e.target.value,
-                  }));
+                    changeGender(e.target.value);
                 }}
                 id="gender"
                 style={{ padding: "10px" }}>
@@ -323,16 +336,20 @@ export default function AddNewProduct() {
                 onChange={(e) => {
                   setGlobalInfo((prevState) => ({
                     ...prevState,
-                    category: e.target.value,
+                    selectedCategory: e.target.value,
                   }));
                 }}
                 style={{ padding: "10px" }}
                 id="category">
                 <option value="">აირჩიე კატეგორია</option>
-                <option value="1">შარვალი</option>
-                <option value="2">ჯინსი</option>
-                <option value="3">შორტები</option>
-                <option value="4">ქურთუკი</option>
+                {category &&
+                category.map((item, index) => {
+                  return (
+                    <option key={item.id} value={item.id}>
+                      {item.label_ge}
+                    </option>
+                  );
+                })}
               </select>
             </div>
           </div>

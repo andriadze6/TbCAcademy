@@ -20,7 +20,8 @@ export async function POST(request: NextRequest) {
     // Fetch Exchange Rate from USD to GEL
     const response = await fetch(`https://v6.exchangerate-api.com/v6/${process.env.EXCHANGE_RATE_API_KEY}/latest/USD`);
     const exchangeRateData = await response.json();
-    const usdToGelRate = exchangeRateData.conversion_rates.GEL;    const globalInfo:globalInfoType = JSON.parse(formData.get('globalInfo') as string);
+    const usdToGelRate = exchangeRateData.conversion_rates.GEL;    
+    const globalInfo:globalInfoType = JSON.parse(formData.get('globalInfo') as string);
     
     let title_en = globalInfo.title_en;
     let title_ge = globalInfo.title_ge;

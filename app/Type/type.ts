@@ -7,6 +7,7 @@ export type globalInfoType = {
     gender: string;
     tag: string[];
     category: string;
+    selectedCategory: string;
 };
 export type catalogType = {
     color: string;
