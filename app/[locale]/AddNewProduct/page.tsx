@@ -151,7 +151,7 @@ export default function AddNewProduct() {
     }
   }
   ///Add New Calor
-  function AddColor() {
+  function AddCatalo() {
     let newCatalog = [
       ...catalogArray,
       {
@@ -678,7 +678,7 @@ export default function AddNewProduct() {
           <h3>დაამატე ფერი</h3>
           <svg
             onClick={() => {
-              AddColor();
+              AddCatalo();
             }}
             style={{ cursor: "pointer", width: "20px", height: "20px" }}
             xmlns="http://www.w3.org/2000/svg"
