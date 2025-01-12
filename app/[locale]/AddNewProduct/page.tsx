@@ -19,16 +19,7 @@ export default function AddNewProduct() {
       price: 0,
     }
   });
-
-  ///Size
-  function changeSizeObj(catalogIndex:number, size:string,value:string, name:string) {
-    debugger
-    let updatedCatalog = [...catalogArray];
-    let sizeObj = updatedCatalog[catalogIndex].sizeObj;
-    sizeObj[size][name] = value;
-    setCatalog(updatedCatalog);
-  }
-  console.log(size);
+  const [message, setMessage] = useState<string | null>(null);
   const [globalInfo, setGlobalInfo] = useState<globalInfoType>({
     title_en: "",
     title_ge: "",
@@ -46,8 +37,17 @@ export default function AddNewProduct() {
       sizeObj: {},
       img: [],
       base64Img:[],
+      imageUploaded: false
     },
   ]);
+  ///Size
+  function changeSizeObj(catalogIndex:number, size:string,value:string, name:string) {
+    debugger
+    let updatedCatalog = [...catalogArray];
+    let sizeObj = updatedCatalog[catalogIndex].sizeObj;
+    sizeObj[size][name] = value;
+    setCatalog(updatedCatalog);
+  }
 
   function handleSizeClick(checked:boolean, size:string, catalogIndex:number, sizeIndex:number) {
     let updatedCatalog = [...catalogArray];
@@ -89,6 +89,7 @@ export default function AddNewProduct() {
       ...updatedCatalogArray[catalogIndex],
       img: [...updatedCatalogArray[catalogIndex].img, url],
       base64Img: [...updatedCatalogArray[catalogIndex].base64Img, newBase64],
+      imageUploaded: true,
     };
 
     console.log(updatedCatalogArray);
@@ -100,8 +101,12 @@ export default function AddNewProduct() {
     let updatedCatalog = [...catalogArray]; // Create a copy of the catalogArray
     updatedCatalog[catalogIndex].img.splice(index, 1); // Remove the image at the specified index from the img array  
     updatedCatalog[catalogIndex].base64Img.splice(index, 1);  // Remove the image at the specified index from the base64Img array 
+    if(updatedCatalog[catalogIndex].img.length == 0)
+    {
+      updatedCatalog[catalogIndex].imageUploaded = false
+    }
     console.log(updatedCatalog);
-    setCatalog(updatedCatalog); // Update the state with the modified array 
+    setCatalog(updatedCatalog); // Update the state with the modified array
   }
 
   function fileToBase64(file: File): Promise<string> {
@@ -153,9 +158,10 @@ export default function AddNewProduct() {
         color: "#0a4b61",
         color_ge: "",
         color_en: "",
-        sizeObj:size,
+        sizeObj: {},
         img: [],
-        base64Img: [], // Add this property
+        base64Img:[],
+        imageUploaded: false
       },
     ];
     setCatalog(newCatalog);
@@ -178,15 +184,32 @@ export default function AddNewProduct() {
   }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    try{
-      if(globalInfo.gender || globalInfo.category){
-        event.preventDefault(); // Prevent default form submission
-        submitProduct(); // Pass form element to clear inputs
+    try {
+      const imgIsUploaded = catalogArray.every((item) => item.imageUploaded);
+      const sizeIsChosen = catalogArray.every((item) => Object.keys(item.sizeObj).length > 0);
+      if(!imgIsUploaded){
+        setMessage("ატვირთეთ სურათი");
+        event.preventDefault();
+        hideMessageAfterDelay();
+        return
       }
-
-    }catch(error){
-      console.log(error)
+      else if(!sizeIsChosen){
+        setMessage("ზომა არ არის არჩეული");
+        event.preventDefault();
+        hideMessageAfterDelay();
+        return
+      }
+      event.preventDefault(); // Prevent default form submission
+      submitProduct();
     }
+    catch (error) {
+      console.log(error);
+    }
+  };
+  const hideMessageAfterDelay = () => {
+    setTimeout(() => {
+      setMessage(null);
+    }, 2000); // Hide message after 3 seconds
   };
   return (
     <form onSubmit={handleSubmit} className="addNewProduct-container">
@@ -505,7 +528,7 @@ export default function AddNewProduct() {
                               value={
                                  catalog.sizeObj?.[sizeElement]!= undefined
                                   ? catalog.sizeObj[sizeElement].count
-                                  : 0}
+                                  : ""}
                               style={{
                                 width: "100%",
                                 height: "100%",
@@ -532,7 +555,7 @@ export default function AddNewProduct() {
                               value={
                                 catalog.sizeObj?.[sizeElement]!= undefined
                                   ? catalog.sizeObj[sizeElement].price
-                                  : 0
+                                  : ""
                               }
                               style={{
                                 width: "100%",
@@ -670,6 +693,26 @@ export default function AddNewProduct() {
           style={{ padding: '10px', marginTop: '20px', backgroundColor: '#0070f3', color: '#fff', border: 'none', borderRadius: '5px' }}
         > Add Product to Stripe
         </button>
+        {message && (
+          <div
+            style={{
+              position: "fixed",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              transition: "all 0.5s linear",
+              padding: "20px",
+              backgroundColor: message.includes("successfully") ? "#d4edda" : "#f8d7da",
+              color: message.includes("successfully") ? "#155724" : "#721c24",
+              border: `1px solid ${message.includes("successfully") ? "#c3e6cb" : "#f5c6cb"}`,
+              borderRadius: "5px",
+              textAlign: "center",
+              zIndex: 1000,
+            }}
+          >
+            {message}
+          </div>
+        )}
     </form>
   );
 }

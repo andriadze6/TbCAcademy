@@ -15,6 +15,7 @@ export type catalogType = {
     sizeObj: any;
     img: string[];
     base64Img: string[];
+    imageUploaded: boolean;
 };
 
 export type sizeType = {
