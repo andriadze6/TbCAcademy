@@ -45,10 +45,10 @@ export async function POST(request: NextRequest) {
       throw new Error(`Up dating GlobalProductInfo table error Error: ${productError.message}`);
     }
     const catalogArray:catalogType[] = JSON.parse(formData.get('catalogArray') as string);
-
-
+    //Add product with different colors
     for (let i = 0; i < catalogArray.length; i++) {
       const catalog:catalogType = catalogArray[i];
+      //add product colors
       try {
         const { data: catalogData, error: catalogError } = await supabase.from("productColors").insert({
           product_id: productData[0].product_id,
@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
         if (catalogError) {
           throw new Error(`Up dating productColors table error: ${catalogError.message}`);
         }
+        // Add product sizes
         for(const[key, value] of Object.entries(catalog.sizeObj)){
             const sizeValue = value as sizeType;
             if(sizeValue.count != 0 && sizeValue.price != 0){
@@ -87,7 +88,7 @@ export async function POST(request: NextRequest) {
                   stripe_ProductID: stripeProduct.id,
                   product_ColorID: catalogData[0].productColorID,
                   price_usd:sizeValue.price,
-                  price_lari: sizeValue.price * usdToGelRate
+                  price_lari: parseFloat((sizeValue.price * usdToGelRate).toFixed(0))
                 },
               ])
               if(productError){
@@ -96,33 +97,48 @@ export async function POST(request: NextRequest) {
             }
         }
         const imageArray:string[] = catalog.base64Img
+        let imageUrls: string[] = [];
+
+        //upload images
         for(let k = 0; k < catalog.base64Img.length; k++){
           const image = imageArray[k]
           const base64String = image.replace(/^data:image\/\w+;base64,/, '');
           /// Store Images
-          const UploadImage = await supabase
+          const {data:UploadImage, error: UploadImageError} = await supabase
             .storage
             .from('product_images')
-            .upload(`public/${catalogData[0].productColorID}`, decode(base64String), {
+            .upload(`${gender}/${catalogData[0].productColorID}-${k}.png`, decode(base64String), {
               contentType: 'image/png'
             })
+            if(UploadImageError){
+              throw new Error(`Up dating productStock table error: ${UploadImageError.message}`);
+            }
             const { data: publicUrl } = supabase.storage
-                  .from('product_images') // Replace with your bucket name
-                  .getPublicUrl(UploadImage.data?.path as string)
-            console.log(publicUrl)
+                  .from('product_images')
+                  .getPublicUrl(UploadImage?.path as string)
+            imageUrls.push(publicUrl.publicUrl);
         }
+        //add images to table
+      const { data, error } = await supabase
+            .from('Images')
+            .insert([
+              { productColorID: catalogData[0].productColorID,
+                imageURL: imageUrls,
+                isPrimary:imageUrls[0]
+              },
+            ]);
+            if (error) {
+              throw new Error(`Up dating Images table error: ${error.message}`);
+            }
       }catch (error) {
         console.log(error);
       }
     }
-
-
-
-
-
     return NextResponse.json(
-      { message: "Product added successfully" },
-      { status: 200 }
+      { message: "Product added successfully" ,
+        id: productData[0].product_id
+      },
+      { status: 200 },
     );
   } catch (error) {
     console.error("Error adding product:", error);

@@ -31,3 +31,40 @@ export type sizeType = {
     count: number;
     price: number;
 }
+
+export type  productColorsType = {
+    productColorID:string;
+    product_id:string;
+    color_en:string;
+    color_ge:string;
+    color_Code:string;
+}
+
+export type productStockType = {
+    productStockID:string;
+    size:string;
+    price_lari:number;
+    price_usd:number;
+    count:number;
+    stripe_ProductID:string;
+}
+
+export type ImagesType = {
+    imageURL: string[];
+    isPrimary: string;
+}
+
+export type GlobalProductInfoType = {
+    title_en: string;
+    title_ge: string;
+    description_ge: string;
+    description_en: string;
+    gender: string;
+    tag: string[];
+}
+
+export type productDetailedType = {
+    productColors: productColorsType;
+    productStock: productStockType[];
+    Image: string[];
+}

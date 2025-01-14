@@ -16,7 +16,7 @@ export default function ProductPage({ params }) {
     const { id } = params; // Access the dynamic parameter from the URL
     useEffect(()=>{
         (async function GetHomePageData() {
-            const product = await fetch(`https://dummyjson.com/products/${id}`) 
+            const product = await fetch(`https://dummyjson.com/products/${id}`)
             let produCtD = await product.json();
             setProductData(produCtD)
         })();

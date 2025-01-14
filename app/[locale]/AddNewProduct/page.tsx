@@ -1,13 +1,15 @@
 "use client";
 import React from "react";
+import {useTranslations, useLocale } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useState } from "react";
 import Image from "next/image";
 import "./style.css";
 import { globalInfoType, catalogType, categoryType} from '../../Type/type'
+
 let sizeArray = ["XS", "S", "M", "L", "XL", "XXL"];
 
 export default function AddNewProduct() {
-
   var size={
 
   }
@@ -18,6 +20,7 @@ export default function AddNewProduct() {
       price: 0,
     }
   });
+  const currentLanguage = useLocale(); // Get current language from next-intl
   const [message, setMessage] = useState<string | null>(null);
   const [globalInfo, setGlobalInfo] = useState<globalInfoType>({
     title_en: "",
@@ -40,7 +43,7 @@ export default function AddNewProduct() {
       imageUploaded: false
     },
   ]);
-
+  const router = useRouter();
  async function changeGender(gender: string) {
     try{
       let formData = new FormData();
@@ -49,7 +52,6 @@ export default function AddNewProduct() {
         method: "POST",
         body: formData, // FormData sets the correct Content-Type
       });
-      debugger
       const data = await response.json() as categoryType[];
       if (data.length == 0) {
         setMessage("კატეგორია არ მოიძებნა");
@@ -68,10 +70,10 @@ export default function AddNewProduct() {
 
   ///Size
   function changeSizeObj(catalogIndex:number, size:string,value:string, name:string) {
-    debugger
     let updatedCatalog = [...catalogArray];
     let sizeObj = updatedCatalog[catalogIndex].sizeObj;
-    sizeObj[size][name] = value;
+    let numberValue = Number(value);
+    sizeObj[size][name] = numberValue;
     setCatalog(updatedCatalog);
   }
 
@@ -195,6 +197,7 @@ export default function AddNewProduct() {
 
   async function submitProduct() {
     try{
+      debugger
         // Send the product data to the API
         let formData = new FormData();
         formData.append("globalInfo", JSON.stringify(globalInfo));
@@ -203,6 +206,11 @@ export default function AddNewProduct() {
           method: "POST",
           body: formData, // FormData sets the correct Content-Type
         });
+        if (response.ok) {
+          debugger
+          const data = await response.json();
+          router.push(`/ProductPage/${data.id}`);
+        }
     }
     catch(error){
       console.log(error)
@@ -211,6 +219,7 @@ export default function AddNewProduct() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     try {
+      debugger
       const imgIsUploaded = catalogArray.every((item) => item.imageUploaded);
       const sizeIsChosen = catalogArray.every((item) => Object.keys(item.sizeObj).length > 0);
       if(!imgIsUploaded){
@@ -565,13 +574,13 @@ export default function AddNewProduct() {
                               }}
                               name="count"
                               type="number"
+                              min={1}
+                              max={100}
                               onChange={(e) => {
-                                changeSizeObj(
-                                  catalogIndex,
-                                  sizeElement,
-                                  e.target.value,
-                                  e.target.name
-                                );
+                                const value = e.target.value;
+                                if (/^(?!0\d)\d*$/.test(value)) { // Regular expression to reject leading zeros
+                                  changeSizeObj(catalogIndex, sizeElement, value, e.target.name);
+                                }
                               }}
                             />
                           </td>
@@ -593,13 +602,14 @@ export default function AddNewProduct() {
                               }}
                               type="number"
                               name="price"
+                              pattern="^[1-9][0-9]*$"
+                              title="Please enter a number without leading zeros"
+                              min={1}
                               onChange={(e) => {
-                                changeSizeObj(
-                                  catalogIndex,
-                                  sizeElement,
-                                  e.target.value,
-                                  e.target.name
-                                );
+                                const value = e.target.value;
+                                if (/^(?!0\d)\d*$/.test(value)) { // Regular expression to reject leading zeros
+                                  changeSizeObj(catalogIndex, sizeElement, value, e.target.name);
+                                }
                               }}/>
                           </td>
                         </tr>);})}
@@ -695,6 +705,7 @@ export default function AddNewProduct() {
                       style={{ display: "none" }}
                       type="file"
                       accept="image/*"
+                      value={""}
                     ></input>
                   </div>
                 </div>

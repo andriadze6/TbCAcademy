@@ -1,25 +1,26 @@
 
 'use client'
-import '../assets/css/productPage.css'
-import useSlider from '../hooks/changeSlider'
+import '../../assets/css/productPage.css'
+import useSlider from '../../hooks/changeSlider'
 import Image from 'next/image'
-import img from '../assets/img/homePageImg/NewArrival/NewArrival1-1.png';
-import img2 from '../assets/img/homePageImg/NewArrival/NewArrival1-2.png';
-import img3 from '../assets/img/homePageImg/NewArrival/NewArrival2-2.png';
-import img4 from '../assets/img/homePageImg/NewArrival/NewArrival2-1.png';
-import img5 from '../assets/img/homePageImg/NewArrival/NewArrival3-1.png';
+import img from '../../assets/img/homePageImg/NewArrival/NewArrival1-1.png';
+import img2 from '../../assets/img/homePageImg/NewArrival/NewArrival1-2.png';
+import img3 from '../../assets/img/homePageImg/NewArrival/NewArrival2-2.png';
+import img4 from '../../assets/img/homePageImg/NewArrival/NewArrival2-1.png';
+import img5 from '../../assets/img/homePageImg/NewArrival/NewArrival3-1.png';
 import { useState } from 'react';
+import{useParams} from 'next/navigation'
 
 let imgArray = [img, img2, img3, img4, img5]
 
 
 let sizeArray = ["XS", "S", "M", "L", "XL", "XXL"]
 export default function ProductPage() {
+    debugger
     let {  sliderState, changeSlider,  skipSlider } = useSlider(1, 5);
     let [amount, setAmount] = useState(1)
-
+    const {id} = useParams()
     function changeAmount(n) {
-        debugger
         setAmount((prev)=>{
             let cAmount = prev + n;
             if (cAmount < 1) {
