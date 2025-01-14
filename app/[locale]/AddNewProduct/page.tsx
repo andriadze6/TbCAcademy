@@ -209,7 +209,7 @@ export default function AddNewProduct() {
         if (response.ok) {
           debugger
           const data = await response.json();
-          router.push(`/ProductPage/${data.id}`);
+          router.push(`ProductPage/${data.id}`);
         }
     }
     catch(error){
