@@ -7,6 +7,60 @@ import { globalInfoType, catalogType, sizeType } from '../../Type/type';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
+
+
+async function processCatalogSizes(catalog, stripe, supabase, globalInfo, productId, productColorID, usdToGelRate) {
+  try {
+    const sizePromises = Object.entries(catalog.sizeObj) // Filter sizes with count and price
+      .map(async ([size, value]) => {
+        const sizeValue = value as sizeType;
+
+        // Create Stripe Product
+        const stripeProduct = await stripe.products.create({
+          name: globalInfo.title_en,
+          description: globalInfo.description_en,
+          metadata: {
+            productID: productId,
+            colorID: productColorID,
+            size,
+          },
+        });
+
+        // Create Stripe Price
+        const stripePrice = await stripe.prices.create({
+          product: stripeProduct.id,
+          unit_amount: sizeValue.price * 100,
+          currency: 'usd',
+        });
+
+        // Insert into Supabase productStock
+        const { error: stockError } = await supabase
+          .from('productStock')
+          .insert({
+            size,
+            count: sizeValue.count,
+            stripe_ProductID: stripeProduct.id,
+            product_ColorID: productColorID,
+            price_usd: sizeValue.price,
+            price_lari: parseFloat((sizeValue.price * usdToGelRate).toFixed(0)),
+          });
+
+        if (stockError) {
+          throw new Error(`Error inserting productStock: ${stockError.message}`);
+        }
+      });
+
+    // Wait for all promises to complete
+    await Promise.all(sizePromises);
+  } catch (error) {
+    console.error('Error processing catalog sizes:', error);
+    throw error;
+  }
+}
+
+
+
+
 /**
  * Helper function to upload images and return their URLs
  */
@@ -98,42 +152,46 @@ export async function POST(request) {
 
       productColorID = catalogData[0].productColorID;
 
+
+
       // Add sizes and create Stripe products and prices
-      for (const [size, value] of Object.entries(catalog.sizeObj)) {
-        const sizeValue = value as sizeType;
-        if (sizeValue.count && sizeValue.price) {
-          const stripeProduct = await stripe.products.create({
-            name: globalInfo.title_en,
-            description: globalInfo.description_en,
-            metadata: {
-              productID: productId,
-              colorID: productColorID,
-              size,
-            },
-          });
 
-          const stripePrice = await stripe.prices.create({
-            product: stripeProduct.id,
-            unit_amount: sizeValue.price * 100,
-            currency: 'usd',
-          });
+      processCatalogSizes(catalog, stripe, supabase, globalInfo, productId, productColorID, usdToGelRate)
+      // for (const [size, value] of Object.entries(catalog.sizeObj)) {
+      //   const sizeValue = value as sizeType;
+      //   if (sizeValue.count && sizeValue.price) {
+      //     const stripeProduct = await stripe.products.create({
+      //       name: globalInfo.title_en,
+      //       description: globalInfo.description_en,
+      //       metadata: {
+      //         productID: productId,
+      //         colorID: productColorID,
+      //         size,
+      //       },
+      //     });
 
-          const { error: stockError } = await supabase
-            .from('productStock')
-            .insert({
-              size,
-              count: sizeValue.count,
-              stripe_ProductID: stripeProduct.id,
-              product_ColorID: productColorID,
-              price_usd: sizeValue.price,
-              price_lari: parseFloat((sizeValue.price * usdToGelRate).toFixed(0)),
-            });
+      //     const stripePrice = await stripe.prices.create({
+      //       product: stripeProduct.id,
+      //       unit_amount: sizeValue.price * 100,
+      //       currency: 'usd',
+      //     });
 
-          if (stockError) {
-            throw new Error(`Error inserting productStock: ${stockError.message}`);
-          }
-        }
-      }
+      //     const { error: stockError } = await supabase
+      //       .from('productStock')
+      //       .insert({
+      //         size,
+      //         count: sizeValue.count,
+      //         stripe_ProductID: stripeProduct.id,
+      //         product_ColorID: productColorID,
+      //         price_usd: sizeValue.price,
+      //         price_lari: parseFloat((sizeValue.price * usdToGelRate).toFixed(0)),
+      //       });
+
+      //     if (stockError) {
+      //       throw new Error(`Error inserting productStock: ${stockError.message}`);
+      //     }
+      //   }
+      // }
 
       // Upload images
       const imageUrls = await uploadImages(supabase, catalogData[0], catalog.base64Img, globalInfo.gender);
