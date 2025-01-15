@@ -188,7 +188,7 @@ export async function POST(request) {
     }
 
     const productId = productData[0].product_id;
-    let result = processCatalogArray(catalogArray, supabase, stripe, globalInfo, productId, usdToGelRate)
+    let result = await processCatalogArray(catalogArray, supabase, stripe, globalInfo, productId, usdToGelRate)
     const productColorID = result[0].productColorID;
     // for (const catalog of catalogArray) {
     //   const { data: catalogData, error: catalogError } = await supabase
