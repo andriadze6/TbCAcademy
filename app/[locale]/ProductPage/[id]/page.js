@@ -3,23 +3,94 @@
 import '../../assets/css/productPage.css'
 import useSlider from '../../hooks/changeSlider'
 import Image from 'next/image'
-import img from '../../assets/img/homePageImg/NewArrival/NewArrival1-1.png';
-import img2 from '../../assets/img/homePageImg/NewArrival/NewArrival1-2.png';
-import img3 from '../../assets/img/homePageImg/NewArrival/NewArrival2-2.png';
-import img4 from '../../assets/img/homePageImg/NewArrival/NewArrival2-1.png';
-import img5 from '../../assets/img/homePageImg/NewArrival/NewArrival3-1.png';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import {useTranslations, useLocale } from 'next-intl';
 import{useParams} from 'next/navigation'
-
-let imgArray = [img, img2, img3, img4, img5]
 
 
 let sizeArray = ["XS", "S", "M", "L", "XL", "XXL"]
+
+const initialState = {
+    globalProductInfo: {},
+    productColors: [],
+    productStock: [],
+    images: [],
+    navImages: [],
+    sliderImages: [],
+};
 export default function ProductPage() {
-    debugger
-    let {  sliderState, changeSlider,  skipSlider } = useSlider(1, 5);
-    let [amount, setAmount] = useState(1)
-    const {id} = useParams()
+    const [productData, setProductData] = useState(initialState);
+    const { sliderState, changeSlider, skipSlider } = useSlider(1, productData.navImages.length);
+    const [amount, setAmount] = useState(1);
+    const currentLanguage = useLocale();
+    const { id } = useParams();
+
+    useEffect(() => {
+        (async function fetchProductData() {
+            try {
+                const response = await fetch('/api/GedProductByID', {
+                    method: 'POST',
+                    body: JSON.stringify({ id: id }),
+                });
+                const data = await response.json();
+                debugger
+                const { navImages, sliderImages } = createSlider(data.images);
+                setProductData({
+                    globalProductInfo: data.globalProductInfo[0],
+                    productColors: data.productColors,
+                    productStock: data.productStock,
+                    images: data.images,
+                    navImages,
+                    sliderImages,
+                });
+                console.log(productData);
+            }catch (error) {
+                console.log(error)
+            }
+        })();
+    },[id]); ///ID უნდა იყოს დამოკიდებული
+
+    function createSlider(imagesArray) {
+        const navImages = [];
+        const sliderImages = [];
+        imagesArray.forEach((color) => {
+            if (color.productColorID === id) {
+                color.imageURL.forEach((url, imgIndex) => {
+                    navImages.push(
+                        <div
+                            key={`${color.productColorID}-nav-${imgIndex}`}
+                            onClick={() => skipSlider(imgIndex)}
+                            className="navImgDiv">
+                            <Image
+                                className={`navImg`}
+                                width={500}
+                                height={500}
+                                src={url}
+                                priority
+                                alt=""
+                            />
+                        </div>
+                    );
+                    sliderImages.push(
+                        <div
+                            key={`${color.productColorID}-slider-${imgIndex}`}
+                            className="SliderDiv"
+                            style={{ flex: `0 0 100%` }}>
+                            <Image
+                                className="sliderImg"
+                                width={700}
+                                height={700}
+                                src={url}
+                                priority
+                                alt=""/>
+                        </div>
+                    );
+                });
+            }
+        });
+        return { navImages, sliderImages };
+    }
+
     function changeAmount(n) {
         setAmount((prev)=>{
             let cAmount = prev + n;
@@ -29,42 +100,17 @@ export default function ProductPage() {
             return cAmount
         })
     }
-    return (
-        <div className="wrapper">
-            <div className="container">
-                <div className="Image-Div">
-                    <div className="image-nav">
-                        {
-                            imgArray.map((item, index) => {
-                                return (
-                                    <div key={index} onClick={() => { skipSlider(index) }} className='navImgDiv'>
-                                        <Image className={`navImg ${index === sliderState.clickAmount ? "border" : ""}`} width={500} height={500} src={item} alt="" />
-                                    </div>
-                                )
-                            })
-                        }
+
+    function Slider({ navImages, sliderImages}) {
+        return (
+            <div className="Image-Div">
+                <div className="image-nav">{navImages}</div>
+                <div className="slider-wrapper">
+                    <div className="Slider-container"
+                        style={{ transform: `translate3d(-${sliderState.transferX}%, 0, 0)` }}>
+                        <div style={{ display: 'flex' }}>{sliderImages}</div>
                     </div>
-                    <div className="slider-wrapper">
-                        <div className='Slider-container'style={{transform:`translate3d(-${sliderState.transferX}%, 0, 0)`}}>
-                                <div style={{display:"flex"}}>
-                                    <div className="SliderDiv" style={{flex: `0 0 100%`}}>
-                                        <Image className='sliderImg' width={700} height={700} src={img} alt="" />
-                                    </div>
-                                    <div className="SliderDiv" style={{flex: `0 0 100%`}}>
-                                        <Image className='sliderImg' width={700} height={700} src={img2} alt="" />
-                                    </div>
-                                    <div className="SliderDiv" style={{flex: `0 0 100%`}}>
-                                        <Image className='sliderImg' width={700} height={700} src={img3} alt="" />
-                                    </div>
-                                    <div className="SliderDiv" style={{flex: `0 0 100%`}}>
-                                        <Image className='sliderImg' width={700} height={700} src={img4} alt="" />
-                                    </div>
-                                    <div className="SliderDiv" style={{flex: `0 0 100%`}}>
-                                        <Image className='sliderImg' width={700} height={700} src={img5} alt="" />
-                                    </div>
-                                </div>
-                        </div>
-                        <div className='slider-ButtonDiv'>
+                    <div className='slider-ButtonDiv'>
                             <button onClick={()=>{changeSlider(0)}} className="slider-Button">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
@@ -75,28 +121,89 @@ export default function ProductPage() {
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
                                 </svg>
                             </button>
-                        </div>
                     </div>
                 </div>
-                <div className="information-Div">
-                    <div className='information-Container'>
-                        <h1 className='information-Title bottom_Margin'>Regular-fit linen cotton shirt</h1>
-                        <div className='bottom_Margin' style={{display:"flex",gap:"20px"}}>
-                            <div className='current-Price' style={{display:"flex"}}>
-                                <h3 className='product-currency'>₾</h3>
-                                <h3 className='product-Price'>200</h3>
-                            </div>
-                            <div style={{display:"flex", gap:"20px"}}>
-                                <div className='old-Price' style={{display:"flex"}}>
-                                    <h3 className='product-currency'>₾</h3>
-                                    <h3 className='product-Price'>400</h3>
-                                </div>
-                                <div className='discount_Percentage'>
-                                    <h5>-50%</h5>
-                                </div>
+            </div>
+        );
+    }
+
+    function ProductInfo({ productInfo, currentLanguage, amount, changeAmount }) {
+        const { title_en, title_ge, description_en, description_ge } = productInfo;
+        return (
+            <div className="information-Div">
+                <div className="information-Container">
+                    <h1 className="information-Title bottom_Margin">
+                        {currentLanguage === 'en' ? title_en : title_ge}
+                    </h1>
+                    <p className="bottom_Margin">
+                        {currentLanguage === 'en' ? description_en : description_ge}
+                    </p>
+                    <div className='bottom_Margin size_Div'>
+                        {
+
+                        }
+                        <div style={{display:"flex", gap:"20px"}}>
+                            <h4 style={{marginBottom:"10px"}}>price:</h4>
+                            <div className='bottom_Margin' style={{display:"flex",gap:"20px"}}>
+                                    <div className='current-Price' style={{display:"flex"}}>
+                                        <h3 className='product-currency'>₾</h3>
+                                        <h3 className='product-Price'>200</h3>
+                                    </div>
+                                    <div style={{display:"flex", gap:"20px"}}>
+                                        <div className='old-Price' style={{display:"flex"}}>
+                                            <h3 className='product-currency'>₾</h3>
+                                            <h3 className='product-Price'>400</h3>
+                                        </div>
+                                        <div className='discount_Percentage'>
+                                            <h5>-50%</h5>
+                                        </div>
+                                    </div>
                             </div>
                         </div>
-                        <p className='bottom_Margin'>Casual styling and precious details come together in this stretch cotton ribbed jersey top. The cropped silhouette pairs perfectly with the casual feel of ribbing, while the deep V-neck is enriched with an embroidery of fine rows of precious monili, completing the look of the top with a very feminine sparkling note.</p>
+                        <div className='size-Container'>
+                            {
+                                sizeArray.map((item, index) => {
+                                    return (
+                                        <button className='size_Button' key={index}>{item}</button>
+                                    )
+                                })
+                            }
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '20px', alignItems: 'center', width: '100%' }} className="bottom_Margin">
+                        <div className="select-Amount">
+                            <button onClick={() => changeAmount(-1)} className="select-Amount-Button">-</button>
+                            <h5 className="select-Amount-Number">{amount}</h5>
+                            <button onClick={() => changeAmount(1)} className="select-Amount-Button">+</button>
+                        </div>
+                        <div className="addToCart" style={{ width: '100%' }}>
+                            <button className="addToCart-Button">Add to cart</button>
+                        </div>
+                    </div>
+                    <div className="bottom_Margin">
+                        <button className="buyNow-Button">Buy now</button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="wrapper">
+            <div className="container">
+                {
+                    productData.navImages.length > 0 &&
+                    <Slider
+                        navImages={productData.navImages}
+                        sliderImages={productData.sliderImages}/>
+                }
+
+                {/* <div className="information-Div">
+                    <div className='information-Container'>
+                        <h1 className='information-Title bottom_Margin'>
+                        {currentLanguage === "en" ? globalProductInfo.title_en : globalProductInfo.title_ge}
+                    </h1>
+                    <p className='bottom_Margin'>{currentLanguage === "en" ? globalProductInfo.description_en : globalProductInfo.description_ge}</p>
                         <div className='bottom_Margin color_Div'>
                             <h4 style={{marginBottom:"10px"}}>Color:</h4>
                             <div className='color-Container'>
@@ -112,7 +219,24 @@ export default function ProductPage() {
                             </div>
                         </div>
                         <div className='bottom_Margin size_Div'>
-                            <h4 style={{marginBottom:"10px"}}>Color:</h4>
+                            <div style={{display:"flex", gap:"20px"}}>
+                                <h4 style={{marginBottom:"10px"}}>price:</h4>
+                                <div className='bottom_Margin' style={{display:"flex",gap:"20px"}}>
+                                        <div className='current-Price' style={{display:"flex"}}>
+                                            <h3 className='product-currency'>₾</h3>
+                                            <h3 className='product-Price'>200</h3>
+                                        </div>
+                                        <div style={{display:"flex", gap:"20px"}}>
+                                            <div className='old-Price' style={{display:"flex"}}>
+                                                <h3 className='product-currency'>₾</h3>
+                                                <h3 className='product-Price'>400</h3>
+                                            </div>
+                                            <div className='discount_Percentage'>
+                                                <h5>-50%</h5>
+                                            </div>
+                                        </div>
+                                </div>
+                            </div>
                             <div className='size-Container'>
                                 {
                                     sizeArray.map((item, index) => {
@@ -169,7 +293,7 @@ export default function ProductPage() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     )
