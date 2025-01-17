@@ -1,13 +1,11 @@
 
 'use client'
-import '../../assets/css/productPage.css'
-import useSlider from '../../hooks/changeSlider'
+import '../../../assets/css/productPage.css'
+import useSlider from '../../../hooks/changeSlider'
 import Image from 'next/image'
 import { useState, useEffect } from 'react';
 import {useTranslations, useLocale } from 'next-intl';
 import{useParams} from 'next/navigation'
-
-
 let sizeArray = ["XS", "S", "M", "L", "XL", "XXL"]
 
 const initialState = {
@@ -17,49 +15,57 @@ const initialState = {
     images: [],
     navImages: [],
     sliderImages: [],
+    imageAmount:0
 };
 export default function ProductPage() {
     const [productData, setProductData] = useState(initialState);
-    const { sliderState, changeSlider, skipSlider } = useSlider(1, productData.navImages.length);
+    const { sliderState, changeSlider, skipSlider } = useSlider();
+    const { ID, colorID } = useParams();
+    const [size, setSize] = useState(null);
     const [amount, setAmount] = useState(1);
     const currentLanguage = useLocale();
-    const { id } = useParams();
 
     useEffect(() => {
         (async function fetchProductData() {
             try {
                 const response = await fetch('/api/GedProductByID', {
                     method: 'POST',
-                    body: JSON.stringify({ id: id }),
+                    body: JSON.stringify({ id: ID }),
                 });
                 const data = await response.json();
-                debugger
-                const { navImages, sliderImages } = createSlider(data.images);
-                setProductData({
-                    globalProductInfo: data.globalProductInfo[0],
-                    productColors: data.productColors,
-                    productStock: data.productStock,
-                    images: data.images,
-                    navImages,
-                    sliderImages,
-                });
-                console.log(productData);
+                if(!data.error){
+                    const { navImages, sliderImages, imageAmount, } = createSlider(data.images,colorID);
+                    console.log(data)
+                    setProductData({
+                        globalProductInfo: data.globalProductInfo[0],
+                        productColors: data.productColors,
+                        productStock: data.productStock,
+                        images: data.images,
+                        currentColorID:colorID,
+                        navImages,
+                        sliderImages,
+                        imageAmount
+                    });
+                }
+
             }catch (error) {
                 console.log(error)
             }
         })();
-    },[id]); ///ID უნდა იყოს დამოკიდებული
+    },[ID]); ///ID უნდა იყოს დამოკიდებული
 
-    function createSlider(imagesArray) {
+    function createSlider(imagesArray, cID) {
         const navImages = [];
         const sliderImages = [];
+        let imageAmount = 0;
         imagesArray.forEach((color) => {
-            if (color.productColorID === id) {
+            if (color.productColorID === cID) {
+                imageAmount = color.imageURL.length
                 color.imageURL.forEach((url, imgIndex) => {
                     navImages.push(
                         <div
                             key={`${color.productColorID}-nav-${imgIndex}`}
-                            onClick={() => skipSlider(imgIndex)}
+                            onClick={() => skipSlider(imgIndex, 1)}
                             className="navImgDiv">
                             <Image
                                 className={`navImg`}
@@ -88,20 +94,10 @@ export default function ProductPage() {
                 });
             }
         });
-        return { navImages, sliderImages };
+        return { navImages, sliderImages, imageAmount};
     }
 
-    function changeAmount(n) {
-        setAmount((prev)=>{
-            let cAmount = prev + n;
-            if (cAmount < 1) {
-                cAmount = 1
-            }
-            return cAmount
-        })
-    }
-
-    function Slider({ navImages, sliderImages}) {
+    function Slider({ navImages, sliderImages, imageAmount}) {
         return (
             <div className="Image-Div">
                 <div className="image-nav">{navImages}</div>
@@ -111,12 +107,12 @@ export default function ProductPage() {
                         <div style={{ display: 'flex' }}>{sliderImages}</div>
                     </div>
                     <div className='slider-ButtonDiv'>
-                            <button onClick={()=>{changeSlider(0)}} className="slider-Button">
+                            <button onClick={()=>{changeSlider(0,1,imageAmount)}} className="slider-Button">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
                                 </svg>
                             </button>
-                            <button onClick={()=>{changeSlider(1)}} className="slider-Button">
+                            <button onClick={()=>{changeSlider(1,1,imageAmount)}} className="slider-Button">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
                                 </svg>
@@ -187,17 +183,82 @@ export default function ProductPage() {
             </div>
         );
     }
-
+    function changeAmount(n) {
+        setAmount((prev)=>{
+            let cAmount = prev + n;
+            if (cAmount < 1) {
+                cAmount = 1
+            }
+            return cAmount
+        })
+    }
     return (
         <div className="wrapper">
-            <div className="container">
-                {
-                    productData.navImages.length > 0 &&
-                    <Slider
-                        navImages={productData.navImages}
-                        sliderImages={productData.sliderImages}/>
-                }
+            {
+                productData.images.length > 0 &&
+                <div className="container">
+                <Slider
+                    navImages={productData.navImages}
+                    sliderImages={productData.sliderImages}
+                    imageAmount={productData.imageAmount}/>
+                <div className='information-Div'>
+                    <div className='information-Container'>
+                        <h1 className='information-Title bottom_Margin'>
+                            {currentLanguage === "en" ? productData.globalProductInfo.title_en :productData.globalProductInfo.title_ge}
+                        </h1>
+                        <p className='bottom_Margin'>{currentLanguage === "en" ? productData.globalProductInfo.description_en :productData.globalProductInfo.description_ge}</p>
+                    </div>
 
+                    {
+                        size != null &&
+                        <div style={{display:"flex", gap:"20px"}}>
+                        <h4 style={{marginBottom:"10px"}}>price:</h4>
+                            <div className='bottom_Margin' style={{display:"flex",gap:"20px"}}>
+                                    <div className='current-Price' style={{display:"flex"}}>
+                                        <h3 className='product-currency'>₾</h3>
+                                        <h3 className='product-Price'>{productData.productStock[productData.currentColorID][size].price_lari}</h3>
+                                    </div>
+                                    {/* <div style={{display:"flex", gap:"20px"}}>
+                                        <div className='old-Price' style={{display:"flex"}}>
+                                            <h3 className='product-currency'>₾</h3>
+                                            <h3 className='product-Price'>400</h3>
+                                        </div>
+                                        <div className='discount_Percentage'>
+                                            <h5>-50%</h5>
+                                        </div>
+                                    </div> */}
+                            </div>
+                        </div>
+                    }
+                    <div className='bottom_Margin color_Div'>
+                            <h4 style={{marginBottom:"10px"}}>Colors:</h4>
+                            <div className='color-Container'>
+                            {
+                                productData.images.map((item, index) => {
+                                    return (
+                                        <button key={index} onClick={() => { skipSlider(index) }} className='color_Img_Button'>
+                                            <Image  className={`color_Img ${index === sliderState.clickAmount ? "border" : ""}`} width={500} height={500} src={item.isPrimary} alt="" />
+                                        </button>
+                                    )
+                                })
+                            }
+                            </div>
+                    </div>
+                    <div className='bottom_Margin size_Div'>
+                            <div className='size-Container'>
+                                {
+                                    Object.entries(productData.productStock[productData.currentColorID]).map(([key, value], index)=>{
+                                        return (
+                                            <button
+                                            style={size != key ? {border:"1px solid rgba(163, 192, 200, 0.771)"}:{border:"1px solid rgba(178,1,14,0.6671043417366946)"}}
+                                             onClick={()=>setSize(key)}
+                                            className='size_Button' key={`${value.productStockID}`}>{key}</button>
+                                        )
+                                    })
+                                }
+                            </div>
+                    </div>
+                </div>
                 {/* <div className="information-Div">
                     <div className='information-Container'>
                         <h1 className='information-Title bottom_Margin'>
@@ -295,6 +356,7 @@ export default function ProductPage() {
                     </div>
                 </div> */}
             </div>
+            }
         </div>
     )
 }

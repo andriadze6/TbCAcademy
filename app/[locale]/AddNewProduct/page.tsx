@@ -125,8 +125,9 @@ export default function AddNewProduct() {
     setCatalog(updatedCatalogArray);
   }
 
-  function deleteImage(index:number, catalogIndex:number) {
+  function deleteImage(catalogIndex:number,index:number) {
     let updatedCatalog = [...catalogArray]; // Create a copy of the catalogArray
+    debugger
     updatedCatalog[catalogIndex].img.splice(index, 1); // Remove the image at the specified index from the img array  
     updatedCatalog[catalogIndex].base64Img.splice(index, 1);  // Remove the image at the specified index from the base64Img array 
     if(updatedCatalog[catalogIndex].img.length == 0)

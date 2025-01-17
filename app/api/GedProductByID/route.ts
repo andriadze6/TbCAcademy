@@ -15,31 +15,29 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const id = body.id;
 
-
-        const {data: productColorsResult, error: productColorsError} = await supabase
-        .from('productColors').select('*')
-        .eq('productColorID', id);
-
-        const [GlobalProductInfoResult,productStockResult, imagesResult] = await Promise.all([
+        const [GlobalProductInfoResult, productColorsResult,productStockResult, imagesResult] = await Promise.all([
             supabase
             .from('GlobalProductInfo')
             .select('*')
-            .eq('product_id', productColorsResult[0].product_id),
+            .eq('product_id', id),
+            supabase.from('productColors')
+            .select('*')
+            .eq('product_id', id),
             supabase
                 .from('productStock')
                 .select("*")
-                .eq('product_id', productColorsResult[0].product_id),
+                .eq('product_id', id),
             supabase
                 .from('Images')
                 .select('imageURL, productColorID, isPrimary')
-                .eq("product_id", productColorsResult[0].product_id)
+                .eq("product_id", id)
         ]);
 
         if (GlobalProductInfoResult.error) {
             return NextResponse.json({ error: GlobalProductInfoResult.error.message }, { status: 500 });
         }
-        if (productColorsError) {
-            return NextResponse.json({ error: productColorsError.message }, { status: 500 });
+        if (productColorsResult.error) {
+            return NextResponse.json({ error: productColorsResult.error.message }, { status: 500 });
         }
 
         if (productStockResult.error) {
@@ -51,7 +49,7 @@ export async function POST(request: NextRequest) {
         }
 
         const globalProductInfo = GlobalProductInfoResult.data as GlobalProductInfoType[];
-        const productColors = productColorsResult as productColorsType[];
+        const productColors = productColorsResult.data as productColorsType[];
         const productStock = {}
         productStockResult.data.map((element) => {
             let product_ColorID = element.product_ColorID;
