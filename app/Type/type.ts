@@ -51,7 +51,7 @@ export type productStockType = {
 
 export type ImagesType = {
     imageURL: string[];
-    isPrimary: string;
+    productColorID: string;
 }
 
 export type GlobalProductInfoType = {
@@ -61,10 +61,4 @@ export type GlobalProductInfoType = {
     description_en: string;
     gender: string;
     tag: string[];
-}
-
-export type productDetailedType = {
-    productColors: productColorsType;
-    productStock: productStockType[];
-    Image: string[];
 }

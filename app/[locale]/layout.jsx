@@ -4,7 +4,6 @@ import {getMessages} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 import {routing} from '../../i18n/routing';
 import "../globals.css";
-import { UserProvider } from '@auth0/nextjs-auth0/client';
 import Header from './components/Header/NewHeader';
 
 export const metadata = {
@@ -28,14 +27,12 @@ export default async function LocaleLayout({
   const t = await getTranslations('ProfilePage');
   return (
     <html lang={locale}>
-      <UserProvider>
       <body>
         <NextIntlClientProvider messages={messages}>
             <Header/>
             {children}
         </NextIntlClientProvider>
       </body>
-    </UserProvider>
     </html>
   );
 }
