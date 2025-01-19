@@ -17,7 +17,6 @@ input[type="number"] {
 
 .addNewProduct-Info, .addNewProduct-catalog{
     margin: 0 auto;
-    width: 50%;
     background-color: white;
     margin-top: 20px;
     padding: 30px;

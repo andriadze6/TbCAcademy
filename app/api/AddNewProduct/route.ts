@@ -42,6 +42,7 @@ async function processCatalogArray(catalogArray, supabase, stripe, globalInfo, p
           productColorID,
           imageURL: imageUrls,
           isPrimary: imageUrls[0],
+          product_id: productId
         });
 
       if (imageError) {
@@ -98,6 +99,7 @@ async function processCatalogSizes(catalog, stripe, supabase, globalInfo, produc
             product_ColorID: productColorID,
             price_usd: sizeValue.price,
             price_lari: parseFloat((sizeValue.price * usdToGelRate).toFixed(0)),
+            product_id: productId,
           });
 
         if (stockError) {
@@ -116,7 +118,7 @@ async function processCatalogSizes(catalog, stripe, supabase, globalInfo, produc
 /**
  * Helper function to upload images and return their URLs
  */
-async function uploadImages(supabase, catalogData, imageArray, gender) {
+async function uploadImages(supabase, catalogData, imageArray, gender,) {
   try {
     // Map each image upload operation into a Promise
     const uploadPromises = imageArray.map((image, index) => {
@@ -180,6 +182,8 @@ export async function POST(request) {
         gender: globalInfo.gender,
         category_ID: globalInfo.selectedCategory,
         tags: globalInfo.tag,
+        details_en: globalInfo.details_en,
+        details_ge: globalInfo.details_ge
       })
       .select('product_id');
 
@@ -190,83 +194,8 @@ export async function POST(request) {
     const productId = productData[0].product_id;
     let result = await processCatalogArray(catalogArray, supabase, stripe, globalInfo, productId, usdToGelRate)
     const productColorID = result[0].productColorID;
-    // for (const catalog of catalogArray) {
-    //   const { data: catalogData, error: catalogError } = await supabase
-    //     .from('productColors')
-    //     .insert({
-    //       product_id: productId,
-    //       color_Code: catalog.color,
-    //       color_ge: catalog.color_ge,
-    //       color_en: catalog.color_en,
-    //     })
-    //     .select('productColorID');
-
-    //   if (catalogError) {
-    //     throw new Error(`Error inserting productColors: ${catalogError.message}`);
-    //   }
-
-    //   productColorID = catalogData[0].productColorID;
-
-
-
-    //   // Add sizes and create Stripe products and prices
-
-    //   processCatalogSizes(catalog, stripe, supabase, globalInfo, productId, productColorID, usdToGelRate)
-    //   // for (const [size, value] of Object.entries(catalog.sizeObj)) {
-    //   //   const sizeValue = value as sizeType;
-    //   //   if (sizeValue.count && sizeValue.price) {
-    //   //     const stripeProduct = await stripe.products.create({
-    //   //       name: globalInfo.title_en,
-    //   //       description: globalInfo.description_en,
-    //   //       metadata: {
-    //   //         productID: productId,
-    //   //         colorID: productColorID,
-    //   //         size,
-    //   //       },
-    //   //     });
-
-    //   //     const stripePrice = await stripe.prices.create({
-    //   //       product: stripeProduct.id,
-    //   //       unit_amount: sizeValue.price * 100,
-    //   //       currency: 'usd',
-    //   //     });
-
-    //   //     const { error: stockError } = await supabase
-    //   //       .from('productStock')
-    //   //       .insert({
-    //   //         size,
-    //   //         count: sizeValue.count,
-    //   //         stripe_ProductID: stripeProduct.id,
-    //   //         product_ColorID: productColorID,
-    //   //         price_usd: sizeValue.price,
-    //   //         price_lari: parseFloat((sizeValue.price * usdToGelRate).toFixed(0)),
-    //   //       });
-
-    //   //     if (stockError) {
-    //   //       throw new Error(`Error inserting productStock: ${stockError.message}`);
-    //   //     }
-    //   //   }
-    //   // }
-
-    //   // Upload images
-    //   const imageUrls = await uploadImages(supabase, catalogData[0], catalog.base64Img, globalInfo.gender);
-
-    //   // Add images to Images table
-    //   const { error: imageError } = await supabase
-    //     .from('Images')
-    //     .insert({
-    //       productColorID,
-    //       imageURL: imageUrls,
-    //       isPrimary: imageUrls[0],
-    //     });
-
-    //   if (imageError) {
-    //     throw new Error(`Error inserting Images: ${imageError.message}`);
-    //   }
-    // }
-
     return NextResponse.json(
-      { message: 'Product added successfully', id:  productColorID},
+      { message: 'Product added successfully', id:  productId},
       { status: 200 }
     );
   } catch (error) {

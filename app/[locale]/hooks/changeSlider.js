@@ -34,7 +34,7 @@ const useSlider = () => {
     /// sliderIndex -> images index that must shows up
     function skipSlider(sliderIndex, sliderToShow) {
         const width = 100 / sliderToShow;
-        var coordinate = width * slider;
+        var coordinate = width * sliderIndex;
         setSliderState((prevState) => ({
             clickAmount: sliderIndex,
             transferX: coordinate,
