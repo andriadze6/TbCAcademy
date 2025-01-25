@@ -16,20 +16,7 @@ import Link from "next/link";
 import MainBanner from '../../assets/img/homePageImg/NewArrival/MainBanner.png'
 
 import Slider from "../HomePage/Slider";
-
-// async function GetHomePageData(params) {
-//     const [woman, man] = await Promise.all([
-//         fetch('https://dummyjson.com/products/category/womens-dresses'),
-//         fetch('https://dummyjson.com/products/category/mens-shirts')
-//     ])
-//     let [manT, womanT] = await Promise.all([
-//         man.json(), woman.json()
-//     ])
-//     return [manT.products,womanT.products]
-// }
-
 async function HomePage(){
-    // const data = await GetHomePageData();
     console.log(MainBanner)
     return(
         <>

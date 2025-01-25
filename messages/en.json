@@ -10,5 +10,17 @@
       "Blog":"Blog",
       "TrendingItems":"trending items",
       "TrendingTitle":"Browse the collection of our best selling and trending products"
+    },
+    "LoginCreateAccount":{
+      "LoginHeader":"Nice to see you again",
+      "LoginPText":"By login you will be able to know the status of your orders, the products saved in your Wishlist",
+      "Email":"Email",
+      "Password":"Password",
+      "ForGetPassword":"For get password?",
+      "Login":"Login",
+      "CreateAnAccount":"Create an account",
+      "Hello": "Hello",
+      "CreateAccountP": "Sign up for early Sale access plus tailored new arrivals, trends and promotions. To opt out, click unsubscribe in our emails.",
+      "Logout":"Logout"
     }
   }

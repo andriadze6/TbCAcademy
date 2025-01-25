@@ -4,10 +4,12 @@ import Link from 'next/link';
 import { useState } from 'react';
 import {useTranslations, useLocale } from 'next-intl';
 export default function Login() {
+    const t = useTranslations('LoginCreateAccount');
     const [checker, setChecker] = useState({
         isEmailValid: true,
         isPasswordValid: true,
-        isRepeatPasswordValid: true
+        isRepeatPasswordValid: true,
+        error: "",
     });
     const currentLanguage = useLocale(); // Get current language from next-intl
    async function CreateAccount(event){
@@ -24,7 +26,8 @@ export default function Login() {
                 setChecker({
                     isEmailValid: isEmailValid,
                     isPasswordValid: isPasswordValid,
-                    isRepeatPasswordValid: isRepeatPasswordValid
+                    isRepeatPasswordValid: isRepeatPasswordValid,
+                    error: "Email is not valid"
                 })
                 return
             }
@@ -36,10 +39,19 @@ export default function Login() {
                   method: "POST",
                   body: formData, // FormData sets the correct Content-Type
                 });
+                const data = await response.json();
                 if (response.ok) {
-                    const data = await response.json();
                     debugger
-                  }
+                }else{
+                    debugger
+                    if(data.error.includes("User already registered")){
+                        setChecker({
+                            ...checker,
+                            isEmailValid: false,
+                            error: data.error
+                        })
+                    }
+                }
             }
         }
         catch(error){
@@ -59,13 +71,11 @@ export default function Login() {
         }
     }
     return (
-        <div style={{height:"500px", width:"30%", margin:"auto auto", display:"flex", justifyContent:"center", alignItems:"center"}}>
+        <div style={{width:"30%", margin:"auto auto", display:"flex", justifyContent:"center", alignItems:"center"}}>
             <form onSubmit={CreateAccount}>
                 <div>
-                    <h2 style={{marginBottom:"30px"}}>Nice to see you again</h2>
-                    <p style={{marginBottom:"30px"}}>By signing you will be able to know the status
-                        of your orders, the products saved in your Wishlist and your
-                        Jackie Club Points available to redeem them for discounts
+                    <h2 style={{marginBottom:"30px"}}>{t("Hello")}</h2>
+                    <p style={{marginBottom:"30px"}}>{t("CreateAccountP")}
                     </p>
                 </div>
                 <div style={{marginBottom:"20px"}}>
@@ -81,7 +91,7 @@ export default function Login() {
                             <svg style={{width:"20px", height:"20px", color:"red"}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
                             </svg>
-                            <span style={{color:"red"}}>Email is not valid</span>
+                            <span style={{color:"red"}}>{checker.error}</span>
                         </div>
                         )
                     }
