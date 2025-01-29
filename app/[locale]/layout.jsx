@@ -1,8 +1,8 @@
 import {NextIntlClientProvider} from 'next-intl';
-import {getTranslations} from 'next-intl/server';
 import {getMessages} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 import {routing} from '../../i18n/routing';
+import {AuthProvider} from '../providers/UserSessionProvider';
 import "../globals.css";
 import Header from './components/Header/NewHeader';
 
@@ -20,17 +20,17 @@ export default async function LocaleLayout({
   if (!routing.locales.includes(locale)) {
     notFound();
   }
- 
   // Providing all messages to the client
   // side is the easiest way to get started
   const messages = await getMessages();
-  const t = await getTranslations('ProfilePage');
   return (
     <html lang={locale}>
       <body>
         <NextIntlClientProvider messages={messages}>
+          <AuthProvider>
             <Header/>
             {children}
+          </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>

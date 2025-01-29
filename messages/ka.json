@@ -20,7 +20,12 @@
       "Login":"შესვლა",
       "CreateAnAccount":"რეგისტრაცია",
       "Hello": "გამარჯობა",
-      "CreateAccountP": "Sign up for early Sale access plus tailored new arrivals, trends and promotions. To opt out, click unsubscribe in our emails.",
-      "Logout":"Logout"
+      "CreateAccountP": "დარეგისტრირდით ადრეულ გაყიდვაზე წვდომისთვის, ასევე მორგებული ახალი ჩამოსვლების, ტენდენციებისა და აქციებისთვის. უარის თქმისთვის, დააწკაპუნეთ გამოწერის გაუქმებაზე ჩვენს ელფოსტაზე.",
+      "AlreadyHaveAccount":"უკვე გაქვთ ანგარიში? Login",
+      "MatchPassword":"პაროლი არ ემთხვევა",
+      "MinPassword":"პაროლი უნდა იყოს მინიმუმ 8 სიმბოლო",
+      "InvalidEmail":"არასწორი ელფოსტა",
+      "EmailExist":"ამ ელფოსტით მომხმარებელი უკვე არსებობს",
+      "Logout":"გამოსვლა"
     }
   }

@@ -21,6 +21,12 @@
       "CreateAnAccount":"Create an account",
       "Hello": "Hello",
       "CreateAccountP": "Sign up for early Sale access plus tailored new arrivals, trends and promotions. To opt out, click unsubscribe in our emails.",
+      "AlreadyHaveAccount":"Already have an account? Login",
+      "MatchPassword":"Password do not match",
+      "MinPassword":"Password must be at least 8 characters long",
+      "InvalidEmail":"Invalid email",
+      "EmailExist":"Email already exist",
       "Logout":"Logout"
+
     }
   }

@@ -2,10 +2,12 @@
 import './style.css'
 import Link from 'next/link';
 import {useTranslations, useLocale } from 'next-intl';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
     const currentLanguage = useLocale(); // Get current language from next-intl
     const t = useTranslations('LoginCreateAccount');
+    const router = useRouter();
     function validateEmail(email) {
         // Define a regex for validating email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -15,28 +17,23 @@ export default function Login() {
     }
 
     async function LoginTo(e) {
-        debugger
         e.preventDefault();
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
-        const isEmailValid = validateEmail(email);
-        const formData = new FormData();
-        formData.append("email", email);
-        formData.append("password", password);
-        if (isEmailValid) {
-            try {
-                const response = await fetch("/api/Login", {
-                    method: "POST",
-                    body: formData, // FormData sets the correct Content-Type
-                  });
-                  const data = await response.json();
-                  debugger
-            }
-            catch{
-
-            }
+        const response = await fetch("/api/Login", {
+            method: "POST",
+            body: new URLSearchParams({ email, password })
+        });
+        debugger
+        const data = await response.json();
+        if (data.error) {
+            console.error("Login Error:", data.error);
+            return;
         }
+
+        router.push(`/${currentLanguage}`);
     }
+
     return (
         <div style={{ width:"30%", margin:"auto auto", display:"flex", justifyContent:"center", alignItems:"center"}}>
             <form onSubmit={LoginTo}>
@@ -61,7 +58,6 @@ export default function Login() {
                     <button className='SignInButton'>{t("CreateAnAccount")}</button>
                 </Link>
             </form>
-
         </div>
     )
 }

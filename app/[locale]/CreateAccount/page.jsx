@@ -9,13 +9,13 @@ export default function Login() {
         isEmailValid: true,
         isPasswordValid: true,
         isRepeatPasswordValid: true,
-        error: "",
+        conformationEmail:false,
+        message: "",
     });
     const currentLanguage = useLocale(); // Get current language from next-intl
    async function CreateAccount(event){
         try{
             event.preventDefault();
-            debugger
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
             const repeatPassword = document.getElementById("repeatPassword").value;
@@ -27,7 +27,7 @@ export default function Login() {
                     isEmailValid: isEmailValid,
                     isPasswordValid: isPasswordValid,
                     isRepeatPasswordValid: isRepeatPasswordValid,
-                    error: "Email is not valid"
+                    message: t("InvalidEmail")
                 })
                 return
             }
@@ -41,14 +41,17 @@ export default function Login() {
                 });
                 const data = await response.json();
                 if (response.ok) {
-                    debugger
+                    setChecker({
+                        ...checker,
+                        conformationEmail:true
+                    })
                 }else{
                     debugger
                     if(data.error.includes("User already registered")){
                         setChecker({
                             ...checker,
                             isEmailValid: false,
-                            error: data.error
+                            message: t("EmailExist")
                         })
                     }
                 }
@@ -72,59 +75,72 @@ export default function Login() {
     }
     return (
         <div style={{width:"30%", margin:"auto auto", display:"flex", justifyContent:"center", alignItems:"center"}}>
-            <form onSubmit={CreateAccount}>
-                <div>
-                    <h2 style={{marginBottom:"30px"}}>{t("Hello")}</h2>
-                    <p style={{marginBottom:"30px"}}>{t("CreateAccountP")}
-                    </p>
-                </div>
-                <div style={{marginBottom:"20px"}}>
-                    <input
-                    className='input'
-                    type="mail"
-                    placeholder={checker.isEmailValid ? "Email" : "Email is not valid"}
-                    style={{borderColor: !checker.isEmailValid && "red"}}
-                    name="" id="email" />
-                    {
-                        !checker.isEmailValid && (
-                        <div style={{display:"flex", gap:"5px", marginTop:"10px",alignItems:"center"}}>
-                            <svg style={{width:"20px", height:"20px", color:"red"}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-                            </svg>
-                            <span style={{color:"red"}}>{checker.error}</span>
-                        </div>
-                        )
-                    }
-                </div>
-                <div style={{marginBottom:"20px"}}>
+            
+            {
+                !checker.conformationEmail ?
+                <form onSubmit={CreateAccount}>
+                    <div>
+                        <h2 style={{marginBottom:"30px"}}>{t("Hello")}</h2>
+                        <p style={{marginBottom:"30px"}}>{t("CreateAccountP")}
+                        </p>
+                    </div>
+                    <div style={{marginBottom:"20px"}}>
+                        <input
+                        className='input'
+                        type="mail"
+                        placeholder={checker.isEmailValid ? "Email" : checker.message}
+                        style={{borderColor: !checker.isEmailValid && "red"}}
+                        name="" id="email" />
+                        {
+                            !checker.isEmailValid && (
+                            <div style={{display:"flex", gap:"5px", marginTop:"10px",alignItems:"center"}}>
+                                <svg style={{width:"20px", height:"20px", color:"red"}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                                </svg>
+                                <span style={{color:"red"}}>{checker.message}</span>
+                            </div>
+                            )
+                        }
+                    </div>
+                    <div style={{marginBottom:"20px"}}>
+                            <input
+                            className='input'
+                            type="password"
+                            placeholder="Password"
+                            name="" id="password"></input>
+                            <div style={{display:"flex", gap:"5px", marginTop:"10px",alignItems:"center"}}>
+                                <svg style={{width:"20px", height:"20px", color: checker.isPasswordValid ? "green" : "red" }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                                </svg>
+                                <span style={{color: checker.isPasswordValid ? "green" : "red"}}>{t("MinPassword")}</span>
+                            </div>
+                    </div>
+                    <div style={{marginBottom:"20px"}}>
                         <input
                         className='input'
                         type="password"
-                        placeholder="Password"
-                        name="" id="password"></input>
-                        <div style={{display:"flex", gap:"5px", marginTop:"10px",alignItems:"center"}}>
-                            <svg style={{width:"20px", height:"20px", color: checker.isPasswordValid ? "green" : "red" }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-                            </svg>
-                            <span style={{color: checker.isPasswordValid ? "green" : "red"}}>Minimum 8 characters required</span>
-                        </div>
-                </div>
-                <div style={{marginBottom:"20px"}}>
-                    <input
-                    className='input'
-                    type="password"
-                    placeholder="Repeat password"
-                    name="" id="repeatPassword"></input>
-                    <div style={{display:"flex", gap:"5px", marginTop:"10px",alignItems:"center"}}>
-                        <svg style={{width:"20px", height:"20px", color: checker.isPasswordValid ? "green" : "red" }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-                        </svg>
-                        <span style={{color: checker.isPasswordValid ? "green" : "red"}}>Password must match</span>
+                        placeholder="Repeat password"
+                        name="" id="repeatPassword"></input>
+                            {
+                                !checker.isRepeatPasswordValid &&
+                                <div style={{display:"flex", gap:"5px", marginTop:"10px",alignItems:"center"}}>
+                                    <svg style={{width:"20px", height:"20px", color: "red" }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                                    </svg>
+                                    <span style={{color:"red"}}>{t("MatchPassword")}</span>
+                                </div>
+                            }
+
                     </div>
+                    <Link href={`/${currentLanguage}/Login`} style={{marginBottom:"30px", textDecoration:"underline"}}>{t("AlreadyHaveAccount")}</Link>
+                    <button style={{marginTop:"10px"}} className='SignInButton'>{t("CreateAnAccount")}</button>
+                </form>:
+                <div style={{transition: "all 1s linear, max-height 1s linear"}}>
+                    <p>
+                        Conformation email was send to you email
+                    </p>
                 </div>
-                <Link href={`/${currentLanguage}/Login`} style={{marginBottom:"30px", textDecoration:"underline"}}>Already have an account Login</Link>
-                <button style={{marginTop:"10px"}} className='SignInButton'>Create an account</button>
-            </form>
+            }
         </div>
     )
 }

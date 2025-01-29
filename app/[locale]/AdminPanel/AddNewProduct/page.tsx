@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from "react";
 import Image from "next/image";
 import "./style.css";
-import { globalInfoType, catalogType, categoryType} from '../../Type/type'
+import { globalInfoType, catalogType, categoryType} from '../../../Type/type'
 
 let sizeArray = ["XS", "S", "M", "L", "XL", "XXL"];
 

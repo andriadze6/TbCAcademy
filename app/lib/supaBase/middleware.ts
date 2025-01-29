@@ -51,17 +51,24 @@ export async function updateSession(request: NextRequest) {
   // Check the locale from the request
   const locale = getLocale(request);
 
-  // const role = user.user_metadata?.role || 'guest'
-  // if (
-  //   !user && role !== 'admin' &&
-  //   request.nextUrl.pathname.startsWith(`/${locale}/Login`) && 
-  //   request.nextUrl.pathname.startsWith(`/${locale}/auth`)
-  // ) {
-  //   // no user, respond by redirecting the user to the language-specific login page
-  //   const url = request.nextUrl.clone();
-  //   url.pathname = `/${locale}/Login`; // Redirect to localized Login page
-  //   return NextResponse.redirect(url);
-  // }
+  const role = user?.user_metadata?.role || 'guest'
+  if (
+    !user && role !== 'admin' &&
+    request.nextUrl.pathname.startsWith(`/${locale}/AdminPanel`)
+  ) {
+    // no user, respond by redirecting the user to the language-specific login page
+    const url = request.nextUrl.clone();
+    url.pathname = `/${locale}/Login`; // Redirect to localized Login page
+    return NextResponse.redirect(url);
+  }
+  else if(request.nextUrl.pathname === '/'){
+    const url = request.nextUrl.clone();
+    url.pathname = `/${locale}`; // Redirect to localized homepage
+    return NextResponse.redirect(url);
+  }
+  else{
+    return NextResponse.next();
+  }
 
   return supabaseResponse;
 }
