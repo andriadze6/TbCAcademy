@@ -10,19 +10,5 @@ export async function POST(request) {
     // Clear authentication cookies
     const response = NextResponse.json({ message: "Logged out successfully" });
 
-    response.cookies.set("sb-access-token", "", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        path: "/",
-        maxAge: 0, // Expire the cookie immediately
-    });
-
-    response.cookies.set("sb-refresh-token", "", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        path: "/",
-        maxAge: 0, // Expire the cookie immediately
-    });
-
     return response;
 }
