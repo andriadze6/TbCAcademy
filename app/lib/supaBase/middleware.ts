@@ -1,15 +1,12 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-
-
-
 // Custom function to detect locale
 function getLocale(request: NextRequest): string {
   const locale = request.cookies.get('NEXT_LOCALE')?.value; // Check locale cookie set by next-intl
   if (locale) return locale;
 
-  // Default to the first segment of the pathname (e.g., '/en' or '/fr')
+  // Default to the first segment of the pathname (e.g., '/en' or '/ka')
   const pathnameLocale = request.nextUrl.pathname.split('/')[1];
   if (pathnameLocale && ['en', 'ka'].includes(pathnameLocale)) return pathnameLocale;
 
@@ -43,31 +40,37 @@ export async function updateSession(request: NextRequest) {
   );
 
   // Do not run code between createServerClient and supabase.auth.getUser()
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   // Check the locale from the request
   const locale = getLocale(request);
+  const role = user?.user_metadata?.role || 'guest';
 
-  const role = user?.user_metadata?.role || 'guest'
-  if (
-    !user && role !== 'admin' &&
-    request.nextUrl.pathname.startsWith(`/${locale}/AdminPanel`)
-  ) {
-    // no user, respond by redirecting the user to the language-specific login page
+  // Redirect to the login page if the user is not authenticated and tries to access the AdminPanel
+  if (!user && role !== 'admin' && request.nextUrl.pathname.startsWith(`/${locale}/AdminPanel`) ) {
     const url = request.nextUrl.clone();
     url.pathname = `/${locale}/Login`; // Redirect to localized Login page
     return NextResponse.redirect(url);
   }
-  else if(request.nextUrl.pathname === '/'){
+
+  // Redirect the root path `/` to the localized homepage
+  if (request.nextUrl.pathname === '/') {
     const url = request.nextUrl.clone();
     url.pathname = `/${locale}`; // Redirect to localized homepage
     return NextResponse.redirect(url);
   }
-  else{
-    return NextResponse.next();
+
+  // If the user is authenticated and tries to access the Login page, prevent navigation
+  if (user && request.nextUrl.pathname.startsWith(`/${locale}/Login`)) {
+    return NextResponse.redirect(new URL(request.headers.get("referer") || `/${locale}`, request.url));
+  }
+
+  if (!user &&  request.nextUrl.pathname.startsWith(`/${locale}/Account`) ) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${locale}/Login`; // Redirect to localized Login page
+    return NextResponse.redirect(url);
   }
 
   return supabaseResponse;
