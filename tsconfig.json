@@ -28,7 +28,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "app/[locale]/AddNewProduct/page.tsxsxsx", "app/lib/supaBase/supabaseClient.js", "app/lib/supaBase/supabaseClient.js"  ],
+, "app/[locale]/AddNewProduct/page.tsxsxsx"  ],
   "exclude": [
     "node_modules"
   ]

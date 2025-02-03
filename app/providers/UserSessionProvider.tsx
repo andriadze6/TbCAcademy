@@ -1,9 +1,8 @@
 'use client';
-
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 // Create a Context for authentication
-export const AuthContext = createContext(null);
+const AuthContext = createContext(null);
 
 // Auth Provider to wrap the app
 export function AuthProvider({ children }) {
@@ -11,29 +10,29 @@ export function AuthProvider({ children }) {
     const [loading, setLoading] = useState(true);
 
     // Fetch user data from the API
-    const fetchUser = useCallback(async () => {
-        setLoading(true);
+    async function fetchUser() {
         try {
-            debugger
             const response = await fetch("/api/GetUser");
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
             const data = await response.json();
 
-            setUser(data.user || null); // Set user or null
+            debugger
+            if (data.user) {
+                setUser(data.user); // Set authenticated user
+            } else {
+                setUser(null); // No user found (logged out)
+            }
         } catch (error) {
             console.error("Error fetching user:", error);
             setUser(null);
         } finally {
             setLoading(false);
         }
-    }, [user]);
+    }
 
     // Fetch user when component mounts
     useEffect(() => {
         fetchUser();
-    }, [fetchUser]);
+    }, []);
 
     return (
         <AuthContext.Provider value={{ user, setUser, loading, fetchUser }}>
