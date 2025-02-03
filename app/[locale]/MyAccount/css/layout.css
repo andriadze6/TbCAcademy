@@ -1,0 +1,25 @@
+.myAccount-wrapper{
+    margin: 50px auto;
+    max-width: 60%;
+}
+.nav-MyAccount{
+    display: grid;
+    border-right: 1px solid #d1d7dd;
+    margin-bottom: 20px;
+    max-height: var(--header2Height);
+}
+h1{
+    padding-top: 50px;
+    padding-bottom: 50px;
+
+}
+main{
+    display: flex;
+    gap: 20px;
+}
+.header-MyAccount{
+    width: 20%;
+}
+.myAccount-Page{
+    padding: 18px 0px;
+}

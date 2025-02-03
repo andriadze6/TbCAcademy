@@ -5,6 +5,7 @@ import {useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../providers/UserSessionProvider';
 
+
 export default function Login() {
     const currentLanguage = useLocale(); // Get current language from next-intl
     const t = useTranslations('LoginCreateAccount');
@@ -24,8 +25,17 @@ export default function Login() {
         const password = document.getElementById("password").value;
         const response = await fetch("/api/Login", {
             method: "POST",
-            body: new URLSearchParams({ email, password })
+            headers: {
+                "Content-Type": "application/json", // Ensure content type is JSON
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password,
+            }),
         });
+        
+
+        
         debugger
         const data = await response.json();
         if (data.error) {
