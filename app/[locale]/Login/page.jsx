@@ -4,9 +4,10 @@ import Link from 'next/link';
 import {useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../providers/UserSessionProvider';
+import { login, signup } from './actions'
 
 
-export default function Login() {
+export default function LoginPage() {
     const currentLanguage = useLocale(); // Get current language from next-intl
     const t = useTranslations('LoginCreateAccount');
     const router = useRouter();
@@ -23,6 +24,10 @@ export default function Login() {
         e.preventDefault();
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
+        const formData = new FormData();
+        formData.append("email", email);
+        formData.append("password", password);
+        // let test = await login(formData);
         const response = await fetch("/api/Login", {
             method: "POST",
             headers: {
@@ -33,9 +38,6 @@ export default function Login() {
                 password: password,
             }),
         });
-        
-
-        
         debugger
         const data = await response.json();
         if (data.error) {
@@ -43,7 +45,7 @@ export default function Login() {
             return;
         }
         setUser(data);
-        router.replace(`/${currentLanguage}`);
+        // router.replace(`/${currentLanguage}`);
     }
 
     return (
@@ -73,3 +75,16 @@ export default function Login() {
         </div>
     )
 }
+
+// export default function LoginPage() {
+//   return (
+//     <form>
+//       <label htmlFor="email">Email:</label>
+//       <input id="email" name="email" type="email" required />
+//       <label htmlFor="password">Password:</label>
+//       <input id="password" name="password" type="password" required />
+//       <button formAction={login}>Log in</button>
+//       <button formAction={signup}>Sign up</button>
+//     </form>
+//   )
+// }

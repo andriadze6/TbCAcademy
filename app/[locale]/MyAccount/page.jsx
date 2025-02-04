@@ -1,11 +1,21 @@
 'use client'
 import { useContext, useEffect } from "react";
 import { useAuth, AuthProvider, AuthContext } from "../../providers/UserSessionProvider";
+import { createClient } from "../../../utils/supabase/client";
 export default function MyAccount() {
   // const {user}  = useContext(AuthContext);
-  const { user} = useAuth()
-  console.log(user);
-  debugger
+  // const { user} = useAuth();
+  useEffect(() => {
+    const fetchUser = async () => {
+      const supabase = await createClient();
+      const { data, error } = await supabase.auth.getUser();
+      const { data: data1, error: error1 } = await supabase.auth.getSession()
+
+      debugger
+      // console.log(data);
+    };
+    fetchUser();
+  },[]);
   return (
     <>
       <h3>Account details</h3>

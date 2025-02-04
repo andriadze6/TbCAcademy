@@ -3,9 +3,9 @@
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext",
+      "esnext"
     ],
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
@@ -16,7 +16,12 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "baseUrl": ".", // Add this line
+    "paths": { // And this section
+      "@/*": [
+        "app/*"
+      ] // Adjust this path based on your folder structure
+    },
     "plugins": [
       {
         "name": "next"
@@ -27,8 +32,9 @@
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "app/[locale]/AddNewProduct/page.tsxsxsx", "app/lib/supaBase/supabaseClient.js", "app/lib/supaBase/supabaseClient.js"  ],
+    "**/*.tsx",
+    "app/lib/supaBase/supabaseClient.js"
+  ],
   "exclude": [
     "node_modules"
   ]
