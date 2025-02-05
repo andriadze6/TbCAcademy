@@ -1,7 +1,7 @@
-import { createClient } from '../../lib/supaBase/server'
+import { createClient } from '../../../../utils/supabase/server';
 import { NextResponse } from "next/server";
 import type { NextRequest } from 'next/server'
-import {GlobalProductInfoType, productColorsType, productStockType, ImagesType} from '../../Type/type'
+import {GlobalProductInfoType, productColorsType, productStockType, ImagesType} from '../../../Type/type'
 
 /**
  * POST method to handle adding a product

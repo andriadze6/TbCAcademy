@@ -3,8 +3,6 @@ import { routing } from './i18n/routing';
 import { type NextRequest } from 'next/server';
 import { updateSession } from './utils/supabase/middleware';
 
-const intlMiddleware = createMiddleware(routing);
-
 export async function middleware(request: NextRequest) {
   // Update Supabase session
   let res =   await updateSession(request);

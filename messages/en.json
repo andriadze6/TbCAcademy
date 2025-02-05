@@ -36,6 +36,11 @@
       "Country":"Country",
       "PostalCode":"Postal Code",
       "UpdateProfile":"Update Profile",
-      "Type": "Type"
+      "Type": "Type",
+      "StreetAddress": "Street Address",
+      "Region": "Region",
+      "Municipality": "Municipality",
+      "SaveChanges":"Save changes",
+      "buildingNumber":"Apartment, suite,building, floor, etc."
     }
   }

@@ -36,6 +36,12 @@
       "Country":"ქვეყანა",
       "PostalCode":"ფოსტის კოდი",
       "UpdateProfile":"შეინახე ცვილება",
-      "Type": "შეიყვანე"
+      "Type": "შეიყვანე",
+      "StreetAddress": "ქუჩის მისამართი",
+      "Apartment": "სახლის მისამართი",
+      "Region": "რეგიონი",
+      "Municipality": "მუნიციპალიტეტი",
+      "SaveChanges":"შეინახე ცვლილებები",
+      "buildingNumber":"ბინა, ლუქსი, შენობა, სართული და ა.შ."
     }
   }
