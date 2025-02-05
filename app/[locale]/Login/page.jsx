@@ -25,8 +25,8 @@ export default function LoginPage() {
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
         const formData = new FormData();
-        formData.append("email", email);
-        formData.append("password", password);
+        // formData.append("email", email);
+        // formData.append("password", password);
         // let test = await login(formData);
         const response = await fetch("/api/Login", {
             method: "POST",
@@ -38,14 +38,16 @@ export default function LoginPage() {
                 password: password,
             }),
         });
-        debugger
-        const data = await response.json();
-        if (data.error) {
-            console.error("Login Error:", data.error);
-            return;
+        if(response.ok){
+            const data = await response.json();
+            if (data.error) {
+                console.error("Login Error:", data.error);
+                return;
+            }
+            setUser(data);
+            router.replace(`/${currentLanguage}`);
         }
-        setUser(data);
-        // router.replace(`/${currentLanguage}`);
+
     }
 
     return (

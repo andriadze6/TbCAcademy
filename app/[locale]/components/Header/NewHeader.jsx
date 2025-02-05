@@ -14,11 +14,6 @@ import Search from '../SearchInput';
 import useTheme from '../../hooks/changeTheme';
 import { useAuth } from '../../../providers/UserSessionProvider';
 import { useRouter } from 'next/navigation';
-
-
-
-
-
 function Header(){
     let {theme, changeTheme} = useTheme();
     const { user, loading, setUser } = useAuth();

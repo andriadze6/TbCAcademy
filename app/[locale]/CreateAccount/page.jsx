@@ -6,7 +6,10 @@ import {useTranslations, useLocale } from 'next-intl';
 export default function Login() {
     const t = useTranslations('LoginCreateAccount');
     const [checker, setChecker] = useState({
+        isNameValid: true,
+        isLastNameValid:true,
         isEmailValid: true,
+        isPhoneValid: true,
         isPasswordValid: true,
         isRepeatPasswordValid: true,
         conformationEmail:false,
@@ -16,7 +19,10 @@ export default function Login() {
    async function CreateAccount(event){
         try{
             event.preventDefault();
+            const name = document.getElementById("name").value;
+            const lastName = document.getElementById("lastName").value;
             const email = document.getElementById("email").value;
+            const phone = document.getElementById("phone").value;
             const password = document.getElementById("password").value;
             const repeatPassword = document.getElementById("repeatPassword").value;
             const isEmailValid = ValidateEmail(email);
@@ -24,7 +30,10 @@ export default function Login() {
             const isRepeatPasswordValid = password === repeatPassword;
             if(!isEmailValid || !isPasswordValid || !isRepeatPasswordValid){
                 setChecker({
+                    isNameValid: name.length > 0 && name.trim() != "",
+                    isLastNameValid: lastName.length > 0 && lastName.trim()!= "",
                     isEmailValid: isEmailValid,
+                    isPhoneValid: phone.length > 0 && phone.trim() != "",
                     isPasswordValid: isPasswordValid,
                     isRepeatPasswordValid: isRepeatPasswordValid,
                     message: t("InvalidEmail")
@@ -35,6 +44,8 @@ export default function Login() {
                 let formData = new FormData();
                 formData.append("email", email);
                 formData.append("password", password);
+                formData.append("name", name);
+                formData.append("lastName", lastName);
                 const response = await fetch("/api/CreateUser", {
                   method: "POST",
                   body: formData, // FormData sets the correct Content-Type
@@ -75,7 +86,6 @@ export default function Login() {
     }
     return (
         <div style={{width:"30%", margin:"auto auto", display:"flex", justifyContent:"center", alignItems:"center"}}>
-            
             {
                 !checker.conformationEmail ?
                 <form onSubmit={CreateAccount}>
@@ -84,29 +94,48 @@ export default function Login() {
                         <p style={{marginBottom:"30px"}}>{t("CreateAccountP")}
                         </p>
                     </div>
-                    <div style={{marginBottom:"20px"}}>
-                        <input
-                        className='input'
-                        type="mail"
-                        placeholder={checker.isEmailValid ? "Email" : checker.message}
-                        style={{borderColor: !checker.isEmailValid && "red"}}
-                        name="" id="email" />
-                        {
-                            !checker.isEmailValid && (
-                            <div style={{display:"flex", gap:"5px", marginTop:"10px",alignItems:"center"}}>
-                                <svg style={{width:"20px", height:"20px", color:"red"}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-                                </svg>
-                                <span style={{color:"red"}}>{checker.message}</span>
-                            </div>
-                            )
-                        }
+                    <div style={{marginBottom:"20px", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"10px"}}>
+                        <div>
+                            <input
+                            className='input'
+                            type="text"
+                            placeholder={checker.isNameValid ? t("Name") : t("Type") + " " + t("Name")}
+                            style={{borderColor: !checker.isNameValid && "red"}}
+                            name="" id="name" />
+                        </div>
+                        <div>
+                            <input
+                            className='input'
+                            type="text"
+                            placeholder={checker.isLastNameValid ? t("LastName") : t("Type") + " " + t("LastName") }
+                            style={{borderColor: !checker.isLastNameValid && "red"}}
+                            name="" id="lastName" />
+                        </div>
                     </div>
+                    <div style={{marginBottom:"20px", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"10px"}}>
+                        <div>
+                            <input
+                            className='input'
+                            type="mail"
+                            placeholder={checker.isEmailValid ? t("Email") : checker.message}
+                            style={{borderColor: !checker.isEmailValid && "red"}}
+                            name="" id="email" />
+                        </div>
+                        <div>
+                            <input
+                            className='input'
+                            type="phone"
+                            placeholder={checker.isPhoneValid ? t("Phone") : t("Type") + " " + t("Phone")}
+                            style={{borderColor: !checker.isPhoneValid && "red"}}
+                            name="" id="phone" />
+                        </div>
+                    </div>
+
                     <div style={{marginBottom:"20px"}}>
                             <input
                             className='input'
                             type="password"
-                            placeholder="Password"
+                            placeholder={t("Password")}
                             name="" id="password"></input>
                             <div style={{display:"flex", gap:"5px", marginTop:"10px",alignItems:"center"}}>
                                 <svg style={{width:"20px", height:"20px", color: checker.isPasswordValid ? "green" : "red" }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -119,7 +148,7 @@ export default function Login() {
                         <input
                         className='input'
                         type="password"
-                        placeholder="Repeat password"
+                        placeholder={t("RepeatPassword")}
                         name="" id="repeatPassword"></input>
                             {
                                 !checker.isRepeatPasswordValid &&
