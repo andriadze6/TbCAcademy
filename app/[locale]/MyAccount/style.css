@@ -50,3 +50,26 @@ label{
     color: black;
     cursor: pointer;
 }
+
+.add_new_address{
+    border-style: dashed;
+    border-width: 2px;
+    border-radius: 6px;
+    box-sizing: border-box;
+    border-color: #C7C7C7;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    padding: 10px;
+    box-shadow: 0px 5px 5px rgba(155, 177, 207, 0.685);
+    cursor: pointer;
+}
+.address-Div h4{
+    margin-bottom: 6px;
+}
+/* .address-Div p{
+    margin-bottom: 6px;
+} */
