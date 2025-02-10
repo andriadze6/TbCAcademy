@@ -85,7 +85,7 @@ export default function MyAccount() {
         .on(
           "postgres_changes",
           {
-            event: "DELETE",
+            event: "*",
             schema: "public",
             table: "DeliveryAddress",
             filter: `user_ID=eq.${user.id}`,

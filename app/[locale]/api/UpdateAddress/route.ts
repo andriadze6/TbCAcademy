@@ -22,8 +22,6 @@ export async function POST(request:NextRequest){
     if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
-
-    // Create HTTP-only cookies for access_token and refresh_token
     const response = NextResponse.json({ result });
 
     return response;
