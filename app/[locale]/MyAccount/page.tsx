@@ -5,12 +5,26 @@ import { supabase } from "../../../utils/supabase/client";
 import {useTranslations, useLocale } from 'next-intl';
 import './style.css'
 import Link from "next/link";
+import { DeliveryAddressType } from "../../Type/type";
 import Popup from '../components/Popup';
 
 
 export default function MyAccount() {
   const {user}  = useContext(AuthContext);
   const t = useTranslations('LoginCreateAccount');
+  const emptyAddress = {
+    id: "",
+    user_ID: "",
+    first_Name: "",
+    last_Name: "",
+    phone: "",
+    city: "",
+    region: "",
+    street_Address: "",
+    apartment_Number: "",
+    zip_Code: "",
+    default: false,
+  }
   const [checker, setChecker] = useState({
         isFirstNameValid: true,
         isLastNameValid:true,
@@ -20,9 +34,16 @@ export default function MyAccount() {
         isApartmentNumberValid:true,
         isZipCodeValid:true,
   });
-  const [data, setData] = useState({
-    deliveryAddress:[],
-    showPopup: false
+  const [data, setData] = useState<{
+    deliveryAddress: DeliveryAddressType[];
+    showPopup: boolean;
+    address: DeliveryAddressType
+    edit:boolean
+  }>({
+    deliveryAddress: [],
+    showPopup: false,
+    address: emptyAddress,
+    edit:false
   });
   const fetchDeliveryAddress = useCallback(async () => {
     if (!user) return; // Prevent fetching if user is not loaded yet
@@ -37,10 +58,12 @@ export default function MyAccount() {
       if (!response.ok) {
         throw new Error("Failed to fetch delivery address");
       }
-      const data = await response.json();
+      const data = await response.json() as DeliveryAddressType[];
       setData({
         deliveryAddress: data,
-        showPopup: false
+        showPopup: false,
+        address:emptyAddress,
+        edit:false
       });
     } catch (error) {
       console.error("Error fetching delivery address:", error);
@@ -82,16 +105,15 @@ export default function MyAccount() {
 
 
 
-  async function CreateNewAddress(event){
-    event.preventDefault();
+  async function CreateNewAddress() {
     const userID = user.id;
-    const firstName = document.getElementById("first_Name").value;
-    const lastName = document.getElementById("last_Name").value;
-    const phone = document.getElementById("phone").value;
-    const city = document.getElementById("city").value;
-    const streetAddress = document.getElementById("street_Address").value;
-    const apartmentNumber = document.getElementById("apartment_Number").value;
-    const zipCode = document.getElementById("zip_Code").value;
+    const firstName = (document.getElementById("first_Name") as HTMLInputElement).value;
+    const lastName = (document.getElementById("last_Name") as HTMLInputElement).value;
+    const phone = (document.getElementById("phone") as HTMLInputElement).value;
+    const city = (document.getElementById("city") as HTMLInputElement).value;
+    const streetAddress = (document.getElementById("street_Address") as HTMLInputElement).value;
+    const apartmentNumber = (document.getElementById("apartment_Number") as HTMLInputElement).value;
+    const zipCode = (document.getElementById("zip_Code") as HTMLInputElement).value;
     const formData = new FormData();
     formData.append("userID", userID);
     formData.append("firstName", firstName);
@@ -140,7 +162,7 @@ export default function MyAccount() {
         </div>
         <div style={{display:"flex", gap:"20px"}}>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr", gap:"10px", marginTop:"20px"}}>
-            <button href="" className="add_new_address" onClick={() => setData(prev => ({ ...prev, showPopup: true }))} style={{background:"transparent=",minHeight:"250px", minWidth:"250px",cursor:"pointer"}}>
+            <button className="add_new_address" onClick={() => setData(prev => ({ ...prev, showPopup: true, edit:false }))} style={{background:"transparent=",minHeight:"250px", minWidth:"250px",cursor:"pointer"}}>
                 <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
@@ -169,8 +191,8 @@ export default function MyAccount() {
                           <p>{t("PostalCode")}:{address.zip_Code}</p>
                       </div>
                       <div style={{display:"flex",gap:"10px", padding:"10px"}}>
-                        <Link href={""} style={{color:"blue", textDecoration:"underline"}}>Edit</Link>
-                        <Link href={""} style={{color:"blue", textDecoration:"underline"}}>Remove</Link>
+                        <button onClick={() => setData(prev => ({ ...prev, showPopup: true, address:address, edit:true }))} style={{color:"blue", textDecoration:"underline"}}>Edit</button>
+                        <button   style={{color:"blue", textDecoration:"underline"}}>Remove</button>
                       </div>
                     </div>
                   </div>
@@ -180,8 +202,10 @@ export default function MyAccount() {
           </div>
           {
             data.showPopup && (
-            <Popup onClose={() => setData(prev => ({ ...prev, showPopup: false }))}>
-            <form style={{marginTop:"20px"}}>
+            <Popup onClose={() => setData(prev => ({ ...prev,
+            showPopup: false,
+            address:emptyAddress }))}>
+            <div style={{marginTop:"20px"}}>
               <div style={{marginBottom:"20px", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"10px"}}>
                 <div>
                     <input
@@ -189,7 +213,7 @@ export default function MyAccount() {
                     type="text"
                     placeholder={checker.isFirstNameValid ? t("Name") : t("Type") + " " + t("Name")}
                     style={{borderColor: !checker.isFirstNameValid && "red"}}
-                    name="" id="first_Name" />
+                    name="" id="first_Name" value={data.edit?"":data.address.first_Name} />
                 </div>
                 <div>
                     <input
@@ -197,7 +221,7 @@ export default function MyAccount() {
                     type="text"
                     placeholder={checker.isLastNameValid ? t("LastName") : t("Type") + " " + t("LastName") }
                     style={{borderColor: !checker.isLastNameValid && "red"}}
-                    name="" id="last_Name" />
+                    name="" id="last_Name" value={data.address.last_Name} />
                 </div>
               </div>
               <div style={{marginBottom:"20px", display:"grid"}}>
@@ -207,7 +231,7 @@ export default function MyAccount() {
                   type="phone"
                   placeholder={checker.isPhoneValid ? t("Phone") : t("Type") + " " + t("Phone")}
                   style={{borderColor: !checker.isPhoneValid && "red"}}
-                  name="" id="phone" />
+                  name="" id="phone" value={data.address.phone} />
                 </div>
               </div>
               <div style={{marginBottom:"20px", display:"grid"}}>
@@ -218,7 +242,7 @@ export default function MyAccount() {
                   type="text"
                   placeholder={checker.isStreetAddressValid ? t("StreetAddress") : t("Type") + " " + t("StreetAddress")}
                   style={{borderColor: !checker.isStreetAddressValid && "red"}}
-                  name="" id="street_Address" />
+                  name="" id="street_Address" value={data.address.street_Address} />
                 </div>
               </div>
               <div style={{marginBottom:"20px", display:"grid"}}>
@@ -238,7 +262,7 @@ export default function MyAccount() {
                   type="text"
                   placeholder={checker.isCityValid ? t("City") : t("City") + " " + t("City")}
                   style={{borderColor: !checker.isCityValid && "red"}}
-                  name="" id="city" />
+                  name="" id="city"  value={data.address.city}/>
                 </div>
               </div>
               <div style={{marginBottom:"20px", display:"grid", }}>
@@ -248,7 +272,7 @@ export default function MyAccount() {
                   className='input'
                   type="text"
                   placeholder=""
-                  name="" id="region" />
+                  name="" id="region" value={data.address.region} />
                 </div>
               </div>
               <div style={{marginBottom:"20px", display:"grid", }}>
@@ -259,13 +283,17 @@ export default function MyAccount() {
                   type="text"
                   placeholder={checker.isZipCodeValid ? t("PostalCode") : t("Type") + " " + t("PostalCode")}
                   style={{borderColor: !checker.isZipCodeValid && "red"}}
-                  name="" id="zip_Code" />
+                  name="" id="zip_Code"  value={data.address.zip_Code}/>
                 </div>
               </div>
               <div style={{marginBottom:"20px", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"10px"}}>
-                    <button onClick={CreateNewAddress} className="save-Changes">{t("SaveChanges")}</button>
+                {
+                  data.edit ? 
+                  <button className="save-Changes">{t("SaveChanges")}</button>:
+                  <button onClick={()=>{CreateNewAddress()}} type="submit" className="save-Changes">Create new address</button>
+                }
               </div>
-            </form>
+            </div>
             </Popup>
           )
           }
