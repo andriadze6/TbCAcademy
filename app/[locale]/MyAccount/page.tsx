@@ -85,7 +85,7 @@ export default function MyAccount() {
         .on(
           "postgres_changes",
           {
-            event: "*",
+            event: "DELETE",
             schema: "public",
             table: "DeliveryAddress",
             filter: `user_ID=eq.${user.id}`,
@@ -137,7 +137,31 @@ export default function MyAccount() {
       }
     }
   }
-
+ async function UpdateAddress(){
+  const addressID = data.address.id;
+  debugger
+  const con = data.deliveryAddress.some((element) => {
+    if (element.id === addressID) {
+        return Object.entries(data.address).some(([key, value]) => element[key] !== value);
+    }
+    return false;
+});
+  debugger
+  if(con){
+    const formData = new FormData();
+    formData.append("data",JSON.stringify(data.address) );
+    const response = await fetch("/api/UpdateAddress", {
+      method: "POST",
+      body: formData, // FormData sets the correct Content-Type
+    });
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+    }else{
+      console.log(response);
+    }
+  }
+}
   function checkInputs( first_Name, last_Name, phone, city, street_Address, apartment_Number, zip_Code){
     let  isFirstNameValid = first_Name.length >0 &&  first_Name.trim("") != "";
     let  isLastNameValid = last_Name.length >0 &&  last_Name.trim("") != "";
@@ -155,6 +179,22 @@ export default function MyAccount() {
     }
   }
 
+  async function DeleteAddress(ID:string) {
+    debugger
+    const formData = new FormData();
+    formData.append("ID", ID)
+    try {
+      const response = await fetch("/api/DeleteAddress", {
+        method: "POST",
+        body: formData, // FormData sets the correct Content-Type
+      });
+      if(response.ok){
+        fetchDeliveryAddress()
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return (
     <div>
         <div style={{display:"flex", gap:"10px", alignItems:"center",padding:"10px 0px", borderBottom:"1px solid #708d97"}}>
@@ -172,15 +212,10 @@ export default function MyAccount() {
              data.deliveryAddress.length > 0 && data.deliveryAddress.map((address, index) => {
                 return(
                   <div key={address.id}style={{transition:"all .5s ease-out",border:"1px solid #708d97", position:"relative",borderRadius:"6px", maxHeight:"250px", minWidth:"250px", boxShadow:"0px 5px 5px rgba(155, 177, 207, 0.685)"}}>
-                    {
-                      (address.default || data.deliveryAddress.length == 1) &&
-                      <div style={{borderBottom:"1px solid #708d97", padding:"10px"}}>
-                        <p style={{}}>Default</p>
-                      </div>
-                    }
+
                     <div>
-                      <div className="address-Div" style={{display:"flex", flexDirection:"column", gap:"10px",padding:"10px"}}>
-                          <h4>{address.first_Name} {address.last_Name}</h4>
+                      <div className="address-Div" style={{display:"flex",flexDirection:"column", gap:"10px",padding:"10px"}}>
+                          <h4 style={{borderBottom:"1px solid #708d97", padding:"10px"}}>{address.first_Name} {address.last_Name}</h4>
                           <p>{address.city}</p>
                           {
                             address.region && <p>{address.region}</p>
@@ -191,8 +226,10 @@ export default function MyAccount() {
                           <p>{t("PostalCode")}:{address.zip_Code}</p>
                       </div>
                       <div style={{display:"flex",gap:"10px", padding:"10px"}}>
-                        <button onClick={() => setData(prev => ({ ...prev, showPopup: true, address:address, edit:true }))} style={{color:"blue", textDecoration:"underline"}}>Edit</button>
-                        <button   style={{color:"blue", textDecoration:"underline"}}>Remove</button>
+                        <button onClick={() => setData(prev => ({ ...prev, showPopup: true, address:address, edit:true }))} style={{color:"blue", cursor:'pointer',background:"transparent",border:"none",textDecoration:"underline"}}>Edit</button>
+                        <button onClick={()=>{
+                          DeleteAddress(address.id)
+                        }}  style={{color:"blue", background:"transparent", cursor:'pointer',border:"none",textDecoration:"underline"}}>Delete</button>
                       </div>
                     </div>
                   </div>
@@ -213,7 +250,12 @@ export default function MyAccount() {
                     type="text"
                     placeholder={checker.isFirstNameValid ? t("Name") : t("Type") + " " + t("Name")}
                     style={{borderColor: !checker.isFirstNameValid && "red"}}
-                    name="" id="first_Name" value={data.edit?"":data.address.first_Name} />
+                    name="" id="first_Name" 
+                    value={data.address.first_Name}
+                    onChange={(e) => setData((prev) => ({
+                      ...prev,
+                      address: { ...prev.address, first_Name: e.target.value }
+                    }))} />
                 </div>
                 <div>
                     <input
@@ -221,7 +263,12 @@ export default function MyAccount() {
                     type="text"
                     placeholder={checker.isLastNameValid ? t("LastName") : t("Type") + " " + t("LastName") }
                     style={{borderColor: !checker.isLastNameValid && "red"}}
-                    name="" id="last_Name" value={data.address.last_Name} />
+                    name="" id="last_Name" 
+                    value={data.address.last_Name}
+                    onChange={(e) => setData((prev) => ({
+                      ...prev,
+                      address: { ...prev.address, last_Name: e.target.value }
+                    }))} />
                 </div>
               </div>
               <div style={{marginBottom:"20px", display:"grid"}}>
@@ -231,7 +278,12 @@ export default function MyAccount() {
                   type="phone"
                   placeholder={checker.isPhoneValid ? t("Phone") : t("Type") + " " + t("Phone")}
                   style={{borderColor: !checker.isPhoneValid && "red"}}
-                  name="" id="phone" value={data.address.phone} />
+                  name="" id="phone" 
+                  value={data.address.phone}
+                  onChange={(e) => setData((prev) => ({
+                    ...prev,
+                    address: { ...prev.address, phone: e.target.value }
+                  }))} />
                 </div>
               </div>
               <div style={{marginBottom:"20px", display:"grid"}}>
@@ -242,7 +294,12 @@ export default function MyAccount() {
                   type="text"
                   placeholder={checker.isStreetAddressValid ? t("StreetAddress") : t("Type") + " " + t("StreetAddress")}
                   style={{borderColor: !checker.isStreetAddressValid && "red"}}
-                  name="" id="street_Address" value={data.address.street_Address} />
+                  name="" id="street_Address" 
+                  value={data.address.street_Address}
+                  onChange={(e) => setData((prev) => ({
+                    ...prev,
+                    address: { ...prev.address, street_Address: e.target.value }
+                  }))} />
                 </div>
               </div>
               <div style={{marginBottom:"20px", display:"grid"}}>
@@ -251,7 +308,12 @@ export default function MyAccount() {
                   className='input'
                   type="text"
                   placeholder={t("buildingNumber")}
-                  name="" id="apartment_Number" />
+                  name="" id="apartment_Number" 
+                  value={data.address.apartment_Number}
+                  onChange={(e) => setData((prev) => ({
+                    ...prev,
+                    address: { ...prev.address, apartment_Number: e.target.value }
+                  }))}/>
                 </div>
               </div>
               <div style={{marginBottom:"20px", display:"grid"}}>
@@ -262,7 +324,12 @@ export default function MyAccount() {
                   type="text"
                   placeholder={checker.isCityValid ? t("City") : t("City") + " " + t("City")}
                   style={{borderColor: !checker.isCityValid && "red"}}
-                  name="" id="city"  value={data.address.city}/>
+                  name="" id="city"
+                  value={data.address.city}
+                  onChange={(e) => setData((prev) => ({
+                    ...prev,
+                    address: { ...prev.address, city: e.target.value }
+                  }))}/>
                 </div>
               </div>
               <div style={{marginBottom:"20px", display:"grid", }}>
@@ -272,7 +339,12 @@ export default function MyAccount() {
                   className='input'
                   type="text"
                   placeholder=""
-                  name="" id="region" value={data.address.region} />
+                  name="" id="region"
+                  value={data.address.region}
+                  onChange={(e) => setData((prev) => ({
+                    ...prev,
+                    address: { ...prev.address, region: e.target.value }
+                  }))} />
                 </div>
               </div>
               <div style={{marginBottom:"20px", display:"grid", }}>
@@ -283,13 +355,18 @@ export default function MyAccount() {
                   type="text"
                   placeholder={checker.isZipCodeValid ? t("PostalCode") : t("Type") + " " + t("PostalCode")}
                   style={{borderColor: !checker.isZipCodeValid && "red"}}
-                  name="" id="zip_Code"  value={data.address.zip_Code}/>
+                  name="" id="zip_Code"
+                  value={data.address.zip_Code}
+                  onChange={(e) => setData((prev) => ({
+                    ...prev,
+                    address: { ...prev.address, zip_Code: e.target.value }
+                  }))}/>
                 </div>
               </div>
               <div style={{marginBottom:"20px", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"10px"}}>
                 {
-                  data.edit ? 
-                  <button className="save-Changes">{t("SaveChanges")}</button>:
+                  data.edit ?
+                  <button onClick={()=>{UpdateAddress()}} type="submit" className="save-Changes">{t("SaveChanges")}</button>:
                   <button onClick={()=>{CreateNewAddress()}} type="submit" className="save-Changes">Create new address</button>
                 }
               </div>
