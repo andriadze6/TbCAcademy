@@ -15,9 +15,9 @@ import ManTrending7 from "../../assets/img/homePageImg/Trending/Man/ManTrending7
 import ManTrending8 from "../../assets/img/homePageImg/Trending/Man/ManTrending8.png"
 import Link from "next/link";
 
-export default function Slider({man, woman, kid}){
+export default function Slider({man, woman, kid, sliderToShow}){
     const[data, setData] = useState(man);
-    let { sliderState, changeSlider } = useSlider(3);
+    let { sliderState, changeSlider } = useSlider(sliderToShow);
     return(
         <div className="TrendingWrapper">
         <div className="TrendingContainer">

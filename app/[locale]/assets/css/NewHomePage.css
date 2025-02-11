@@ -307,9 +307,13 @@
     z-index: 5;
     transition: all 1s linear ;
 }
-.SliderItem:hover .popUpContent{
+.SliderItem:hover .popUpContent {
     opacity: 1;
     transform: translateY(-40px);
+}
+
+.SliderItem:hover .S-Img2 {
+    opacity: 1;
 }
 .cardButton{
     width: 40px;

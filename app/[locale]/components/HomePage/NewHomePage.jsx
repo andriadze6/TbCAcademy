@@ -127,7 +127,7 @@ async function HomePage(){
                 </div>
 
             </div>
-            <TrendingSlider man={result.man} woman={result.woman} kid={result.kid}></TrendingSlider>
+            <TrendingSlider man={result.man} woman={result.woman} kid={result.kid} sliderToShow={3}></TrendingSlider>
             <div className="BannerWrapper">
                 <div className="BannerContainer">
                     <Link className="mainBanner" href='/'>
@@ -137,7 +137,7 @@ async function HomePage(){
                         <button className="exploreButton">Explore</button>
                     </Link>
                 <div style={{display:"flex", gap:"20px", alignItems:"center", width:"70%"}}>
-                    <Slider></Slider>
+                    <Slider data={result.woman} sliderToShow={3}></Slider>
                 </div>
                 </div>
             </div>
