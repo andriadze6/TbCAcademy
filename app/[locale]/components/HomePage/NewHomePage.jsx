@@ -16,8 +16,18 @@ import Link from "next/link";
 import MainBanner from '../../assets/img/homePageImg/NewArrival/MainBanner.png'
 
 import Slider from "../HomePage/Slider";
+
+const getProduct = async () => {
+    const response = await fetch("/api/HomePage"); // Ensure it starts with a `/`
+    const data = await response.json();
+    debugger
+    return data;
+  };
+  
 async function HomePage(){
+    debugger
     console.log(MainBanner)
+     await getProduct();
     return(
         <>
             <div className="mainBillboard">
