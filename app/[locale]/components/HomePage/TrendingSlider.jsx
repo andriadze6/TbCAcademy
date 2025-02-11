@@ -13,8 +13,10 @@ import ManTrending5 from "../../assets/img/homePageImg/Trending/Man/ManTrending5
 import ManTrending6 from "../../assets/img/homePageImg/Trending/Man/ManTrending6.png"
 import ManTrending7 from "../../assets/img/homePageImg/Trending/Man/ManTrending7.png"
 import ManTrending8 from "../../assets/img/homePageImg/Trending/Man/ManTrending8.png"
+import Link from "next/link";
 
-export default function Slider(){
+export default function Slider({man, woman, kid}){
+    const[data, setData] = useState(man);
     let { sliderState, changeSlider } = useSlider(3);
     return(
         <div className="TrendingWrapper">
@@ -22,9 +24,9 @@ export default function Slider(){
             <div className="TrendingDiv-header">
                 <h3>trend collection</h3>
                 <div style={{textAlign:"center", justifyContent:"flex-start", fontSize:"15px", display:"grid", gridTemplateColumns:"1fr 1fr 1fr"}}>
-                    <button className="lineButton">Man</button>
-                    <button className="lineButton">Woman</button>
-                    <button className="lineButton">Kid</button>
+                    <button className="lineButton" onClick={()=>setData(man)}>Man</button>
+                    <button className="lineButton" onClick={()=>setData(woman)}>Woman</button>
+                    <button className="lineButton" onClick={()=>setData(kid)}>Kid</button>
                 </div>
                 <div style={{display:"flex",alignItems:"center", gap:"20px"}}>
                     <button className="lineButton">view all collections</button>
@@ -33,7 +35,24 @@ export default function Slider(){
             <div className="TSlider-Wrapper">
                 <div className="TSlider-Container"
                     style={{transform:`translate3d(-${sliderState.transferX}%, 0, 0)`}}>
-                    <div style={{flex: `0 0 calc(100% / ${3})`}} className="Item">
+                    {
+                        data.length > 0 && data.map((item, index) =>{
+                            return(
+                                <Link href={`/ProductPage/${item.product_id}/${item.product_ColorID}`} key={item.product_ColorID} style={{flex: `0 0 calc(100% / ${3})`}} className="Item">
+                                    <div style={{position:"relative"}}>
+                                        {
+                                            item.imageURL && item.imageURL.length > 0 &&
+                                            <>
+                                                <Image className="T-Img" alt="" height={500} width={500} src={item.imageURL[0]}/>
+                                                <Image className="T-Img2" alt="" height={500} width={500} src={item.imageURL[1]}/>
+                                            </>
+                                        }
+                                    </div>
+                                </Link>
+                            )
+                        })
+                    }
+                    {/* <div style={{flex: `0 0 calc(100% / ${3})`}} className="Item">
                         <div style={{position:"relative"}}>
                             <Image className="T-Img" alt="" height={500} width={500} src={ManTrending}/>
                             <Image className="T-Img2" alt="" height={500} width={500} src={ManTrending2}/>
@@ -56,7 +75,7 @@ export default function Slider(){
                             <Image className="T-Img" alt="" height={500} width={500} src={ManTrending7}/>
                             <Image className="T-Img2" alt="" height={500} width={500} src={ManTrending8}/>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
             <div style={{display:"flex",gap:"60px", justifyContent:"center"}}>
