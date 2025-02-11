@@ -16,7 +16,6 @@ import ManTrending8 from "../../assets/img/homePageImg/Trending/Man/ManTrending8
 import Link from "next/link";
 
 export default function Slider({man, woman, kid}){
-    debugger
     const[data, setData] = useState(man);
     let { sliderState, changeSlider } = useSlider(3);
     return(
@@ -40,12 +39,12 @@ export default function Slider({man, woman, kid}){
                         data.length > 0 && data.map((item, index) =>{
                             return(
                                 <Link href={`/ProductPage/${item.product_ID}/${item.color_ID}`} key={item.color_ID} style={{flex: `0 0 calc(100% / ${3})`}} className="Item">
-                                    <div style={{position:"relative"}}>
+                                    <div style={{position:"relative",borderRadius:"10px"}}>
                                         {
                                             item.imageURL && item.imageURL.length > 0 &&
                                             <>
-                                                <Image className="T-Img" alt="" height={500} width={500} src={item.imageURL[0]}/>
-                                                <Image className="T-Img2" alt="" height={500} width={500} src={item.imageURL[1]}/>
+                                                <Image style={{borderRadius:"10px",border:"1px solid #ccc", overflow:"hidden"}} className="T-Img" alt="" height={500} width={500} src={item.imageURL[0]}/>
+                                                <Image style={{borderRadius:"10px",border:"1px solid #ccc", overflow:"hidden"}} className="T-Img2" alt="" height={500} width={500} src={item.imageURL[1]}/>
                                             </>
                                         }
                                     </div>

@@ -176,7 +176,7 @@
     cursor: pointer;
     width: 100%;
     border-radius: 10px;
-    object-fit: contain;
+    object-fit: fill;
 }
 .T-Img2{
     position: absolute;
@@ -190,6 +190,7 @@
 }
 .Item:hover .T-Img2{
     opacity: 1;
+    scale: 1.08;
 }
 .Active{
     color: var(--RedColor);
