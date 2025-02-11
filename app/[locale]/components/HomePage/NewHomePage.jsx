@@ -34,44 +34,28 @@ async function getProduct() {
         throw new Error(error);
     }
     for (let i = 0; i < Trending.length; i++) {
-        const [GlobalProductInfoResult, productColorsResult,productStockResult, imagesResult] = await Promise.all([
+        const [GlobalProductInfoResult, imagesResult] = await Promise.all([
             supabase
             .from('GlobalProductInfo')
             .select('*')
             .eq('product_id', Trending[i].product_ID),
-            supabase.from('productColors')
-            .select('*')
-            .eq('productColorID', Trending[i].color_ID),
-            supabase
-                .from('productStock')
-                .select("*")
-                .eq('product_ColorID', Trending[i].color_ID),
             supabase
                 .from('Images')
-                .select('imageURL, productColorID, isPrimary')
+                .select('imageURL, isPrimary')
                 .eq("productColorID", Trending[i].color_ID)
         ]);
-        if (GlobalProductInfoResult.error) {
-            throw new Error(GlobalProductInfoResult.error.message);
-        }
-        if (productColorsResult.error) {
-            throw new Error(productColorsResult.error.message);
-        }
-        if (productStockResult.error) {
-            throw new Error(productStockResult.error.message);
-        }
         if (imagesResult.error) {
             throw new Error(imagesResult.error.message);
         }
         if(GlobalProductInfoResult.data[0].gender === "man"){
-            result.man.push({...GlobalProductInfoResult.data[0],...productColorsResult.data[0],...productStockResult.data[0],...imagesResult.data[0]})
+            result.man.push({...Trending[i], ...imagesResult.data[0]})
         }
         else if(GlobalProductInfoResult.data[0].gender === "woman"){
 
-            result.woman.push({...GlobalProductInfoResult.data[0],...productColorsResult.data[0],...productStockResult.data[0],...imagesResult.data[0]})
+            result.woman.push({...Trending[i], ...imagesResult.data[0]})
         }
         else{
-            result.kid.push({...GlobalProductInfoResult.data[0],...productColorsResult.data[0],...productStockResult.data[0],...imagesResult.data[0]})
+            result.kid.push({...Trending[i], ...imagesResult.data[0]})
         }
     }
     return result

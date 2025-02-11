@@ -16,6 +16,7 @@ import ManTrending8 from "../../assets/img/homePageImg/Trending/Man/ManTrending8
 import Link from "next/link";
 
 export default function Slider({man, woman, kid}){
+    debugger
     const[data, setData] = useState(man);
     let { sliderState, changeSlider } = useSlider(3);
     return(
@@ -38,7 +39,7 @@ export default function Slider({man, woman, kid}){
                     {
                         data.length > 0 && data.map((item, index) =>{
                             return(
-                                <Link href={`/ProductPage/${item.product_id}/${item.product_ColorID}`} key={item.product_ColorID} style={{flex: `0 0 calc(100% / ${3})`}} className="Item">
+                                <Link href={`/ProductPage/${item.product_ID}/${item.color_ID}`} key={item.color_ID} style={{flex: `0 0 calc(100% / ${3})`}} className="Item">
                                     <div style={{position:"relative"}}>
                                         {
                                             item.imageURL && item.imageURL.length > 0 &&
@@ -52,30 +53,6 @@ export default function Slider({man, woman, kid}){
                             )
                         })
                     }
-                    {/* <div style={{flex: `0 0 calc(100% / ${3})`}} className="Item">
-                        <div style={{position:"relative"}}>
-                            <Image className="T-Img" alt="" height={500} width={500} src={ManTrending}/>
-                            <Image className="T-Img2" alt="" height={500} width={500} src={ManTrending2}/>
-                        </div>
-                    </div>
-                    <div style={{flex: `0 0 calc(100% / ${3})`}} className="Item">
-                        <div style={{position:"relative"}}>
-                            <Image className="T-Img" alt="" height={500} width={500} src={ManTrending3}/>
-                            <Image className="T-Img2" alt="" height={500} width={500} src={ManTrending4}/>
-                        </div>
-                    </div>
-                    <div style={{flex: `0 0 calc(100% / ${3})`}} className="Item">
-                        <div style={{position:"relative"}}>
-                            <Image className="T-Img" alt="" height={500} width={500} src={ManTrending5}/>
-                            <Image className="T-Img2" alt="" height={500} width={500} src={ManTrending6}/>
-                        </div>
-                    </div>
-                    <div style={{flex: `0 0 calc(100% / ${3})`}} className="Item">
-                        <div style={{position:"relative"}}>
-                            <Image className="T-Img" alt="" height={500} width={500} src={ManTrending7}/>
-                            <Image className="T-Img2" alt="" height={500} width={500} src={ManTrending8}/>
-                        </div>
-                    </div> */}
                 </div>
             </div>
             <div style={{display:"flex",gap:"60px", justifyContent:"center"}}>
