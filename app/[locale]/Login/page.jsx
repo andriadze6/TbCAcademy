@@ -40,8 +40,9 @@ export default function LoginPage() {
                 console.error("Login Error:", data.error);
                 return;
             }
-            setUser(data);
-            router.replace(`/${currentLanguage}`);
+            // router.replace(`/${currentLanguage}`);
+            // window.location.href = "/";
+            window.location.href = `/${currentLanguage}`;
         }
 
     }

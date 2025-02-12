@@ -20,13 +20,13 @@ export default async function LocaleLayout({ children, params: { locale } }) {
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider messages={messages}>
-          <AuthProvider>
-            <Header />
-            {children}
-            <div id="popup-root"></div>
-          </AuthProvider>
-        </NextIntlClientProvider>
+        <AuthProvider>
+          <NextIntlClientProvider messages={messages}>
+              <Header />
+              {children}
+              <div id="popup-root"></div>
+          </NextIntlClientProvider>
+        </AuthProvider>
       </body>
     </html>
   );

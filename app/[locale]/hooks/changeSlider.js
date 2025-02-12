@@ -10,7 +10,6 @@ const useSlider = () => {
     /// sliderToShow -> number of slides to show
     /// imagesAmount -> Img number in slider
     const changeSlider = (con, sliderToShow, imagesAmount) => {
-        debugger
         const clickAmount = imagesAmount - sliderToShow;
         const width = 100 / sliderToShow;
         if (con === 1) {

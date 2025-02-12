@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useContext, useState, useCallback } from "react";
-import { useAuth, AuthProvider, AuthContext } from "../../providers/UserSessionProvider";
+import { useAuth } from "../../providers/UserSessionProvider";
 import { supabase } from "../../../utils/supabase/client";
 import {useTranslations, useLocale } from 'next-intl';
 import './style.css'
@@ -10,7 +10,7 @@ import Popup from '../components/Popup';
 
 
 export default function MyAccount() {
-  const {user}  = useContext(AuthContext);
+  const { user } = useAuth();
   const t = useTranslations('LoginCreateAccount');
   const emptyAddress = {
     id: "",
@@ -76,10 +76,8 @@ export default function MyAccount() {
         fetchDeliveryAddress();
       }
     }, [user,fetchDeliveryAddress]);
-    // Set up Supabase real-time listener
     useEffect(() => {
-      if (!user) return; // Ensure user is available before setting up listener
-      console.log("Setting up Supabase listener for user:", user.id);
+      if (!user) return;
       const channel = supabase
         .channel("custom-filter-channel")
         .on(
@@ -96,7 +94,6 @@ export default function MyAccount() {
           }
         )
         .subscribe();
-      // Cleanup function to unsubscribe when the component unmounts
       return () => {
         console.log("Unsubscribing from Supabase channel");
         channel.unsubscribe();

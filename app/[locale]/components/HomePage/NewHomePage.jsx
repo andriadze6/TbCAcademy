@@ -31,7 +31,7 @@ async function getProduct() {
     .select('*')
 
     if (error) {
-        throw new Error(error);
+        throw new Error(JSON.stringify(error));
     }
     for (let i = 0; i < Trending.length; i++) {
         const [GlobalProductInfoResult, imagesResult] = await Promise.all([

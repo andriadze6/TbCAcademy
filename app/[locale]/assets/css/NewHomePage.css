@@ -318,18 +318,18 @@
 .cardButton{
     width: 40px;
     height: 40px;
-    border-color: transparent;
-    background-color:white;
-    border-radius: 50%;
+    border: none;
+    background-color: transparent;
+    /* border-radius: 50%; */
     cursor: pointer;
     transition: all 0.25s linear;
     display: flex;
     align-items: center ;
-    box-shadow: 0 4px 8px rgba(155, 177, 207, 0.685);
+    /* box-shadow: 0 4px 8px rgba(155, 177, 207, 0.685); */
 }
-.cardButton:hover{
-    background-color: var(--RedColor);
-    color: white;
+.cardButton:hover svg{
+    fill: var(--RedColor);
+    color: black
 }
 
 /* @keyframes showButton{
