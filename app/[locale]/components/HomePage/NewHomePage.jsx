@@ -1,5 +1,7 @@
 import Image from "next/image";
-import "../../assets/css/NewHomePage.css"
+import "../../assets/css/NewHomePage.css";
+import { createClient } from '../../../../utils/supabase/server';
+
 import BillboardImg1 from "../../assets/img/homePageImg/NewHomePage/Header-Img1.png"
 import BillboardImg2 from "../../assets/img/homePageImg/NewHomePage/Header-Img2.png"
 import BillboardImg3 from "../../assets/img/homePageImg/NewHomePage/Header-Img3.png"
@@ -16,8 +18,52 @@ import Link from "next/link";
 import MainBanner from '../../assets/img/homePageImg/NewArrival/MainBanner.png'
 
 import Slider from "../HomePage/Slider";
+
+async function getProduct() {
+    const result = {
+        man:[],
+        woman:[],
+        kid:[],
+    }
+    const supabase = await createClient();
+    let { data: Trending, error } = await supabase
+    .from('Trending')
+    .select('*')
+
+    if (error) {
+        throw new Error(JSON.stringify(error));
+    }
+    for (let i = 0; i < Trending.length; i++) {
+        const [GlobalProductInfoResult, imagesResult] = await Promise.all([
+            supabase
+            .from('GlobalProductInfo')
+            .select('*')
+            .eq('product_id', Trending[i].product_ID),
+            supabase
+                .from('Images')
+                .select('imageURL, isPrimary')
+                .eq("productColorID", Trending[i].color_ID)
+        ]);
+        if (imagesResult.error) {
+            throw new Error(imagesResult.error.message);
+        }
+        if(GlobalProductInfoResult.data[0].gender === "man"){
+            result.man.push({...Trending[i], ...imagesResult.data[0]})
+        }
+        else if(GlobalProductInfoResult.data[0].gender === "woman"){
+
+            result.woman.push({...Trending[i], ...imagesResult.data[0]})
+        }
+        else{
+            result.kid.push({...Trending[i], ...imagesResult.data[0]})
+        }
+    }
+    return result
+}
+
 async function HomePage(){
-    console.log(MainBanner)
+    let result  = await getProduct();
+    console.log(result);
     return(
         <>
             <div className="mainBillboard">
@@ -81,7 +127,7 @@ async function HomePage(){
                 </div>
 
             </div>
-            <TrendingSlider></TrendingSlider>
+            <TrendingSlider man={result.man} woman={result.woman} kid={result.kid} sliderToShow={3}></TrendingSlider>
             <div className="BannerWrapper">
                 <div className="BannerContainer">
                     <Link className="mainBanner" href='/'>
@@ -91,7 +137,7 @@ async function HomePage(){
                         <button className="exploreButton">Explore</button>
                     </Link>
                 <div style={{display:"flex", gap:"20px", alignItems:"center", width:"70%"}}>
-                    <Slider></Slider>
+                    <Slider data={result.woman} sliderToShow={3}></Slider>
                 </div>
                 </div>
             </div>

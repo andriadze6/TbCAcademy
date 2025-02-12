@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import createIntlMiddleware from 'next-intl/middleware';
 
 // Custom function to detect locale
 function getLocale(request: NextRequest): string {
@@ -12,11 +13,12 @@ function getLocale(request: NextRequest): string {
 
   return 'en'; // Default locale
 }
-
-export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
+  const handleI18nRouting = createIntlMiddleware({
+    locales: ['en', 'ka'],
+    defaultLocale: 'en'
   });
+export async function updateSession(request: NextRequest) {
+  let supabaseResponse = handleI18nRouting(request);
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -49,7 +51,7 @@ export async function updateSession(request: NextRequest) {
   const role = user?.user_metadata?.role || 'guest';
 
   // Redirect to the login page if the user is not authenticated and tries to access the AdminPanel
-  if (!user && role !== 'admin' && request.nextUrl.pathname.startsWith(`/${locale}/AdminPanel`) ) {
+  if (!user && role !== 'admin' && request.nextUrl.pathname.endsWith(`/AdminPanel`) ) {
     const url = request.nextUrl.clone();
     url.pathname = `/${locale}/Login`; // Redirect to localized Login page
     return NextResponse.redirect(url);
@@ -63,11 +65,11 @@ export async function updateSession(request: NextRequest) {
   }
 
   // If the user is authenticated and tries to access the Login page, prevent navigation
-  if (user && request.nextUrl.pathname.startsWith(`/${locale}/Login`)) {
+  if (user && request.nextUrl.pathname.endsWith(`/Login`)) {
     return NextResponse.redirect(new URL(request.headers.get("referer") || `/${locale}`, request.url));
   }
 
-  if (!user &&  request.nextUrl.pathname.startsWith(`/${locale}/Account`) ) {
+  if (!user &&  request.nextUrl.pathname.endsWith(`/MyAccount`) ) {
     const url = request.nextUrl.clone();
     url.pathname = `/${locale}/Login`; // Redirect to localized Login page
     return NextResponse.redirect(url);

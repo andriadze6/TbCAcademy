@@ -64,3 +64,18 @@ export type GlobalProductInfoType = {
     gender: string;
     tag: string[];
 }
+
+
+export type DeliveryAddressType = {
+  id: string;
+  user_ID: string;
+  first_Name: string;
+  last_Name: string;
+  phone: string;
+  city: string;
+  region: string;
+  street_Address: string;
+  apartment_Number: string;
+  zip_Code: string;
+  default: boolean
+};

@@ -1,9 +1,9 @@
 // pages/api/create-product.js
 import Stripe from 'stripe';
-import { createClient } from '../../lib/supaBase/server';
+import { createClient } from '../../../../utils/supabase/server';
 import { NextResponse } from 'next/server';
 import { decode } from 'base64-arraybuffer';
-import { globalInfoType, catalogType, sizeType } from '../../Type/type';
+import { globalInfoType, catalogType, sizeType } from '../../../Type/type';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 

@@ -176,7 +176,7 @@
     cursor: pointer;
     width: 100%;
     border-radius: 10px;
-    object-fit: contain;
+    object-fit: fill;
 }
 .T-Img2{
     position: absolute;
@@ -190,6 +190,7 @@
 }
 .Item:hover .T-Img2{
     opacity: 1;
+    scale: 1.08;
 }
 .Active{
     color: var(--RedColor);
@@ -306,25 +307,29 @@
     z-index: 5;
     transition: all 1s linear ;
 }
-.SliderItem:hover .popUpContent{
+.SliderItem:hover .popUpContent {
     opacity: 1;
     transform: translateY(-40px);
+}
+
+.SliderItem:hover .S-Img2 {
+    opacity: 1;
 }
 .cardButton{
     width: 40px;
     height: 40px;
-    border-color: transparent;
-    background-color:white;
-    border-radius: 50%;
+    border: none;
+    background-color: transparent;
+    /* border-radius: 50%; */
     cursor: pointer;
     transition: all 0.25s linear;
     display: flex;
     align-items: center ;
-    box-shadow: 0 4px 8px rgba(155, 177, 207, 0.685);
+    /* box-shadow: 0 4px 8px rgba(155, 177, 207, 0.685); */
 }
-.cardButton:hover{
-    background-color: var(--RedColor);
-    color: white;
+.cardButton:hover svg{
+    fill: var(--RedColor);
+    color: black
 }
 
 /* @keyframes showButton{

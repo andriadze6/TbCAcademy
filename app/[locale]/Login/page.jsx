@@ -4,8 +4,10 @@ import Link from 'next/link';
 import {useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../providers/UserSessionProvider';
+import { login, signup } from './actions'
 
-export default function Login() {
+
+export default function LoginPage() {
     const currentLanguage = useLocale(); // Get current language from next-intl
     const t = useTranslations('LoginCreateAccount');
     const router = useRouter();
@@ -24,16 +26,25 @@ export default function Login() {
         const password = document.getElementById("password").value;
         const response = await fetch("/api/Login", {
             method: "POST",
-            body: new URLSearchParams({ email, password })
+            headers: {
+                "Content-Type": "application/json", // Ensure content type is JSON
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password,
+            }),
         });
-        debugger
-        const data = await response.json();
-        if (data.error) {
-            console.error("Login Error:", data.error);
-            return;
+        if(response.ok){
+            const data = await response.json();
+            if (data.error) {
+                console.error("Login Error:", data.error);
+                return;
+            }
+            // router.replace(`/${currentLanguage}`);
+            // window.location.href = "/";
+            window.location.href = `/${currentLanguage}`;
         }
-        setUser(data);
-        router.replace(`/${currentLanguage}`);
+
     }
 
     return (

@@ -16,6 +16,7 @@
       "LoginPText":"By login you will be able to know the status of your orders, the products saved in your Wishlist",
       "Email":"Email",
       "Password":"Password",
+      "RepeatPassword":"Repeat password",
       "ForGetPassword":"For get password?",
       "Login":"Login",
       "CreateAnAccount":"Create an account",
@@ -26,7 +27,20 @@
       "MinPassword":"Password must be at least 8 characters long",
       "InvalidEmail":"Invalid email",
       "EmailExist":"Email already exist",
-      "Logout":"Logout"
-
+      "Logout":"Logout",
+      "Name":"Name",
+      "LastName":"Last Name",
+      "Phone":"Phone",
+      "Address":"Address",
+      "City":"City",
+      "Country":"Country",
+      "PostalCode":"Postal Code",
+      "UpdateProfile":"Update Profile",
+      "Type": "Type",
+      "StreetAddress": "Street Address",
+      "Region": "Region",
+      "Municipality": "Municipality",
+      "SaveChanges":"Save changes",
+      "buildingNumber":"Apartment, suite,building, floor, etc."
     }
   }

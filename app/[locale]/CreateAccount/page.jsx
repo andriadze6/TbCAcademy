@@ -6,7 +6,10 @@ import {useTranslations, useLocale } from 'next-intl';
 export default function Login() {
     const t = useTranslations('LoginCreateAccount');
     const [checker, setChecker] = useState({
+        isNameValid: true,
+        isLastNameValid:true,
         isEmailValid: true,
+        isPhoneValid: true,
         isPasswordValid: true,
         isRepeatPasswordValid: true,
         conformationEmail:false,
@@ -39,7 +42,6 @@ export default function Login() {
                   method: "POST",
                   body: formData, // FormData sets the correct Content-Type
                 });
-                const data = await response.json();
                 if (response.ok) {
                     setChecker({
                         ...checker,
@@ -47,6 +49,7 @@ export default function Login() {
                     })
                 }else{
                     debugger
+                    const data = await response.json();
                     if(data.error.includes("User already registered")){
                         setChecker({
                             ...checker,
@@ -75,7 +78,6 @@ export default function Login() {
     }
     return (
         <div style={{width:"30%", margin:"auto auto", display:"flex", justifyContent:"center", alignItems:"center"}}>
-            
             {
                 !checker.conformationEmail ?
                 <form onSubmit={CreateAccount}>
@@ -84,14 +86,15 @@ export default function Login() {
                         <p style={{marginBottom:"30px"}}>{t("CreateAccountP")}
                         </p>
                     </div>
-                    <div style={{marginBottom:"20px"}}>
-                        <input
-                        className='input'
-                        type="mail"
-                        placeholder={checker.isEmailValid ? "Email" : checker.message}
-                        style={{borderColor: !checker.isEmailValid && "red"}}
-                        name="" id="email" />
-                        {
+                    <div style={{marginBottom:"20px", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"10px"}}>
+                        <div>
+                            <input
+                            className='input'
+                            type="mail"
+                            placeholder={checker.isEmailValid ? t("Email") : checker.message}
+                            style={{borderColor: !checker.isEmailValid && "red"}}
+                            name="" id="email" />
+                                                    {
                             !checker.isEmailValid && (
                             <div style={{display:"flex", gap:"5px", marginTop:"10px",alignItems:"center"}}>
                                 <svg style={{width:"20px", height:"20px", color:"red"}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -101,12 +104,14 @@ export default function Login() {
                             </div>
                             )
                         }
+                        </div>
                     </div>
+
                     <div style={{marginBottom:"20px"}}>
                             <input
                             className='input'
                             type="password"
-                            placeholder="Password"
+                            placeholder={t("Password")}
                             name="" id="password"></input>
                             <div style={{display:"flex", gap:"5px", marginTop:"10px",alignItems:"center"}}>
                                 <svg style={{width:"20px", height:"20px", color: checker.isPasswordValid ? "green" : "red" }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -119,7 +124,7 @@ export default function Login() {
                         <input
                         className='input'
                         type="password"
-                        placeholder="Repeat password"
+                        placeholder={t("RepeatPassword")}
                         name="" id="repeatPassword"></input>
                             {
                                 !checker.isRepeatPasswordValid &&
