@@ -79,3 +79,9 @@ export type DeliveryAddressType = {
   zip_Code: string;
   default: boolean
 };
+export type WishListType = {
+    id:string;
+    user_ID:string;
+    product_ID:string;
+    color_ID:string;
+}
