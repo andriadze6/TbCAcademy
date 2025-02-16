@@ -39,18 +39,17 @@ export function AuthProvider({ children }) {
         }
       }, [])
       useEffect(()=>{
-        async function ChangeWishListAmount(){
-
-            let { data: result, error } = await supabase
-                .from('WishList')
-                .select("id")
-                // Filters
-                .eq('user_ID',user.id)
-                setWishList(result.length)
+        async function CheckWishListAmount(){
+        let { data: result, error } = await supabase
+            .from('WishList')
+            .select("id")
+            // Filters
+            .eq('user_ID',user.id)
+            setWishList(result.length)
          }
         if(user){
             console.log("useEffect ChangeWishListAmount()")
-            ChangeWishListAmount()
+            CheckWishListAmount()
         }else{
             console.log("useEffect setWishList(0)")
             setWishList(0)
