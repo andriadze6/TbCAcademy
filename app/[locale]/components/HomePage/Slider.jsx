@@ -8,18 +8,7 @@ import {useAuth} from "../../../providers/UserSessionProvider";
 
 
 export default function Slider({data,sliderToShow}) {
-    const {user}  = useAuth();
-   async function AddToWishList(productID, colorID) {
-    debugger
-        if(user){
-            const response = fetch("/api/AddToWishList", {
-                method: "POST",
-                body: JSON.stringify({user_ID: user.id, product_ID: productID, color_ID: colorID}),
-            })
-        }
-        else{
-        }
-    }
+    const {user,AddToWishList}  = useAuth();
     let { sliderState, changeSlider } = useSlider(sliderToShow);
     return(
         <div className="sliderWrapper">

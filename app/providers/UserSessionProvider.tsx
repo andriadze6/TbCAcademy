@@ -1,68 +1,135 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, useRef } from "react";
+import { createContext, use, useContext, useEffect, useState, useCallback } from "react";
+import { WishListType } from "@/Type/type";
 import { supabase } from "../../utils/supabase/client";
+import { User } from "@supabase/supabase-js";
 
-export const AuthContext = createContext(null);
+interface AuthContextType {
+    user: User | null;
+    setUser: React.Dispatch<React.SetStateAction<User | null>>;
+    wishList: WishListType[];
+    setWishList: React.Dispatch<React.SetStateAction<WishListType[]>>;
+    AddToWishList: (productID: string, colorID: string) => Promise<void>;
+    loading: boolean;
+}
 
-export function AuthProvider({ children }) {
-    const [user, setUser] = useState(null);
-    const [wishList, setWishList] = useState(0);
+export const AuthContext = createContext<AuthContextType | null>(null);
+
+interface AuthProviderProps {
+    children: React.ReactNode;
+}
+
+export function AuthProvider({ children }: AuthProviderProps) {
+    const [user, setUser] = useState<User | null>(null);
+    const [wishList, setWishList] = useState<WishListType[]>([]);
     const [loading, setLoading] = useState(true);
-    const hasFetched = useRef(false); // Prevents multiple API calls
-    const isMounted = useRef(true); // Tracks component mount status
+
+    ///Subscription When user action
+    useEffect(() => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'INITIAL_SESSION') {
+                console.log('INITIAL_SESSION');
+                setUser(session?.user || null);
+            } else 
+            if (event === 'SIGNED_IN') {
+                console.log("SIGNED_IN");
+                setUser(session?.user || null);
+            } else if (event === 'SIGNED_OUT') {
+                console.log('SIGNED_OUT');
+                setUser(null);
+            } else if (event === 'PASSWORD_RECOVERY') {
+                console.log('PASSWORD_RECOVERY');
+            } else if (event === 'TOKEN_REFRESHED') {
+                console.log('TOKEN_REFRESHED');
+            } else if (event === 'USER_UPDATED') {
+                console.log('USER_UPDATED');
+            }
+        });
+
+        return () => {
+            subscription?.unsubscribe();
+        };
+    }, []);
 
     useEffect(() => {
-        const {data: { subscription }} = supabase.auth.onAuthStateChange((event, session) => {
-            if (event === 'INITIAL_SESSION') {
-                console.log('INITIAL_SESSION')
-                setUser(session?.user || null)
-            } else if (event === 'SIGNED_IN') {
-                debugger
-                console.log("SIGNED_IN")
-                setUser(session?.user)
-            } else if (event === 'SIGNED_OUT') {
-                debugger
-                console.log('SIGNED_OUT')
-                setUser(null)
-            }
-            else if (event === 'PASSWORD_RECOVERY') {
-              // handle password recovery event
-            } else if (event === 'TOKEN_REFRESHED') {
-              // handle token refreshed event
-            } else if (event === 'USER_UPDATED') {
-              // handle user updated event
-            }
-          })
-        return () => {
-          subscription.unsubscribe()
-        }
-      }, [])
-      useEffect(()=>{
-        async function ChangeWishListAmount(){
-
-            let { data: result, error } = await supabase
-                .from('WishList')
-                .select("id")
-                // Filters
-                .eq('user_ID',user.id)
-                setWishList(result.length)
-         }
-        if(user){
-            console.log("useEffect ChangeWishListAmount()")
+      if (!user) {
+        ChangeWishListAmount();
+      }else{
+        ChangeWishListAmount();
+        const WishList = supabase.channel('custom-filter-channel')
+        .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'WishList', filter: `user_ID=eq.${user.id}` },
+        (payload) => {
+            console.log('Change received!', payload)
             ChangeWishListAmount()
-        }else{
-            console.log("useEffect setWishList(0)")
-            setWishList(0)
+        })
+        .subscribe()
+
+        return () => {
+          supabase.removeChannel(WishList); // Correct way to unsubscribe
+        };
+      }
+
+    }, [user]);
+
+
+    const ChangeWishListAmount = useCallback(async () => {
+      try {
+        if(user?.id){
+          const { data, error } = await supabase
+              .from('WishList')
+              .select("*")
+              .eq('user_ID', user.id);
+
+          if (error) throw error;
+
+          setWishList(data || []);
+
+      }
+      else{
+            const storedWishList = localStorage.getItem("wishList");
+            if (storedWishList) {
+              setWishList(JSON.parse(storedWishList));
+            }
+      }
+    } catch (err) {
+    console.error("Error fetching wishlist:", err);
+    setWishList([]);
+    }
+
+  },[user]);
+
+
+  const AddToWishList = useCallback(async (productID:string, colorID:string,) => {
+    try {
+        if(user){
+            const response = fetch("/api/AddToWishList", {
+                method: "POST",
+                body: JSON.stringify({user_ID:user.id, product_ID: productID, color_ID: colorID}),
+            })
         }
-      },[user])
+        else{
+          localStorage.setItem("wishList", JSON.stringify([...wishList, { product_ID: productID, color_ID: colorID }]));
+          setWishList([...wishList, {id:"",user_ID:"", product_ID: productID, color_ID: colorID }]);
+        }
+    } catch (err) {
+    console.error("Error adding to wishlist:", err);
+    }
+  },[user,wishList]);
+
     return (
-        <AuthContext.Provider value={{ user, setUser, wishList, setWishList, loading }}>
+        <AuthContext.Provider value={{ user, setUser, wishList, setWishList, AddToWishList,loading }}>
             {children}
         </AuthContext.Provider>
     );
 }
 
 export function useAuth() {
-    return useContext(AuthContext);
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error("useAuth must be used within an AuthProvider");
+    }
+    return context;
 }
