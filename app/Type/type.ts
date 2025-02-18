@@ -84,4 +84,6 @@ export type WishListType = {
     user_ID:string;
     product_ID:string;
     color_ID:string;
+    productStockID:string;
+    amount:number;
 }

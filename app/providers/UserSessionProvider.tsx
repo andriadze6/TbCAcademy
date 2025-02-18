@@ -9,8 +9,7 @@ interface AuthContextType {
     user: User | null;
     setUser: React.Dispatch<React.SetStateAction<User | null>>;
     wishList: WishListType[];
-    setWishList: React.Dispatch<React.SetStateAction<WishListType[]>>;
-    AddToWishList: (productID: string, colorID: string) => Promise<void>;
+    AddToWishList: (productID: string, colorID: string, productStockID?: string, amount?: number) => Promise<void>;
     loading: boolean;
 }
 
@@ -102,17 +101,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
   },[user]);
 
 
-  const AddToWishList = useCallback(async (productID:string, colorID:string,) => {
+  const AddToWishList = useCallback(async (productID:string, colorID:string, productStockID?:string, amount?:number) => {
     try {
-        if(user){
-            const response = fetch("/api/AddToWishList", {
-                method: "POST",
-                body: JSON.stringify({user_ID:user.id, product_ID: productID, color_ID: colorID}),
-            })
-        }
-        else{
-          localStorage.setItem("wishList", JSON.stringify([...wishList, { product_ID: productID, color_ID: colorID }]));
-          setWishList([...wishList, {id:"",user_ID:"", product_ID: productID, color_ID: colorID }]);
+        if(productID.length > 0 || colorID.length > 0){
+            if(user){
+                const response =  fetch("/api/AddToWishList", {
+                    method: "POST",
+                    body: JSON.stringify({user_ID:user.id, product_ID: productID, color_ID: colorID, productStockID:productStockID, amount:amount }),
+                })
+                if (!response) {
+                    throw new Error("Failed to add to wishlist");
+                }
+            }
+            else{
+              localStorage.setItem("wishList", JSON.stringify([...wishList, { product_ID: productID, color_ID: colorID, productStockID:productStockID, amount:amount }]));
+              setWishList([...wishList, {id:"",user_ID:"", product_ID: productID, color_ID: colorID, productStockID:productStockID, amount:amount }]);
+            }
         }
     } catch (err) {
     console.error("Error adding to wishlist:", err);
@@ -120,7 +124,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   },[user,wishList]);
 
     return (
-        <AuthContext.Provider value={{ user, setUser, wishList, setWishList, AddToWishList,loading }}>
+        <AuthContext.Provider value={{ user, setUser, wishList, AddToWishList,loading }}>
             {children}
         </AuthContext.Provider>
     );

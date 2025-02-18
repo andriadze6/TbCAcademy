@@ -1,12 +1,12 @@
 
 'use client'
-import '../../../assets/css/productPage.css'
+import '../../style/productPage.css'
 import useSlider from '../../../hooks/changeSlider'
 import Image from 'next/image'
 import { useState, useEffect } from 'react';
 import {useTranslations, useLocale } from 'next-intl';
+import { useAuth } from '../../../../providers/UserSessionProvider';
 import{useParams} from 'next/navigation'
-let sizeArray = ["XS", "S", "M", "L", "XL", "XXL"]
 
 const initialState = {
     globalProductInfo: {},
@@ -23,6 +23,7 @@ export default function ProductPage() {
     const { ID, colorID } = useParams();
     const [amount, setAmount] = useState(1);
     const currentLanguage = useLocale();
+    const {  user, setUser, wishList, AddToWishList  } = useAuth();
 
     useEffect(() => {
         (async function fetchProductData() {
@@ -52,7 +53,7 @@ export default function ProductPage() {
                 console.log(error)
             }
         })();
-    },[ID]); ///ID უნდა იყოს დამოკიდებული
+    },[ID,colorID]); ///ID უნდა იყოს დამოკიდებული
 
     function createSlider(imagesArray, cID) {
         const navImages = [];
@@ -212,15 +213,15 @@ export default function ProductPage() {
                                         return (
                                             <button
                                             style={productData.currentSize != key ? {border:"1px solid rgba(163, 192, 200, 0.771)"}:{border:"2px solid rgba(178,1,14,0.6671043417366946)"}}
-                                             onClick={()=>setProductData({...productData, currentSize: key})}
-                                            className='size_Button' key={`${value.productStockID}`}>{key}</button>
+                                             onClick={()=>setProductData({...productData, currentSize: value.productStockID})}
+                                            className='size_Button' key={`${value.productStockID}`}>{value.size}</button>
                                         )
                                     })
                                 }
                             </div>
                     </div>
                     <div className='bottom_Margin size-chart'>
-                                <button className='size-chart-Button'>Size chart</button>
+                        <button className='size-chart-Button'>Size chart</button>
                     </div>
                     <div style={{display:"flex",gap:"20px", alignItems:"center", width:"100%"}} className='bottom_Margin'>
                                 <div className='select-Amount'>
@@ -235,9 +236,16 @@ export default function ProductPage() {
                                         </svg>
                                     Add to cart</button>
                                 </div>
+                                <div className='addToCart' style={{width:"100%"}}>
+                                    <button onClick={()=>{AddToWishList(ID,productData.currentColorID, productData.currentSize, amount)}} className='addToCart-Button'>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"></path>
+                                        </svg>
+                                    Add to wish List</button>
+                                </div>
                     </div>
                     <div className='bottom_Margin'>
-                                <button className='buyNow-Button'>Buy now</button>
+                        <button className='buyNow-Button'>Buy now</button>
                     </div>
                     <div className='bottom_Margin product-Details-Div'>
                                 <h4 style={{marginBottom:"10px"}}>Product details</h4>

@@ -8,7 +8,7 @@ import {useAuth} from "../../../providers/UserSessionProvider";
 
 
 export default function Slider({data,sliderToShow}) {
-    const {user,AddToWishList}  = useAuth();
+    const {user, AddToWishList}  = useAuth();
     let { sliderState, changeSlider } = useSlider(sliderToShow);
     return(
         <div className="sliderWrapper">

@@ -53,9 +53,10 @@ export async function POST(request: NextRequest) {
         const productStock = {}
         productStockResult.data.map((element) => {
             let product_ColorID = element.product_ColorID;
-            let currentSize = element.size;
+            let currentSize = element.productStockID;
             let sizeObject = {}
             sizeObject[currentSize] = {
+                size: element.size,
                 price_lari: element.price_lari,
                 count: element.count,
                 price_usd: element.price_usd,
