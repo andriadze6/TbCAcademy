@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, use, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { WishListType } from "@/Type/type";
 import { supabase } from "../../utils/supabase/client";
 import { User } from "@supabase/supabase-js";
@@ -24,25 +24,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const [wishList, setWishList] = useState<WishListType[]>([]);
     const [loading, setLoading] = useState(true);
 
-    ///Subscription When user action
     useEffect(() => {
         const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
             if (event === 'INITIAL_SESSION') {
                 console.log('INITIAL_SESSION');
                 setUser(session?.user || null);
-            } else 
-            if (event === 'SIGNED_IN') {
+                ChangeWishListAmount(session?.user?.id);
+            } else if (event === 'SIGNED_IN') {
                 console.log("SIGNED_IN");
+                localStorage.removeItem("wishList");
                 setUser(session?.user || null);
+                ChangeWishListAmount(session?.user?.id);
             } else if (event === 'SIGNED_OUT') {
                 console.log('SIGNED_OUT');
                 setUser(null);
-            } else if (event === 'PASSWORD_RECOVERY') {
-                console.log('PASSWORD_RECOVERY');
-            } else if (event === 'TOKEN_REFRESHED') {
-                console.log('TOKEN_REFRESHED');
-            } else if (event === 'USER_UPDATED') {
-                console.log('USER_UPDATED');
+                setWishList([]);
+                localStorage.removeItem("wishList");
             }
         });
 
@@ -52,79 +49,77 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }, []);
 
     useEffect(() => {
-      if (!user) {
-        ChangeWishListAmount();
-      }else{
-        ChangeWishListAmount();
-        const WishList = supabase.channel('custom-filter-channel')
-        .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'WishList', filter: `user_ID=eq.${user.id}` },
-        (payload) => {
-            console.log('Change received!', payload)
-            ChangeWishListAmount()
-        })
-        .subscribe()
+        console.log("open channel");
+        if (!user?.id) return;
+        const wishListSubscription = supabase.channel('custom-filter-channel')
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'WishList', filter: `user_ID=eq.${user.id}` },
+                (payload) => {
+                    console.log('Wishlist change received!', payload);
+                    ChangeWishListAmount(user.id);
+                }
+            )
+            .subscribe();
 
         return () => {
-          supabase.removeChannel(WishList); // Correct way to unsubscribe
+            supabase.removeChannel(wishListSubscription);
         };
-      }
-
     }, [user]);
 
+    const ChangeWishListAmount = useCallback(async (id?: string) => {
+        try {
+            console.log("Fetching wishlist...");
+            if (id) {
+                const { data, error } = await supabase
+                    .from('WishList')
+                    .select("*")
+                    .eq('user_ID', id);
 
-    const ChangeWishListAmount = useCallback(async () => {
-      try {
-        if(user?.id){
-          const { data, error } = await supabase
-              .from('WishList')
-              .select("*")
-              .eq('user_ID', user.id);
+                if (error) throw error;
 
-          if (error) throw error;
-
-          setWishList(data || []);
-
-      }
-      else{
-            const storedWishList = localStorage.getItem("wishList");
-            if (storedWishList) {
-              setWishList(JSON.parse(storedWishList));
-            }
-      }
-    } catch (err) {
-    console.error("Error fetching wishlist:", err);
-    setWishList([]);
-    }
-
-  },[user]);
-
-
-  const AddToWishList = useCallback(async (productID:string, colorID:string, productStockID?:string, amount?:number) => {
-    try {
-        if(productID.length > 0 || colorID.length > 0){
-            if(user){
-                const response =  fetch("/api/AddToWishList", {
-                    method: "POST",
-                    body: JSON.stringify({user_ID:user.id, product_ID: productID, color_ID: colorID, productStockID:productStockID, amount:amount }),
-                })
-                if (!response) {
-                    throw new Error("Failed to add to wishlist");
+                setWishList(data || []);
+            } else {
+                const storedWishList = localStorage.getItem("wishList");
+                if (storedWishList) {
+                    setWishList(JSON.parse(storedWishList));
                 }
             }
-            else{
-              localStorage.setItem("wishList", JSON.stringify([...wishList, { product_ID: productID, color_ID: colorID, productStockID:productStockID, amount:amount }]));
-              setWishList([...wishList, {id:"",user_ID:"", product_ID: productID, color_ID: colorID, productStockID:productStockID, amount:amount }]);
-            }
+        } catch (err) {
+            console.error("Error fetching wishlist:", err);
+            setWishList([]);
         }
-    } catch (err) {
-    console.error("Error adding to wishlist:", err);
-    }
-  },[user,wishList]);
+    }, []);
+
+    const AddToWishList = useCallback(async (productID: string, colorID: string, productStockID?: string, amount?: number) => {
+        try {
+            if (!productID || !colorID) return;
+
+            if (user) {
+                const response = await fetch("/api/AddToWishList", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_ID: user.id, product_ID: productID, color_ID: colorID, productStockID, amount }),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to add to wishlist");
+                }
+                let result = await response.json();
+                const newWishList = [...wishList, { id: result.id, user_ID: "", product_ID: productID, color_ID: colorID, productStockID, amount }];
+                setWishList(newWishList);
+            } else {
+                const newWishList = [...wishList, { id: "", user_ID: "", product_ID: productID, color_ID: colorID, productStockID, amount }];
+                localStorage.setItem("wishList", JSON.stringify(newWishList));
+                setWishList(newWishList);
+            }
+        } catch (err) {
+            console.error("Error adding to wishlist:", err);
+        }
+    }, [user, wishList, ChangeWishListAmount]);
 
     return (
-        <AuthContext.Provider value={{ user, setUser, wishList, AddToWishList,loading }}>
+        <AuthContext.Provider value={{ user, setUser, wishList, AddToWishList, loading }}>
             {children}
         </AuthContext.Provider>
     );

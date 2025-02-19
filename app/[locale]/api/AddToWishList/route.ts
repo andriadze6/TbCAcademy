@@ -11,12 +11,12 @@ export async function POST(request:NextRequest){
     .insert([
       { user_ID: user_ID, product_ID: product_ID, color_ID: color_ID, productStockID: productStockID, amount: amount},
     ])
-    .select()
+    .select("id");
 
     if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    const response = NextResponse.json("Item was added to Wish list");
+    const response = NextResponse.json({id: data[0].id});
 
     return response;
 }

@@ -4,24 +4,32 @@ import './style/WishListStyle.css'
 import Tooltip from '../components/Tooltip'
 import { useAuth } from '../../providers/UserSessionProvider';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import Image from "next/image";
+import {useTranslations, useLocale } from 'next-intl';
+
+
 export default function WishListPage() {
     const [tooltip, setTooltip] = useState(null);
     const[data, setData] = useState([]);
     const {  wishList } = useAuth();
+    const currentLanguage = useLocale();
+    const [gridView, setView] = useState(true);
+    const [showElements, setShowElements] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
             try {
-                debugger
                 const response = await fetch('/api/GetWishList',{
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ wishList }),
+                    body: JSON.stringify( wishList ),
                 });
-                const json = await response.json();
-                setData(json);
+                const result = await response.json();
+                console.log(result);
+                setData(result);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -32,6 +40,10 @@ export default function WishListPage() {
             setData([]);
         }
     }, [wishList]);
+    useEffect(() => {
+        setShowElements(false); // Reset animation on view change
+        setTimeout(() => setShowElements(true), 100);
+    }, [gridView]); // Run when view changes
     const showTooltip = (event, text) => {
         const rect = event.target.getBoundingClientRect();
         setTooltip({
@@ -52,7 +64,7 @@ export default function WishListPage() {
             </div>
             <div className='toolbar' style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"20px"}}>
                 <div style={{display:"flex", gap:"16px", alignItems:"center"}}>
-                    <div>
+                    <div onClick={() => setView(true)}>
                         <svg
                         style={{cursor:"pointer"}}
                         onMouseEnter={(e) => showTooltip(e, "Grid View")}
@@ -63,7 +75,7 @@ export default function WishListPage() {
                             <path d="M20.6246 13.2375H15.8621C14.5871 13.2375 13.5371 14.2875 13.5371 15.5625V20.325C13.5371 21.6 14.5871 22.65 15.8621 22.65H20.6246C21.8996 22.65 22.9496 21.6 22.9496 20.325V15.6C22.9496 14.2875 21.8996 13.2375 20.6246 13.2375ZM21.2996 20.3625C21.2996 20.7375 20.9996 21.0375 20.6246 21.0375H15.8621C15.4871 21.0375 15.1871 20.7375 15.1871 20.3625V15.6C15.1871 15.225 15.4871 14.925 15.8621 14.925H20.6246C20.9996 14.925 21.2996 15.225 21.2996 15.6V20.3625Z" fill="#A3AEB9"></path>
                         </svg>
                     </div>
-                    <div>
+                    <div onClick={() => setView(false)}>
                         <svg
                         style={{cursor:"pointer"}}
                         onMouseEnter={(e) => showTooltip(e, "List View")}
@@ -94,6 +106,107 @@ export default function WishListPage() {
                 </div>
                 {tooltip && <Tooltip text={tooltip.text} position={tooltip.position} />}
             </div>
+            {
+                gridView ?
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr", gap:"20px"}}>
+                    {
+                        data.length > 0 &&
+                        data.map((item, index) =>{
+                            return(
+                                <div className="product-card-grid" key={item.images.productColorID + index}>
+                                    <Link  href={`/ProductPage/${item.product.product_ID}/${item.images.productColorID}`} >
+                                        {
+                                            item?.images &&
+                                            <>
+                                                <Image style={{borderRadius:"10px",border:"1px solid #ccc", overflow:"hidden"}} className="Image" alt="" height={500} width={500} src={item.images.isPrimary}/>
+                                            </>
+                                        }
+                                    </Link>
+                                    <div style={{padding:"10px"}}>
+                                        <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+                                            {
+                                                item.productStock &&
+                                                <div style={{display:"flex", alignItems:"center", justifyContent:"center"}}>
+                                                    <p style={{padding:"10px"}}>
+                                                        ₾{item.productStock.price_lari}
+                                                    </p>
+                                                </div>
+                                            }
+                                            <div>
+                                                <svg
+                                                    style={{cursor:"pointer"}}
+                                                    onMouseEnter={(e) => showTooltip(e, "Delete")}
+                                                    onMouseLeave={hideTooltip}
+                                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <button className='addToCart-Button'>
+                                                Add to Cart
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        })
+                    }
+                </div>
+                :
+                <div style={{display:"grid",gridTemplateColumns:"1fr", gap:"20px"}}>
+                    {
+                        data.length > 0 &&
+                        data.map((item, index) =>{
+                            return(
+                                <div className='product-card-line' key={item.images.productColorID + index}>
+                                    <Link  href={`/ProductPage/${item.product.product_ID}/${item.images.productColorID}`} >
+                                            {
+                                                item?.images &&
+                                                <>
+                                                    <Image style={{borderRadius:"10px",border:"1px solid #ccc", overflow:"hidden"}} className="Image" alt="" height={500} width={500} src={item.images.isPrimary}/>
+                                                </>
+                                            }
+                                    </Link>
+                                    <div style={{padding:"10px", width:"86%", display:"flex", flexDirection:"column"}}>
+                                        <h3 style={{padding:"10px 0px"}}>{currentLanguage === "en" ? item.product.title_en : item.product.title_ge}</h3>
+                                        <p>{currentLanguage === "en" ? item.product.description_en : item.product.description_ge}</p>
+                                        <div style={{ padding:"10px 0px"}}>
+                                            {
+                                                item.productStock &&
+                                                <div>
+                                                    <p>
+                                                        ₾{item.productStock.price_lari}
+                                                    </p>
+                                                </div>
+                                            }
+
+                                        </div>
+                                        <div style={{display:"flex", gap:"10px", alignItems:"center", padding:"30px 0px"}}>
+                                            <div>
+                                                <button className='addToCart-Button'>
+                                                    Add to Cart
+                                                </button>
+                                            </div>
+                                            <div>
+                                                <svg
+                                                    style={{cursor:"pointer"}}
+                                                    onMouseEnter={(e) => showTooltip(e, "Delete")}
+                                                    onMouseLeave={hideTooltip}
+                                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                                </svg>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            )
+                        })
+                    }
+                </div>
+            }
+
         </div>
     )
 }
