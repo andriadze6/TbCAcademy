@@ -27,14 +27,11 @@
     width: 100%;;
 }
 
-
 .product-card-grid, .product-card-line {
-    transform: translateX(50px);
+    transform: translateX(0);
     transition: transform 0.3s ease-out;
 }
-.show{
-    transform: translateX(0);
-}
+
 
 .product-card-grid, .product-card-line {
   border-radius: 10px;
@@ -62,4 +59,25 @@
 
 .addToCart-Button:hover {
   background-color: #e65c00;
+}
+
+.animation-grid {
+    opacity: 0;
+    transform: translateY(100px);
+    transition: transform 0.3s ease-out;
+}
+.showGrid{
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+.animation-line {
+    opacity: 0;
+    transform: translateX(100px);
+    transition: transform 0.3s ease-out;
+}
+.showLine{
+    opacity: 1;
+    transform: translateX(0);
 }
