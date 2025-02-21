@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from "rea
 import { WishListType } from "@/Type/type";
 import { supabase } from "../../utils/supabase/client";
 import { User } from "@supabase/supabase-js";
+import { useRouter } from 'next/navigation';
 
 interface AuthContextType {
     user: User | null;
@@ -24,7 +25,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const [user, setUser] = useState<User | null>(null);
     const [wishList, setWishList] = useState<WishListType[]>([]);
     const [loading, setLoading] = useState(true);
-
+    const router = useRouter();
     useEffect(() => {
         const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
             if (event === 'INITIAL_SESSION') {
@@ -41,6 +42,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 setUser(null);
                 setWishList([]);
                 localStorage.removeItem("wishList");
+                router.replace("/");
             }
         });
 

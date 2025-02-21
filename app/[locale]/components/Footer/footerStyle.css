@@ -5,6 +5,7 @@
 }
 
 .footer {
+    margin-top:20px;
     background: var(--footerBackground);
     color: var(--footerTextColor);
     padding: 20px 0;

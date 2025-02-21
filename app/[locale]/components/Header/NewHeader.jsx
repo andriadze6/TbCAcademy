@@ -21,8 +21,10 @@ function Header(){
     const t = useTranslations('HomePage');
     const router = useRouter();
     const currentLanguage = useLocale();
-    // const [isSticky, setIsSticky] = useState(false);
 
+
+    /// Sticky header
+    // const [isSticky, setIsSticky] = useState(false);
     // useEffect(() => {
     //     const handleScroll = () => {
     //         const header1Height = document.querySelector(".header1-Div")?.offsetHeight || 0;
@@ -32,25 +34,7 @@ function Header(){
     //     window.addEventListener("scroll", handleScroll);
     //     return () => window.removeEventListener("scroll", handleScroll);
     // }, []);
-    //  async function ChangeWishListAmount(){
-    //     let { data: WishList, error } = await supabase
-    //         .from('WishList')
-    //         .select("id")
-    //         // Filters
-    //         .eq('user_ID',user.id)
-    //         setWishList(WishList)
-    //  }
-    async function handleLogout() {
-        const response = await fetch("/api/LogOut", { method: "POST" });
-        if (response.ok) {
-            console.log("User logged out successfully");
-            // ✅ Update UI Immediately
-            setUser(null);
-            router.replace(`/${currentLanguage}`);
-        } else {
-            console.error("Logout failed");
-        }
-    }
+
     return(
         <ThemeProvider>
         <header>
@@ -78,17 +62,14 @@ function Header(){
                         <div>
                             {user?
                                 (
-                                    <div>
-                                        <Link href={`/${currentLanguage}/Login`}>
-                                            <svg style={{width:"30px", height:"30px", cursor:"pointer"}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                            </svg>
-                                        </Link>
-                                        {/* <div onClick={handleLogout}>LogOut</div> */}
-                                    </div>
+                                    <Link style={{cursor:"pointer"}} href={`/${currentLanguage}/MyAccount`}>
+                                        <svg style={{width:"30px", height:"30px", cursor:"pointer"}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                        </svg>
+                                    </Link>
                                 )
                                 :
-                                <Link href={`/${currentLanguage}/Login`}>
+                                <Link style={{cursor:"pointer"}} href={`/${currentLanguage}/Login`}>
                                     <svg style={{width:"30px", height:"30px", cursor:"pointer"}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
                                     </svg>
