@@ -12,15 +12,17 @@ import {useTranslations, useLocale } from 'next-intl';
 export default function WishListPage() {
     const [tooltip, setTooltip] = useState(null);
     const[data, setData] = useState([]);
-    const {  wishList } = useAuth();
+    const {  wishList, DeleteItemFromWishList } = useAuth();
     const currentLanguage = useLocale();
     const [gridView, setView] = useState(true);
     const [showElements, setShowElements] = useState(false);
+    const t = useTranslations('LoginCreateAccount');
+
 
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await fetch('/api/GetWishList',{
+                const response = await fetch('/api/GetWishListItems',{
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -44,6 +46,7 @@ export default function WishListPage() {
         setShowElements(false); // Reset animation on view change
         setTimeout(() => setShowElements(true), 400);
     }, [gridView]); // Run when view changes
+    
     const showTooltip = (event, text) => {
         const rect = event.target.getBoundingClientRect();
         setTooltip({
@@ -92,7 +95,7 @@ export default function WishListPage() {
                         </div>
 
                     </div>
-                    <div style={{display:"flex", gap:"16px", alignItems:"center"}}>
+                    {/* <div style={{display:"flex", gap:"16px", alignItems:"center"}}>
                         <div>
                             <svg
                             style={{cursor:"pointer"}}
@@ -104,19 +107,19 @@ export default function WishListPage() {
                         </div>
                         <span> Showing 25 Products</span>
 
-                    </div>
+                    </div> */}
                     {tooltip && <Tooltip text={tooltip.text} position={tooltip.position} />}
                 </div>
             </div>
             <div className="WishList-Page">
                 {
                     gridView ?
-                    <div className={`animation-grid ${showElements ? "showGrid" : ""}`} style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr", gap:"20px"}}>
+                    <div className={`animation-grid ${showElements ? "showGrid" : ""}`} style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr", gap:"20px", width:"80%", margin:"0 auto"}}>
                         {
                             data.length > 0 &&
                             data.map((item, index) =>{
                                 return(
-                                    <div className="product-card-grid" key={item.images.productColorID + index}>
+                                    <div className="product-card-grid" key={item.productStock.productStockID + "grid"}>
                                         <Link  href={`/ProductPage/${item.product.product_ID}/${item.images.productColorID}`} >
                                             {
                                                 item?.images &&
@@ -127,15 +130,21 @@ export default function WishListPage() {
                                         </Link>
                                         <div style={{padding:"10px"}}>
                                             <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+                                                <div style={{display:"flex", alignItems:"center", justifyContent:"center"}}>
+                                                    <p className={`animation-grid ${showElements ? "showGrid" : ""}`} style={{padding:"10px"}}>
+                                                        ₾{item.productStock.price_lari}
+                                                    </p>
+                                                </div>
                                                 {
-                                                    item.productStock &&
+                                                    item.productStock.size &&
                                                     <div style={{display:"flex", alignItems:"center", justifyContent:"center"}}>
                                                         <p className={`animation-grid ${showElements ? "showGrid" : ""}`} style={{padding:"10px"}}>
-                                                            ₾{item.productStock.price_lari}
+                                                            Size:{item.productStock.size}
                                                         </p>
                                                     </div>
                                                 }
-                                                <div className={`animation-grid ${showElements ? "showGrid" : ""}`}>
+                                                <div className={`animation-grid ${showElements ? "showGrid" : ""}`}
+                                                    onClick={() => DeleteItemFromWishList(item.id,item.productStock.productStockID, item.amount)}>
                                                     <svg
                                                         style={{cursor:"pointer"}}
                                                         onMouseEnter={(e) => showTooltip(e, "Delete")}
@@ -157,12 +166,12 @@ export default function WishListPage() {
                         }
                     </div>
                     :
-                    <div className={`animation-line ${showElements ? "showLine" : ""}`} style={{display:"grid",gridTemplateColumns:"1fr", gap:"20px"}}>
+                    <div className={`animation-line ${showElements ? "showLine" : ""}`} style={{display:"grid",gridTemplateColumns:"1fr", gap:"20px", width:"80%", margin:"0 auto"}}>
                         {
                             data.length > 0 &&
                             data.map((item, index) =>{
                                 return(
-                                    <div className='product-card-line' key={item.images.productColorID + index}>
+                                    <div className='product-card-line' key={item.productStock.productStockID + "line"}>
                                         <Link  href={`/ProductPage/${item.product.product_ID}/${item.images.productColorID}`} >
                                                 {
                                                     item?.images &&
@@ -171,19 +180,25 @@ export default function WishListPage() {
                                                     </>
                                                 }
                                         </Link>
-                                        <div style={{padding:"10px", width:"86%", display:"flex", flexDirection:"column"}}>
+                                        <div style={{padding:"10px", width:"86%", display:"flex", flexDirection:"column", justifyContent:"center"}}>
                                             <h3 className={`animation-line ${showElements ? "showLine" : ""}`} style={{padding:"10px 0px"}}>{currentLanguage === "en" ? item.product.title_en : item.product.title_ge}</h3>
                                             <p  className={`animation-line ${showElements ? "showLine" : ""}`}>{currentLanguage === "en" ? item.product.description_en : item.product.description_ge}</p>
                                             <div style={{ padding:"10px 0px"}}>
                                                 {
                                                     item.productStock &&
-                                                    <div>
-                                                        <p className={`animation-line ${showElements ? "showLine" : ""}`}>
-                                                            ₾{item.productStock.price_lari}
-                                                        </p>
-                                                    </div>
+                                                    <p className={`animation-line ${showElements ? "showLine" : ""}`}>
+                                                        ₾{item.productStock.price_lari}
+                                                    </p>
                                                 }
 
+                                            </div>
+                                            <div style={{ padding:"10px 0px"}}>
+                                            {
+                                                item.productStock.size &&
+                                                <p className={`animation-grid ${showElements ? "showGrid" : ""}`}>
+                                                    Size:{item.productStock.size}
+                                                </p>
+                                            }
                                             </div>
                                             <div className={`animation-line ${showElements ? "showLine" : ""}`} style={{display:"flex", gap:"10px", alignItems:"center", padding:"30px 0px"}}>
                                                 <div>
@@ -191,7 +206,8 @@ export default function WishListPage() {
                                                         Add to Cart
                                                     </button>
                                                 </div>
-                                                <div>
+                                                <div
+                                                    onClick={() => DeleteItemFromWishList(item.id,item.productStock.productStockID, item.amount)}>
                                                     <svg
                                                         style={{cursor:"pointer"}}
                                                         onMouseEnter={(e) => showTooltip(e, "Delete")}

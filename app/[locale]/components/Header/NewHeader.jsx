@@ -1,5 +1,6 @@
 'use client'
 import '../../assets/css/NewHeader.css'
+import { useEffect, useState } from "react";
 import {useTranslations, useLocale } from 'next-intl';
 import { LanguagePicker } from '../Header/languageSwitcher';
 import { ThemeProvider } from '../../../providers/ThemeProvider';
@@ -20,6 +21,17 @@ function Header(){
     const t = useTranslations('HomePage');
     const router = useRouter();
     const currentLanguage = useLocale();
+    // const [isSticky, setIsSticky] = useState(false);
+
+    // useEffect(() => {
+    //     const handleScroll = () => {
+    //         const header1Height = document.querySelector(".header1-Div")?.offsetHeight || 0;
+    //         setIsSticky(window.scrollY > header1Height);
+    //     };
+
+    //     window.addEventListener("scroll", handleScroll);
+    //     return () => window.removeEventListener("scroll", handleScroll);
+    // }, []);
     //  async function ChangeWishListAmount(){
     //     let { data: WishList, error } = await supabase
     //         .from('WishList')
@@ -86,7 +98,7 @@ function Header(){
                     </div>
                 </div>
             </div>
-            <div className='header2-wrapper'>
+            <div className={`header2-wrapper `}>
                 <div className='header2-Div'>
                         <div className='Header-Logo-Div'>
                             <Image className='logo' src={logo} alt="" />

@@ -5,6 +5,7 @@ import { routing } from '../../i18n/routing';
 import { AuthProvider } from '../providers/UserSessionProvider';
 import "../globals.css";
 import Header from './components/Header/NewHeader';
+import Footer from './components/Footer/footer'
 
 export const metadata = {
   title: "Shopping site",
@@ -19,12 +20,13 @@ export default async function LocaleLayout({ children, params: { locale } }) {
 
   return (
     <html lang={locale}>
-      <body>
+      <body style={{position:"relative"}}>
         <AuthProvider>
           <NextIntlClientProvider messages={messages}>
               <Header />
               {children}
               <div id="popup-root"></div>
+              <Footer/>
           </NextIntlClientProvider>
         </AuthProvider>
       </body>

@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server';
 import { WishListType, productStockType,globalInfoType, ImagesType } from "@/Type/type";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-    const  wishList = await request.json();
+    const  wishList = await request.json() as WishListType[];
     const supabase = await createClient();
 
     const productIDs = Array.from(new Set(wishList.map(item => item.product_ID)));
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         // მონაცემების ერთიანად წამოღება
         const [globalProductInfo, images, productStock] = await Promise.all([
             supabase.from('GlobalProductInfo')
-                .select('*')
+                .select('description_en, description_ge, details_en, details_ge, gender, title_en, title_ge, product_id')
                 .in('product_id', productIDs),
             supabase.from('Images')
                 .select('productColorID, isPrimary')
@@ -39,10 +39,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             (productStock.data || []).map(stock => [stock.productStockID, stock] as [string, productStockType])
         );
         // საბოლოო შედეგის ფორმატირება
-        const results = wishList.map(({ product_ID, color_ID, productStockID }) => ({
+        const results = wishList.map(({id, product_ID, color_ID, productStockID, amount }) => ({
+            id: id,
             product: productMap.get(product_ID) || null,
             productStock: productStockID ? stockMap.get(productStockID) || null : null,
-            images: color_ID ? imagesMap.get(color_ID) || null : null
+            images: color_ID ? imagesMap.get(color_ID) || null : null,
+            amount: amount
         }));
 
         return NextResponse.json(results);

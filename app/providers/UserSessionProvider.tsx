@@ -10,6 +10,7 @@ interface AuthContextType {
     setUser: React.Dispatch<React.SetStateAction<User | null>>;
     wishList: WishListType[];
     AddToWishList: (productID: string, colorID: string, productStockID?: string, amount?: number) => Promise<void>;
+    DeleteItemFromWishList: (id: string, productStockID?: string, amount?: number) => Promise<void>;
     loading: boolean;
 }
 
@@ -47,26 +48,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
             subscription?.unsubscribe();
         };
     }, []);
-
-    useEffect(() => {
-        console.log("open channel");
-        if (!user?.id) return;
-        const wishListSubscription = supabase.channel('custom-filter-channel')
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'WishList', filter: `user_ID=eq.${user.id}` },
-                (payload) => {
-                    console.log('Wishlist change received!', payload);
-                    ChangeWishListAmount(user.id);
-                }
-            )
-            .subscribe();
-
-        return () => {
-            supabase.removeChannel(wishListSubscription);
-        };
-    }, [user]);
-
     const ChangeWishListAmount = useCallback(async (id?: string) => {
         try {
             console.log("Fetching wishlist...");
@@ -116,10 +97,36 @@ export function AuthProvider({ children }: AuthProviderProps) {
         } catch (err) {
             console.error("Error adding to wishlist:", err);
         }
-    }, [user, wishList, ChangeWishListAmount]);
+    }, [user, wishList]);
 
+    const DeleteItemFromWishList = useCallback(async (id: string, productStockID?: string, amount?: number) => {
+        try {
+            if (!id || !productStockID || !amount) return;
+            debugger
+            if (user) {
+                const response = await fetch("/api/DeleteItemFromWishList", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ ID: id }),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to delete item from wishlist");
+                }
+                let result = await response.json(); // Assuming the response is JSON
+                const newWishList = wishList.filter((item) => item.id !== id);
+                setWishList(newWishList);
+            } else {
+                const newWishList = wishList.filter((item) => item.productStockID !== productStockID && amount !== item.amount);
+                localStorage.setItem("wishList", JSON.stringify(newWishList));
+                setWishList(newWishList);
+            }
+        } catch (err) {
+            console.error("Error deleting item from wishlist:", err);
+        }
+    }, [user, wishList]);
     return (
-        <AuthContext.Provider value={{ user, setUser, wishList, AddToWishList, loading }}>
+        <AuthContext.Provider value={{ user, setUser, wishList, AddToWishList, DeleteItemFromWishList, loading }}>
             {children}
         </AuthContext.Provider>
     );
