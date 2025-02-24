@@ -26,12 +26,24 @@
       "MatchPassword":"პაროლი არ ემთხვევა",
       "MinPassword":"პაროლი უნდა იყოს მინიმუმ 8 სიმბოლო",
       "InvalidEmail":"არასწორი ელფოსტა",
-      "EmailExist":"ამ ელფოსტით მომხმარებელი უკვე არსებობს",
-      "Logout":"გამოსვლა",
+      "EmailExist":"ამ ელფოსტით მომხმარებელი უკვე არსებობს"
+    },
+    "MyAccount":{
+      "MyAccount":"ჩემი პროფილი",
+      "Address":"მისამართი",
+      "DeliveryAddress":"მიწოდების მისამართი",
+      "Orders":"შეკვეთები",
+      "ShoppingCart":"საყიდლების კალათი",
+      "WishList":"სურვილების სია",
+      "AddNewAddress":"ახალი მისამართის დამატება",
+      "EditAddress":"მისამართის რედაქტირება",
+      "DeleteAddress":"წაშალე მისამართი",
+      "ShippingAddress":"მიწოდების მისამართი",
+      "UpdateAddress":"მისამართის შეცვლა",
+      "LogOut":"გასვლა",
       "Name":"სახელი",
       "LastName":"გვარი",
       "Phone":"ტელეფონი",
-      "Address":"მისამართი",
       "City":"ქალაქი",
       "Country":"ქვეყანა",
       "PostalCode":"ფოსტის კოდი",
@@ -43,5 +55,6 @@
       "Municipality": "მუნიციპალიტეტი",
       "SaveChanges":"შეინახე ცვლილებები",
       "buildingNumber":"ბინა, ლუქსი, შენობა, სართული და ა.შ."
+
     }
   }

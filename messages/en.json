@@ -42,5 +42,33 @@
       "Municipality": "Municipality",
       "SaveChanges":"Save changes",
       "buildingNumber":"Apartment, suite,building, floor, etc."
+    },
+    "MyAccount":{
+      "MyAccount":"My account",
+      "Address":"Address",
+      "DeliveryAddress":"Delivery Address",
+      "Orders":"Orders",
+      "ShoppingCart":"Shopping Cart",
+      "WishList":"Wish list",
+      "AddNewAddress":"Add New Address",
+      "EditAddress":"Edit Address",
+      "DeleteAddress":"Delete Address",
+      "BillingAddress":"Billing Address",
+      "ShippingAddress":"Shipping Address",
+      "UpdateAddress":"Update Address",
+      "LogOut":"Logout",
+      "Name":"Name",
+      "LastName":"Last Name",
+      "Phone":"Phone",
+      "City":"City",
+      "Country":"Country",
+      "PostalCode":"Postal Code",
+      "UpdateProfile":"Update Profile",
+      "Type": "Type",
+      "StreetAddress": "Street Address",
+      "Region": "Region",
+      "Municipality": "Municipality",
+      "SaveChanges":"Save changes",
+      "buildingNumber":"Apartment, suite,building, floor, etc."
     }
-  }
+}

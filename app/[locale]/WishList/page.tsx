@@ -12,7 +12,7 @@ import {useTranslations, useLocale } from 'next-intl';
 export default function WishListPage() {
     const [tooltip, setTooltip] = useState(null);
     const[data, setData] = useState([]);
-    const {  wishList, DeleteItemFromWishList } = useAuth();
+    const {  wishList, AddToCart,DeleteItemFromWishList } = useAuth();
     const currentLanguage = useLocale();
     const [gridView, setView] = useState(true);
     const [showElements, setShowElements] = useState(false);
@@ -22,7 +22,7 @@ export default function WishListPage() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await fetch('/api/GetWishListItems',{
+                const response = await fetch('/api/GetItems',{
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ export default function WishListPage() {
         setShowElements(false); // Reset animation on view change
         setTimeout(() => setShowElements(true), 400);
     }, [gridView]); // Run when view changes
-    
+
     const showTooltip = (event, text) => {
         const rect = event.target.getBoundingClientRect();
         setTooltip({
@@ -120,7 +120,7 @@ export default function WishListPage() {
                             data.map((item, index) =>{
                                 return(
                                     <div className="product-card-grid" key={item.productStock.productStockID + "grid"}>
-                                        <Link  href={`/ProductPage/${item.product.product_ID}/${item.images.productColorID}`} >
+                                        <Link  href={`/ProductPage/${item.product.product_id}/${item.images.productColorID}`} >
                                             {
                                                 item?.images &&
                                                 <>
@@ -155,7 +155,7 @@ export default function WishListPage() {
                                                 </div>
                                             </div>
                                             <div>
-                                                <button className='addToCart-Button'>
+                                                <button onClick={() => AddToCart(item.product.product_id, item.images.productColorID, item.productStock.productStockID, item.amount)} className='addToCart-Button'>
                                                     Add to Cart
                                                 </button>
                                             </div>
@@ -202,7 +202,7 @@ export default function WishListPage() {
                                             </div>
                                             <div className={`animation-line ${showElements ? "showLine" : ""}`} style={{display:"flex", gap:"10px", alignItems:"center", padding:"30px 0px"}}>
                                                 <div>
-                                                    <button className='addToCart-Button'>
+                                                <button onClick={() => AddToCart(item.product.product_id, item.images.productColorID, item.productStock.productStockID, item.amount)} className='addToCart-Button'>
                                                         Add to Cart
                                                     </button>
                                                 </div>

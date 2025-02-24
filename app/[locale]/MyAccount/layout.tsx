@@ -13,20 +13,21 @@ export default function MyAccountLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  const t = useTranslations('LoginCreateAccount');
+  const t = useTranslations('MyAccount');
   async function handleLogout() {
     const { error } = await supabase.auth.signOut()
 }
   return (
       <div className="myAccount-wrapper">
-        <h1>Your Account</h1>
+        <h1>{t("MyAccount")}</h1>
         <main>
           <header className="header-MyAccount">
             <nav className="nav-MyAccount">
-                <Link href={`/${locale}/MyAccount`} className='navName'>{t("Address")}</Link>
-                <Link href={`/${locale}/ShoppingCart`} className='navName'>Shopping cart</Link>
-                <Link href={`/${locale}/WishList`} className='navName'>Wish list</Link>
-                <p onClick={()=>{handleLogout()}} className="navName">Log out</p>
+                <Link href={`/${locale}/MyAccount`} className='navName'>{t("DeliveryAddress")}</Link>
+                <Link href={`/${locale}/MyAccount`} className='navName'>{t("Orders")}</Link>
+                <Link href={`/${locale}/ShoppingCart`} className='navName'>{t("ShoppingCart")}</Link>
+                <Link href={`/${locale}/WishList`} className='navName'>{t("WishList")}</Link>
+                <p onClick={()=>{handleLogout()}} className="navName">{t("LogOut")}</p>
             </nav>
           </header>
           <div className="myAccount-Page">

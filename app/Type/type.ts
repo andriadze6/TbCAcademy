@@ -54,6 +54,7 @@ export type productStockType = {
 export type ImagesType = {
     imageURL: string[];
     productColorID: string;
+    isPrimary: string
 }
 
 export type GlobalProductInfoType = {
@@ -79,7 +80,7 @@ export type DeliveryAddressType = {
   zip_Code: string;
   default: boolean
 };
-export type WishListType = {
+export type ItemListType = {
     id:string;
     user_ID:string;
     product_ID:string;

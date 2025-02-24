@@ -20,7 +20,7 @@ export default async function LocaleLayout({ children, params: { locale } }) {
 
   return (
     <html lang={locale}>
-      <body style={{position:"relative"}}>
+      <body style={{position:"relative",height:"100%"}}>
         <AuthProvider>
           <NextIntlClientProvider messages={messages}>
               <Header />

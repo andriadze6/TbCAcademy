@@ -1,10 +1,10 @@
 import { createClient } from '../../../../utils/supabase/server';
 import { NextResponse } from "next/server";
 import type { NextRequest } from 'next/server';
-import { WishListType, productStockType,globalInfoType, ImagesType } from "@/Type/type";
+import { ItemListType, productStockType,globalInfoType, ImagesType } from "@/Type/type";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-    const  wishList = await request.json() as WishListType[];
+    const  wishList = await request.json() as ItemListType[];
     const supabase = await createClient();
 
     const productIDs = Array.from(new Set(wishList.map(item => item.product_ID)));

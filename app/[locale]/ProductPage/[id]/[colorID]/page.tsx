@@ -7,23 +7,35 @@ import { useState, useEffect } from 'react';
 import {useTranslations, useLocale } from 'next-intl';
 import { useAuth } from '../../../../providers/UserSessionProvider';
 import{useParams} from 'next/navigation'
+import {productStockType, productColorsType, globalInfoType, ImagesType} from '../../../../Type/type'
+import Tooltip from '../../../components/Tooltip';
+import { set } from '@auth0/nextjs-auth0/dist/session';
 
 const initialState = {
-    globalProductInfo: {},
-    productColors: [],
-    productStock: [],
-    images: [],
-    navImages: [],
-    sliderImages: [],
-    imageAmount:0
+    globalProductInfo: {} as globalInfoType,
+    productColors: [] as productColorsType[],
+    productStock: [] as productStockType[],
+    images: [] as ImagesType[],
+    navImages: [] as string[],
+    sliderImages: [] as string[],
+    imageAmount:0 as number,
 };
 export default function ProductPage() {
+    const [tooltip, setTooltip] = useState(null);
     const [productData, setProductData] = useState(initialState);
     const { sliderState, changeSlider, skipSlider } = useSlider();
-    const { ID, colorID } = useParams();
+    const { ID, colorID } = useParams<{ ID: string, colorID: string}>();
     const [amount, setAmount] = useState(1);
+    const [selectedItem, setSelectedItem] = useState({
+        productStockID: null,
+        colorID:colorID as string,
+        size: null,
+        amount: 1,
+        wishListID: null,
+        cartID: null
+    });
     const currentLanguage = useLocale();
-    const {  user, setUser, wishList, AddToWishList  } = useAuth();
+    const {  user, setUser, wishList, AddToWishList, cart, AddToCart, DeleteItemFromWishList, DeleteItemFromCart  } = useAuth();
 
     useEffect(() => {
         (async function fetchProductData() {
@@ -38,11 +50,9 @@ export default function ProductPage() {
                     console.log(data)
                     setProductData({
                         globalProductInfo: data.globalProductInfo[0],
-                        productColors: data.productColors,
-                        productStock: data.productStock,
-                        images: data.images,
-                        currentColorID:colorID,
-                        currentSize: null,
+                        productColors: data.productColors as productColorsType[],
+                        productStock: data.productStock as productStockType[],
+                        images: data.images as ImagesType[],
                         navImages,
                         sliderImages,
                         imageAmount
@@ -54,6 +64,17 @@ export default function ProductPage() {
             }
         })();
     },[ID,colorID]); ///ID უნდა იყოს დამოკიდებული
+
+    useEffect(()=>{
+        debugger
+        if(selectedItem.productStockID){
+            const checkWishList = wishList.find(item=>item.productStockID === selectedItem.productStockID)
+            const checkCart = cart.find(item=>item.productStockID === selectedItem.productStockID)
+            setSelectedItem({...selectedItem, wishListID: checkWishList?.id, cartID: checkCart?.id})
+        }
+    },[wishList, cart])
+
+
 
     function createSlider(imagesArray, cID) {
         const navImages = [];
@@ -103,10 +124,13 @@ export default function ProductPage() {
     function changeColor(colorID){
         const { navImages, sliderImages, imageAmount } = createSlider(productData.images, colorID);
         debugger
+        setSelectedItem({
+            ...selectedItem,
+            productStockID: null,
+            colorID: colorID
+        })
         setProductData({
             ...productData,
-            currentColorID: colorID,
-            currentSize: null,
             navImages,
             sliderImages,
             imageAmount
@@ -150,11 +174,65 @@ export default function ProductPage() {
         })
     }
 
-    function AddToList() {
-        if (productData.currentSize && amount) {
-            AddToWishList(ID,productData.currentColorID, productData.currentSize, amount)
+
+   async function WisList(){
+        if(selectedItem.productStockID){
+           await AddToWishList(ID,selectedItem.colorID, selectedItem.productStockID, amount)
         }
     }
+   async function DeleteWishList(){
+        if(selectedItem.wishListID){
+          await  DeleteItemFromCart(selectedItem.wishListID, selectedItem.productStockID)
+        }
+    }
+
+    async function Cart(){
+        if(selectedItem.productStockID){
+            await AddToCart(ID,selectedItem.colorID, selectedItem.productStockID, amount)
+        }
+    }
+async function DeleteCart(){
+    if(selectedItem.cartID){
+        await DeleteItemFromCart(selectedItem.cartID, selectedItem.productStockID)
+    }
+}
+
+    function changeSize(productStockID:string){
+        const checkWishList = wishList.find(item=>item.productStockID === productStockID)
+        const checkCart = cart.find(item=>item.productStockID === productStockID)
+        if(checkWishList || checkCart){
+            setSelectedItem({
+                ...selectedItem,
+                productStockID: productStockID,
+                wishListID: checkWishList?.id,
+                cartID: checkCart?.id
+            })
+        }
+        else{
+            setSelectedItem({
+                ...selectedItem,
+                productStockID: productStockID,
+                wishListID: null,
+                cartID: null
+            })
+        }
+    }
+    const showTooltip = (event, text) => {
+        const rect = event.target.getBoundingClientRect();
+        setTooltip({
+          text,
+          position: {
+            top: rect.top + window.scrollY - 30,
+            left: rect.left + window.scrollX + rect.width / 2,
+          },
+        });
+      };
+    const hideTooltip = () => {
+        setTooltip(null);
+      };
+
+
+
     function createDetails(language){
         let detail = `detail_${language}`
         let list= []
@@ -185,10 +263,10 @@ export default function ProductPage() {
                         <h4 style={{marginBottom:"10px"}}>price:</h4>
                         <div className='bottom_Margin' style={{display:"flex",gap:"20px"}}>
                             {
-                                productData.currentSize != null ?
+                                selectedItem.productStockID != null ?
                                 <div className='current-Price' style={{display:"flex"}}>
                                     <h3 className='product-currency'>₾</h3>
-                                    <h3 className='product-Price'>{ productData.productStock[productData.currentColorID][productData.currentSize].price_lari}</h3>
+                                    <h3 className='product-Price'>{ productData.productStock[selectedItem.colorID][selectedItem.productStockID].price_lari}</h3>
                                 </div>
                                 : <h4 style={{marginBottom:"10px"}}>To see price choose size</h4>
                             }
@@ -204,7 +282,7 @@ export default function ProductPage() {
                                         <button
                                         onClick={()=>changeColor(item.productColorID)} key={item.productColorID} className='color_Img_Button'>
                                             <Image
-                                            style={productData.currentColorID != item.productColorID ? {border:"1px solid rgba(163, 192, 200, 0.771)"}:{border:"2px solid rgba(178,1,14,0.6671043417366946)"}}
+                                            style={selectedItem.colorID != item.productColorID ? {border:"1px solid rgba(163, 192, 200, 0.771)"}:{border:"2px solid rgba(178,1,14,0.6671043417366946)"}}
                                             className={`color_Img ${index === sliderState.clickAmount ? "border" : ""}`} width={500} height={500} src={item.isPrimary} alt="" />
                                         </button>
                                     )
@@ -215,11 +293,11 @@ export default function ProductPage() {
                     <div className='bottom_Margin size_Div'>
                             <div className='size-Container'>
                                 {
-                                    Object.entries(productData.productStock[productData.currentColorID]).map(([key, value], index)=>{
+                                    Object.entries(productData.productStock[selectedItem.colorID]).map(([key, value]:[string, productStockType], index)=>{
                                         return (
                                             <button
-                                            style={productData.currentSize != key ? {border:"1px solid rgba(163, 192, 200, 0.771)"}:{border:"2px solid rgba(178,1,14,0.6671043417366946)"}}
-                                             onClick={()=>setProductData({...productData, currentSize: value.productStockID})}
+                                            style={selectedItem.productStockID != key ? {border:"1px solid rgba(163, 192, 200, 0.771)"}:{border:"2px solid rgba(178,1,14,0.6671043417366946)"}}
+                                             onClick={()=>{changeSize(value.productStockID)}}
                                             className='size_Button' key={`${value.productStockID}`}>{value.size}</button>
                                         )
                                     })
@@ -230,25 +308,41 @@ export default function ProductPage() {
                         <button className='size-chart-Button'>Size chart</button>
                     </div>
                     <div style={{display:"flex",gap:"20px", alignItems:"center", width:"100%"}} className='bottom_Margin'>
-                                <div className='select-Amount'>
-                                    <button onClick={()=>{changeAmount(-1)}} className='select-Amount-Button'>-</button>
-                                    <h5 className='select-Amount-Number'>{amount}</h5>
-                                    <button onClick={()=>{changeAmount(1)}} className='select-Amount-Button'>+</button>
-                                </div>
-                                <div className='addToCart' style={{width:"100%"}}>
-                                    <button className='addToCart-Button'>
-                                        <svg className='addToCart-Icon' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                                            <path  d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                                        </svg>
-                                    Add to cart</button>
-                                </div>
-                                <div className='addToCart' style={{width:"100%"}}>
-                                    <button onClick={()=>{AddToList()}} className='addToCart-Button'>
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"></path>
-                                        </svg>
-                                    Add to wish List</button>
-                                </div>
+                        <div className='select-Amount'>
+                            <button onClick={()=>{changeAmount(-1)}} className='select-Amount-Button'>-</button>
+                            <h5 className='select-Amount-Number'>{amount}</h5>
+                            <button onClick={()=>{changeAmount(1)}} className='select-Amount-Button'>+</button>
+                        </div>
+                        <div
+                            style={{width:"100%"}}
+                            onMouseEnter={(e) => showTooltip(e,selectedItem.productStockID? (selectedItem.cartID ? "Remove from cart" : "Add to cart") : "Choose size")}
+                            onMouseLeave={hideTooltip}>
+                            <button
+                             style={{
+                                 background: selectedItem.cartID ? "radial-gradient(circle, rgba(230,139,0,1) 9%, rgba(230,123,0,1) 50%, rgba(230,92,0,1) 100%)" : "radial-gradient(circle, rgba(76,129,144,1) 28%, rgba(40,24,52,0.9360119047619048) 100%)"
+                             }}
+                            onClick={selectedItem.cartID ? ()=>{DeleteCart()} : () => {Cart()}}
+                            className='addToCart-Button'>
+                                <svg className='addToCart-Icon' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                    <path  d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                                </svg>
+                            Add to cart</button>
+                        </div>
+                        <div
+                            onMouseEnter={(e) => showTooltip(e,selectedItem.productStockID? (selectedItem.wishListID ? "Remove from wish list" : "Add to wish list") : "Choose size")}
+                            onMouseLeave={hideTooltip}>
+                            <button
+                                className='addWishList-Button'
+                                onClick={selectedItem.wishListID ? ()=>{DeleteWishList()} : ()=>{WisList()}}
+                                style={{
+                                    background: selectedItem.wishListID ? "radial-gradient(circle, rgba(230,139,0,1) 9%, rgba(230,123,0,1) 50%, rgba(230,92,0,1) 100%)" : "radial-gradient(circle, rgba(76,129,144,1) 28%, rgba(40,24,52,0.9360119047619048) 100%)"
+                                }}
+                                >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"></path>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                     <div className='bottom_Margin'>
                         <button className='buyNow-Button'>Buy now</button>
@@ -257,9 +351,9 @@ export default function ProductPage() {
                                 <h4 style={{marginBottom:"10px"}}>Product details</h4>
                                 <ul className='product-Details-list'>
                                     <li>Gender : {productData.globalProductInfo.gender}</li>
-                                    {
+                                    {/* {
                                         <createDetails language={currentLanguage}></createDetails>
-                                    }
+                                    } */}
                                 </ul>
                     </div>
                     <div className='bottom_Margin delivery-Div'>
@@ -276,6 +370,7 @@ export default function ProductPage() {
                                 <h5>Estimate delivery times: 3-6 days (international)( 27 )</h5>
                             </div>
                     </div>
+                    {tooltip && <Tooltip text={tooltip.text} position={tooltip.position} />}
                 </div>
             </div>
             }
