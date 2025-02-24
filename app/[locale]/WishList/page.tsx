@@ -144,7 +144,7 @@ export default function WishListPage() {
                                                     </div>
                                                 }
                                                 <div className={`animation-grid ${showElements ? "showGrid" : ""}`}
-                                                    onClick={() => DeleteItemFromWishList(item.id,item.productStock.productStockID, item.amount)}>
+                                                    onClick={() => DeleteItemFromWishList(item.id,item.productStock.productStockID)}>
                                                     <svg
                                                         style={{cursor:"pointer"}}
                                                         onMouseEnter={(e) => showTooltip(e, "Delete")}
@@ -207,7 +207,7 @@ export default function WishListPage() {
                                                     </button>
                                                 </div>
                                                 <div
-                                                    onClick={() => DeleteItemFromWishList(item.id,item.productStock.productStockID, item.amount)}>
+                                                    onClick={() => DeleteItemFromWishList(item.id,item.productStock.productStockID)}>
                                                     <svg
                                                         style={{cursor:"pointer"}}
                                                         onMouseEnter={(e) => showTooltip(e, "Delete")}
