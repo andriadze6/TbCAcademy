@@ -3,16 +3,6 @@
 import Image from "next/image";
 import { useState } from "react";
 import useSlider from '../../hooks/changeSlider'
-
-
-import ManTrending from "../../assets/img/homePageImg/Trending/Man/ManTrending.png"
-import ManTrending2 from "../../assets/img/homePageImg/Trending/Man/ManTrending2.png"
-import ManTrending3 from "../../assets/img/homePageImg/Trending/Man/ManTrending3.png"
-import ManTrending4 from "../../assets/img/homePageImg/Trending/Man/ManTrending4.png"
-import ManTrending5 from "../../assets/img/homePageImg/Trending/Man/ManTrending5.png"
-import ManTrending6 from "../../assets/img/homePageImg/Trending/Man/ManTrending6.png"
-import ManTrending7 from "../../assets/img/homePageImg/Trending/Man/ManTrending7.png"
-import ManTrending8 from "../../assets/img/homePageImg/Trending/Man/ManTrending8.png"
 import Link from "next/link";
 
 export default function Slider({man, woman, kid, sliderToShow}){

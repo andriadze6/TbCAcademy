@@ -191,11 +191,11 @@ export default function ProductPage() {
             await AddToCart(ID,selectedItem.colorID, selectedItem.productStockID, amount)
         }
     }
-async function DeleteCart(){
-    if(selectedItem.cartID){
-        await DeleteItemFromCart(selectedItem.cartID, selectedItem.productStockID)
+    async function DeleteCart(){
+        if(selectedItem.cartID){
+            await DeleteItemFromCart(selectedItem.cartID, selectedItem.productStockID)
+        }
     }
-}
 
     function changeSize(productStockID:string){
         const checkWishList = wishList.find(item=>item.productStockID === productStockID)

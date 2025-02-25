@@ -81,3 +81,26 @@
     opacity: 1;
     transform: translateX(0);
 }
+
+.message{
+    opacity: 0;
+    transform: translateY(0px);
+    transition: transform 0.3s ease-out;
+    margin: 0 auto;
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    left: 25%;
+}
+
+.showMessage{
+    opacity: 1;
+    transform: translateY(100px);
+}
+.message p{
+    background: radial-gradient(circle, rgba(76,129,144,1) 28%, rgba(40,24,52,0.9360119047619048) 100%);
+    padding: 20px;
+    border-radius: 5px;
+    color: white;
+}
