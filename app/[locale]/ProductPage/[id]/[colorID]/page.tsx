@@ -314,9 +314,7 @@ export default function ProductPage() {
                             <button onClick={()=>{changeAmount(1)}} className='select-Amount-Button'>+</button>
                         </div>
                         <div
-                            style={{width:"100%"}}
-                            onMouseEnter={(e) => showTooltip(e,selectedItem.productStockID? (selectedItem.cartID ? "Remove from cart" : "Add to cart") : "Choose size")}
-                            onMouseLeave={hideTooltip}>
+                            style={{width:"100%"}}>
                             <button
                              style={{
                                  background: selectedItem.cartID ? "radial-gradient(circle, rgba(230,139,0,1) 9%, rgba(230,123,0,1) 50%, rgba(230,92,0,1) 100%)" : "radial-gradient(circle, rgba(76,129,144,1) 28%, rgba(40,24,52,0.9360119047619048) 100%)"
@@ -326,7 +324,7 @@ export default function ProductPage() {
                                 <svg className='addToCart-Icon' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                                     <path  d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
                                 </svg>
-                            Add to cart</button>
+                            {selectedItem.cartID ? "Remove from cart" : "Add to cart"}</button>
                         </div>
                         <div
                             onMouseEnter={(e) => showTooltip(e,selectedItem.productStockID? (selectedItem.wishListID ? "Remove from wish list" : "Add to wish list") : "Choose size")}

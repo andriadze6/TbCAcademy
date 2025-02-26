@@ -13,7 +13,7 @@ import { set } from '@auth0/nextjs-auth0/dist/session';
 export default function WishListPage() {
     const [tooltip, setTooltip] = useState(null);
     const[data, setData] = useState([]);
-    const {  wishList, cart,AddToCart,DeleteItemFromWishList } = useAuth();
+    const {  wishList, cart,AddToCart,DeleteItemFromWishList, DeleteItemFromCart } = useAuth();
     const currentLanguage = useLocale();
     const [gridView, setView] = useState(true);
     const [showElements, setShowElements] = useState(false);
@@ -30,7 +30,6 @@ export default function WishListPage() {
                     body: JSON.stringify( wishList ),
                 });
                 const result = await response.json();
-                console.log(result);
                 setData(result);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -65,9 +64,10 @@ export default function WishListPage() {
         let checkItemExist = cart.find((item) => item.product_ID === productID && item.color_ID === colorID && item.productStockID === productStockID);
         if(!checkItemExist){
             AddToCart(productID, colorID, productStockID, amount);
-            setMessage("In cart");
+            setMessage("Item added to cart");
         }else{
-            setMessage("Item already exist in cart");
+            DeleteItemFromCart(checkItemExist.id, productStockID);
+            setMessage("Item Deleted from cart");
         }
         setTimeout(() => {
             setMessage(null);
@@ -158,11 +158,21 @@ export default function WishListPage() {
                                                     </svg>
                                                 </div>
                                             </div>
-                                            <div style={{width:"100%", margin:"0 auto"}}>
+                                            <div style={{
+                                                width:"100%",  
+                                                margin:"0 auto",
+                                                }}>
                                                 <button
-                                                    onClick={() => AddCart(item.product.product_id, item.images.productColorID, item.productStock.productStockID, item.amount)} className='addToCart-Button'>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width={24} fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"></path>
+                                                className="addToCart-Button"
+                                                style={{
+                                                    background:`${
+                                                    cart.find((cartItem) => cartItem.productStockID === item.productStock.productStockID) ?
+                                                    "radial-gradient(circle, rgba(230,139,0,1) 9%, rgba(230,123,0,1) 50%, rgba(230,92,0,1) 100%)":
+                                                    "radial-gradient(circle, rgba(76,129,144,1) 28%, rgba(40,24,52,0.9360119047619048) 100%)"}`
+                                                }}
+                                                    onClick={() => AddCart(item.product.product_id, item.images.productColorID, item.productStock.productStockID, item.amount)} >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width={24} fill="none" viewBox="0 0 24 24" strokeWidth="1" stroke="currentColor">
+                                                        <path strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"></path>
                                                     </svg>
                                                 </button>
                                             </div>
@@ -209,8 +219,18 @@ export default function WishListPage() {
                                             </div>
                                             <div className={`animation-line ${showElements ? "showLine" : ""}`} style={{display:"flex", gap:"10px", alignItems:"center", padding:"30px 0px"}}>
                                                 <div>
-                                                <button onClick={() => AddToCart(item.product.product_id, item.images.productColorID, item.productStock.productStockID, item.amount)} className='addToCart-Button'>
-                                                        Add to Cart
+                                                    <button 
+                                                    style={{
+                                                        background:`${
+                                                        cart.find((cartItem) => cartItem.productStockID === item.productStock.productStockID) ?
+                                                        "radial-gradient(circle, rgba(230,139,0,1) 9%, rgba(230,123,0,1) 50%, rgba(230,92,0,1) 100%)":
+                                                        "radial-gradient(circle, rgba(76,129,144,1) 28%, rgba(40,24,52,0.9360119047619048) 100%)"}`
+                                                    }}
+                                                    onClick={() => AddCart(item.product.product_id, item.images.productColorID, item.productStock.productStockID, item.amount)}
+                                                    className='addToCart-Button'>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width={24} fill="none" viewBox="0 0 24 24" strokeWidth="1" stroke="currentColor">
+                                                            <path strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"></path>
+                                                        </svg>
                                                     </button>
                                                 </div>
                                                 <div
