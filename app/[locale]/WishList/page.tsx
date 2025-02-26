@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from "next/image";
 import {useTranslations, useLocale } from 'next-intl';
-import { set } from '@auth0/nextjs-auth0/dist/session';
 
 
 export default function WishListPage() {
