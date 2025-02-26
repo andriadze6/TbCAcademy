@@ -84,6 +84,7 @@ export default function Cart() {
                                     <div style={{display:"flex", alignItems:"center", gap:"20px"}}>
                                         <div style={{display:"flex", alignItems:"center", gap:"10px"}}>
                                             <svg
+                                                onClick={() => DeleteItemFromCart(item.id,  item.productStock.productStockID)}
                                                 style={{cursor:"pointer"}}
                                                 onMouseEnter={(e) => showTooltip(e, "Delete")}
                                                 onMouseLeave={hideTooltip}
@@ -112,6 +113,7 @@ export default function Cart() {
                                     <div style={{display:"flex", alignItems:"center", gap:"20px"}}>
                                         <p>${item.productStock.price_lari * item.amount}</p>
                                     </div>
+                                    {tooltip && <Tooltip text={tooltip.text} position={tooltip.position} />}
                                 </div>
                         )}) : <h1 style={{textAlign:"center"}}>Cart is empty</h1>
                     }
