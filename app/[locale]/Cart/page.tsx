@@ -12,32 +12,42 @@ import { set } from '@auth0/nextjs-auth0/dist/session';
 export default function Cart() {
     const locale = useLocale();
     const [tooltip, setTooltip] = useState(null);
-    const [data, setData] = useState([]);    
+    const [data, setData] = useState({
+        isEmpty: false,
+        cartItems: []
+    });
     const {  cart, DeleteItemFromCart } = useAuth();
-    const [amount, setAmount] = useState(1);
-
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await fetch('/api/GetItems',{
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify( cart ),
-                });
-                const result = await response.json();
-                console.log(result);
-                setData(result);
+                if (cart.length === 0) {
+                    setData({
+                        isEmpty: true,
+                        cartItems: []
+                    });
+                    return;
+                }else{
+                    const response = await fetch('/api/GetItems',{
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify( cart ),
+                    });
+                    const result = await response.json();
+                    console.log(result);
+                    setData({
+                        isEmpty: false,
+                        cartItems: result
+                    });
+                }
+
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         }
-        if(cart.length > 0){
-            fetchData();
-        }else{
-            setData([]);
-        }    }, [cart]);
+        fetchData();
+    }, [cart]);
     const showTooltip = (event, text) => {
         event.preventDefault();
         const rect = event.target.getBoundingClientRect();
@@ -54,7 +64,7 @@ export default function Cart() {
       };
 
       function changeAmount(n, index) {
-        let newData = [...data];
+        let newData = [...data.cartItems];
         let prev = newData[index].amount;
         let cAmount = prev + n;
         if (cAmount < 1) {
@@ -62,12 +72,12 @@ export default function Cart() {
         }
         newData[index].amount = cAmount;
         console.log(newData);
-        setData(newData);
+        setData(()=>({...data, cartItems: newData}));
     }
     return (
         <div className="cart-container">
             <div style={{margin:"30px auto", width:"50%", textAlign:"center", position:"relative"}}>
-                <h1 style={{borderBottom:"1px solid #ccc", paddingBottom:"10px"}}>Cart</h1>
+                <h1 style={{borderBottom:"1px solid #ccc", paddingBottom:"10px"}}>Cart {}</h1>
             </div>
             <div className='cart-Div'>
                 <div className='cart-header'>
@@ -78,7 +88,8 @@ export default function Cart() {
                 </div>
                 <div className='cart-body'>
                     {
-                        data.length > 0 ? data.map((item, index) => {
+                        data.isEmpty  ? <h1>Cart is empty</h1>:
+                        data.cartItems.map((item, index) => {
                             return (
                                 <div className='cart-item' key={item.productStock.productStockID}>
                                     <div style={{display:"flex", alignItems:"center", gap:"20px"}}>
@@ -95,7 +106,7 @@ export default function Cart() {
                                                 <Image className='cart-item-image' height={100} width={100} src={item.images.isPrimary} alt=""></Image>
                                             </div>
                                         </div>
-                                        <div style={{display:"flex", alignItems:"left", 
+                                        <div style={{display:"flex", alignItems:"left",
                                             flexDirection:"column", gap:"10px"}}>
                                             <h4>{locale === "en" ? item.product.title_en : item.product.title_ge}</h4>
                                             <p>color: {locale === "en" ? item.colors.color_en : item.colors.color_ge}</p>
@@ -115,7 +126,7 @@ export default function Cart() {
                                     </div>
                                     {tooltip && <Tooltip text={tooltip.text} position={tooltip.position} />}
                                 </div>
-                        )}) : <h1 style={{textAlign:"center"}}>Cart is empty</h1>
+                        )})
                     }
                 </div>
             </div>
