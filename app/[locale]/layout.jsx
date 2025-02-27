@@ -20,11 +20,13 @@ export default async function LocaleLayout({ children, params: { locale } }) {
 
   return (
     <html lang={locale}>
-      <body style={{position:"relative",height:"100%"}}>
+      <body style={{display:"grid", gridTemplateRows:"auto 1fr auto", height:"100vh", margin:"0"}}>
         <AuthProvider>
           <NextIntlClientProvider messages={messages}>
               <Header />
-              {children}
+              <main>
+                {children}
+              </main>
               <div id="popup-root"></div>
               <Footer/>
           </NextIntlClientProvider>

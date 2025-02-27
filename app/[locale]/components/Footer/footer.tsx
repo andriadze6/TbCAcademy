@@ -6,7 +6,7 @@ import twitterIcon from '../../assets/img/twitterIcon.png';
 
 const Footer = () => {
   return (
-    <footer className="footer">
+    <footer style={{maxHeight:"100hv"}} className="footer">
       <div className="footer-content">
         <div className="footer-section">
           <h4>Company</h4>

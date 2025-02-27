@@ -77,7 +77,7 @@
     object-fit: fill;
     cursor: pointer;
 }
-.slider-ButtonDiv{
+.slider-ButtonDiv-ProductPage{
     padding-left: 20px;
     padding-right: 20px;
     position: absolute;
@@ -86,16 +86,19 @@
     width: 100%;
     bottom:40%;
 }
-.slider-ButtonDiv button{
+.slider-ButtonDiv-ProductPage button{
     width: 50px;
     border-radius: 50%;
     border: none;
 }
-.slider-ButtonDiv button:hover{
+.slider-ButtonDiv-ProductPage button:hover{
     background-color: var(---redColor);
     color: white;
     cursor: pointer;
     transition: background-color 0.5s linear;
+}
+.slider-Button-ProductPage{
+  cursor: pointer;
 }
 .slider-wrapper{
     position: relative;
@@ -274,7 +277,4 @@
 }
 .product-Details-list li{
   margin-bottom: 5px;
-}
-.slider-Button{
-  cursor: pointer;
 }

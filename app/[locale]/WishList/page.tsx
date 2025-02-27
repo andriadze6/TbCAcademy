@@ -29,7 +29,9 @@ export default function WishListPage() {
                     body: JSON.stringify( wishList ),
                 });
                 const result = await response.json();
-                setData(result);
+
+                setTimeout(() =>setData(result)
+                , 400);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
