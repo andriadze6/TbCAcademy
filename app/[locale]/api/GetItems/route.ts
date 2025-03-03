@@ -26,7 +26,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
             productStockIDs.length ?
                 supabase.from('productStock')
-                    .select("productStockID, product_ColorID, size, price_lari, price_usd, count")
+                    .select("productStockID, product_ColorID, size, stripe_ProductID,price_lari, price_usd, count")
                     .in('productStockID', productStockIDs)
                 : { data: [] as productStockType[], error: null }
         ]);

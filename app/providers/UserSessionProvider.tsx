@@ -33,7 +33,6 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
     const [user, setUser] = useState<User | null>(null);
     const [saveItems, setSavedItems] = useState<UserSavedItemsType>({ wishList: [], cart: [] });
-    const [cart, setCart] = useState<ItemListType[]>([]);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
     useEffect(() => {

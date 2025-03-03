@@ -49,6 +49,24 @@ export default function Cart() {
         }
         fetchData();
     }, [cart]);
+
+    const handleCheckout = async () => {
+        let cartItems = data.cartItems.map(item => ({ priceId: item.productStock.stripe_ProductID, quantity: item.amount }));
+        const response = await fetch('/api/Create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cartItems: cartItems }), // Send cart items
+        });
+
+        if (response.ok) {
+          const session = await response.json();
+          window.location.href = session.url;
+        }else{
+            const error = await response.json();
+            console.log(error);
+        }
+
+      };
     const showTooltip = (event, text) => {
         event.preventDefault();
         const rect = event.target.getBoundingClientRect();
@@ -78,7 +96,7 @@ export default function Cart() {
     return (
         <>
             {
-                loading ? <Loading /> :         
+                loading ? <Loading /> :
                 <div className="cart-container">
                     <div style={{margin:"30px auto", width:"50%", textAlign:"center", position:"relative"}}>
                         <h1 style={{borderBottom:"1px solid #ccc", paddingBottom:"10px"}}>{!data.isEmpty ? "Your Cart" : "Your Cart is Empty"}</h1>
@@ -136,7 +154,7 @@ export default function Cart() {
                         {
                             data.cartItems.length > 0 &&
                             <div className='cart-footer'>
-                                <button className='to-checkout-button'>To check out</button>
+                                <button onClick={handleCheckout} className='to-checkout-button'>To check out</button>
                                 <div className='price-sum-div'>
                                     <h3>Total Price: ${data.cartItems.reduce((acc, item) => acc + item.productStock.price_lari * item.amount, 0).toFixed(2)}</h3>
                                 </div>

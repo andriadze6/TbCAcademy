@@ -24,9 +24,7 @@ export default async function LocaleLayout({ children, params: { locale } }) {
         <AuthProvider>
           <NextIntlClientProvider messages={messages}>
               <Header />
-              <main>
                 {children}
-              </main>
               <div id="popup-root"></div>
               <Footer/>
           </NextIntlClientProvider>

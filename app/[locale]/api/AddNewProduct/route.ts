@@ -29,11 +29,13 @@ async function processCatalogArray(catalogArray, supabase, stripe, globalInfo, p
 
       const productColorID = catalogData[0].productColorID;
 
+      const imageUrls = await uploadImages(supabase, catalogData[0], catalog.base64Img, globalInfo.gender);
+
+
       // Process sizes and create Stripe products and prices
-      await processCatalogSizes(catalog, stripe, supabase, globalInfo, productId, productColorID, usdToGelRate);
+      await processCatalogSizes(catalog, stripe, supabase, globalInfo, productId, productColorID, usdToGelRate, imageUrls[0]);
 
       // Upload images
-      const imageUrls = await uploadImages(supabase, catalogData[0], catalog.base64Img, globalInfo.gender);
 
       // Add images to Images table
       const { error: imageError } = await supabase
@@ -65,7 +67,7 @@ async function processCatalogArray(catalogArray, supabase, stripe, globalInfo, p
 
 
 
-async function processCatalogSizes(catalog, stripe, supabase, globalInfo, productId, productColorID, usdToGelRate) {
+async function processCatalogSizes(catalog, stripe, supabase, globalInfo, productId, productColorID, usdToGelRate, imageUrl) {
   try {
     const sizePromises = Object.entries(catalog.sizeObj) // Filter sizes with count and price
       .map(async ([size, value]) => {
@@ -74,7 +76,7 @@ async function processCatalogSizes(catalog, stripe, supabase, globalInfo, produc
         // Create Stripe Product
         const stripeProduct = await stripe.products.create({
           name: globalInfo.title_en,
-          description: globalInfo.description_en,
+          images: [imageUrl],
           metadata: {
             productID: productId,
             colorID: productColorID,
@@ -95,7 +97,7 @@ async function processCatalogSizes(catalog, stripe, supabase, globalInfo, produc
           .insert({
             size,
             count: sizeValue.count,
-            stripe_ProductID: stripeProduct.id,
+            stripe_ProductID: stripePrice.id,
             product_ColorID: productColorID,
             price_usd: sizeValue.price,
             price_lari: parseFloat((sizeValue.price * usdToGelRate).toFixed(0)),

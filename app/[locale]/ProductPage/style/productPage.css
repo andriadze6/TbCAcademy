@@ -86,19 +86,18 @@
     width: 100%;
     bottom:40%;
 }
-.slider-ButtonDiv-ProductPage button{
+.slider-Button-ProductPage{
     width: 50px;
     border-radius: 50%;
     border: none;
+    cursor: pointer;
+
 }
-.slider-ButtonDiv-ProductPage button:hover{
+.slider-Button-ProductPage:hover{
     background-color: var(---redColor);
     color: white;
     cursor: pointer;
     transition: background-color 0.5s linear;
-}
-.slider-Button-ProductPage{
-  cursor: pointer;
 }
 .slider-wrapper{
     position: relative;
