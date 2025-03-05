@@ -3,8 +3,7 @@ import { createClient } from '../../../../utils/supabase/server'
 
 
 export async function POST(request:NextRequest){
-    const formData = await request.formData();
-    const data = JSON.parse(formData.get('data') as string)
+    const data = await request.json();
     const supabase = await createClient();
     const { data:result, error } = await supabase
     .from('DeliveryAddress')

@@ -26,9 +26,9 @@ export async function POST(request: NextRequest) {
     // Create Checkout Sessions from body params.
     const session = await stripe.checkout.sessions.create({
       line_items: lineItems.map((item) => ({
-        // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
         price: item.priceId,
         quantity: item.quantity,
+        currency: 'gel',
       })),
       mode: 'payment',
       success_url: `${origin}/Success?session_id={CHECKOUT_SESSION_ID}`,
