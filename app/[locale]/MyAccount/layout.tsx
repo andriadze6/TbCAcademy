@@ -23,11 +23,11 @@ export default function MyAccountLayout({
         <main>
           <header className="header-MyAccount">
             <nav className="nav-MyAccount">
-                <Link href={`/${locale}/MyAccount`} className='navName'>{t("DeliveryAddress")}</Link>
-                <Link href={`/${locale}/MyAccount`} className='navName'>{t("Orders")}</Link>
-                <Link href={`/${locale}/ShoppingCart`} className='navName'>{t("ShoppingCart")}</Link>
-                <Link href={`/${locale}/WishList`} className='navName'>{t("WishList")}</Link>
-                <p onClick={()=>{handleLogout()}} className="navName">{t("LogOut")}</p>
+                <Link href={`/${locale}/MyAccount`} className='navName_MyAccount'>{t("DeliveryAddress")}</Link>
+                <Link href={`/${locale}/MyAccount`} className='navName_MyAccount'>{t("Orders")}</Link>
+                <Link href={`/${locale}/ShoppingCart`} className='navName_MyAccount'>{t("ShoppingCart")}</Link>
+                <Link href={`/${locale}/WishList`} className='navName_MyAccount'>{t("WishList")}</Link>
+                <p onClick={()=>{handleLogout()}} className="navName_MyAccount">{t("LogOut")}</p>
             </nav>
           </header>
           <div className="myAccount-Page">

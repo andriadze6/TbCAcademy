@@ -77,13 +77,17 @@ async function processCatalogSizes(catalog, stripe, supabase, globalInfo, produc
         const stripeProduct = await stripe.products.create({
           name: globalInfo.title_en,
           images: [imageUrl],
+          default_price_data: {
+            unit_amount: 2000,
+            currency: 'usd',
+          },
+          expand: ['default_price'],
           metadata: {
             productID: productId,
             colorID: productColorID,
             size,
           },
         });
-
         // Create Stripe Price
         const stripePrice = await stripe.prices.create({
           product: stripeProduct.id,

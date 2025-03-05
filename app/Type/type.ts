@@ -88,3 +88,16 @@ export type ItemListType = {
     productStockID:string;
     amount:number;
 }
+
+export type OrderType = {
+    user_id:string;
+    session_id:string;
+    product:string;
+    amount_money:number;
+    quantity:number;
+    currency:string;
+    pay_status:string;
+    delivery_address:string;
+    delivery_status:string;
+    up_date:string;
+}

@@ -46,13 +46,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         // საბოლოო შედეგის ფორმატირება
         const results = wishList.map(({id, product_ID, color_ID, productStockID, amount }) => ({
             id: id,
-            colors: color_ID ? colorsMap.get(color_ID) || null : null,
-            product: productMap.get(product_ID) || null,
-            productStock: productStockID ? stockMap.get(productStockID) || null : null,
-            images: color_ID ? imagesMap.get(color_ID) || null : null,
+            ...colorsMap.get(color_ID),
+            ...productMap.get(product_ID),
+            ...stockMap.get(productStockID),
+            ...imagesMap.get(color_ID),
             amount: amount
         }));
-
         return NextResponse.json(results);
     } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });

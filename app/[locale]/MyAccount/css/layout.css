@@ -23,3 +23,12 @@ main{
 .myAccount-Page{
     padding: 18px 0px;
 }
+.navName_MyAccount {
+    padding-right: 18px;
+    padding-top: 18px;
+    padding-bottom: 18px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+}
