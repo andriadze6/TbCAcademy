@@ -101,3 +101,32 @@ export type OrderType = {
     delivery_status:string;
     up_date:string;
 }
+export type Refund = {
+
+    user_id: string | null;     // მომხმარებლის ID (UUID), შეიძლება იყოს null
+    session_id: string;         // Stripe Checkout Session ID
+    payment_intent?: string;    // Payment Intent ID (nullable)
+    refund_id?: string;         // Stripe-ის Refund ID (nullable)
+    customer_email: string;     // მომხმარებლის Email
+    refunded_amount: number;    // დაბრუნებული თანხა (DECIMAL)
+    currency: string;           // ვალუტა (USD, EUR, GEL და ა.შ.)
+    status: 'pending' | 'processed' | 'failed'; // Refund-ის სტატუსი
+    reason?: string;            // დაბრუნების მიზეზი (nullable)
+    product?: string;           // რომელი პროდუქტი დაბრუნდა (nullable)
+    created_at: string;         // როდის მოითხოვა მომხმარებელმა (TIMESTAMP)
+    processed_at?: string | null; // როდის შესრულდა Refund (nullable)
+  };
+  export type ErrorLog = {
+    id: number;
+    user_id?: string | null;   // მომხმარებლის UUID (NULL თუ არ არის მომხმარებელთან დაკავშირებული)
+    session_id?: string | null; // Stripe-ის სესიის ID (NULL თუ არაა გადახდასთან დაკავშირებული)
+    error_message: string;      // შეცდომის ტექსტი
+    stack_trace?: string | null;// Stack Trace (თუ არის ხელმისაწვდომი)
+    function_name?: string | null; // რომელი ფუნქციიდან წარმოიშვა
+    file_name?: string | null;  // რომელ ფაილში მოხდა შეცდომა
+    line_number?: number | null;// რომელი ხაზიდან წამოვიდა შეცდომა
+    status: 'unresolved' | 'resolved' | 'ignored'; // შეცდომის სტატუსი
+    created_at: string;         // როდის მოხდა შეცდომა
+    resolved_at?: string | null;// როდის გამოსწორდა (NULL თუ ჯერ არ გამოსწორებულა)
+  };
+  

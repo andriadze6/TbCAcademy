@@ -16,7 +16,7 @@ export default function AddressFormCart({ setDeliveryAddress }: { setDeliveryAdd
                 data.deliveryAddress.length > 0 && data.deliveryAddress.map((address, index) => {
                 return(
                     <div key={address.id}style={{display:"flex", gap:"10px"}}>
-                        <input  
+                        <input
                         defaultChecked={index === 0}
                         type='radio' name='address' value={index} onClick={() => setDeliveryAddress(address)} className='address-radio'></input>
                         <div className="address-Div" style={{display:"flex",flexDirection:"column", gap:"5px", textAlign:"center", padding:"0px 10px", transition:"all .5s ease-out",border:"1px solid #708d97",borderRadius:"6px", boxShadow:"0px 5px 5px rgba(155, 177, 207, 0.685)" }}>
@@ -53,7 +53,7 @@ export default function AddressFormCart({ setDeliveryAddress }: { setDeliveryAdd
                 })
             }
             {
-              data.deliveryAddress.length > 0 &&            
+              data.deliveryAddress.length > 0 &&
                 <button style={{width:"50%"}} className="add_new_address_cart" onClick={() => setData(prev => ({ ...prev, showPopup: true, edit:false }))}>
                   <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />

@@ -66,7 +66,6 @@ export default function ProductPage() {
     },[ID,colorID]); ///ID უნდა იყოს დამოკიდებული
 
     useEffect(()=>{
-        debugger
         if(selectedItem.productStockID){
             const checkWishList = wishList.find(item=>item.productStockID === selectedItem.productStockID)
             const checkCart = cart.find(item=>item.productStockID === selectedItem.productStockID)

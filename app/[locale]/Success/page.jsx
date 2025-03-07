@@ -1,33 +1,30 @@
 import { redirect } from 'next/navigation'
 import { stripe } from '../../../utils/stripe'
 import { createClient } from '../../../utils/supabase/server'
+import {logError} from '../functions/logError'
 import { getLocale } from 'next-intl/server';
 
+
 export default async function Success({ searchParams }) {
+  let notAdded = {
+
+  }
   const supabase = await createClient();
   const { session_id } = await searchParams
   if (!session_id) throw new Error('Please provide a valid session_id (`cs_test_...`)')
-
   const session = await stripe.checkout.sessions.retrieve(session_id, {
     expand: ['line_items', 'payment_intent']
   })
-
   const { status, customer_details: { email: customerEmail }, line_items, metadata} = session
-
-  console.log("metadata",metadata)
-  console.log("line_items",line_items.data)
   if (status === 'open') {
     await stripe.checkout.sessions.expire(session_id);
     return redirect('/')
   }
-
   const { data: existingOrder, error: checkError } = await supabase
     .from('Orders')
     .select('id')
     .eq('session_id', session_id)
     .single();
-
-
   if (checkError && checkError.code !== 'PGRST116') {
     console.error('Error checking order:', checkError);
     return redirect('/');
@@ -38,38 +35,71 @@ export default async function Success({ searchParams }) {
   }
   if (status === 'complete') {
     let supabase = await createClient();
-    try {
-      const results = await Promise.all(
-        line_items.data.map(async (item) => {
-          const [stockResult, orderResult, cartResult] = await Promise.all([
-            supabase.rpc('decrement_stock', { sid: item.price.id, quantity: item.quantity }),
-            supabase.from('Orders').insert([
+    for (const [index, item] of line_items.data.entries()) {
+      try {
+        const [stockResult, orderResult, cartResult] = await Promise.all([
+          supabase.rpc('decrement_stock', { sid: item.price.id, quantity: item.quantity }),
+          supabase.from('Orders').insert([
+            {
+              session_id: session_id,
+              amount_money: item.amount_total / 100,
+              quantity: item.quantity,
+              currency: session.currency,
+              pay_status: session.payment_status,
+              delivery_address: metadata.delivery_address,
+              delivery_status: 'pending',
+              user_id: metadata.user_id,
+              product: metadata[item.price.id],
+              up_date: new Date().toISOString(),
+            }
+          ]),
+          supabase.from('Cart').delete().eq('user_ID', metadata.user_id)
+        ]);
+        const [stockError, orderError, cartError] = [stockResult.error, orderResult.error, cartResult.error];
+        if (cartError) {
+          logError(cartError, "deleting cart", "Success", 65, metadata.user_id);
+        }
+        if (orderError) {
+
+          try {
+            notAdded[item.price.id] = true
+            const refund = await stripe.refunds.create({
+              payment_intent: session.payment_intent.id,
+              reason: 'requested_by_customer',
+              amount: item.amount_total,
+              metadata: {
+                user_id: metadata.user_id,
+                reason: 'requested_by_customer',
+              }
+            });
+            if (refund.status === 'succeeded') {
+              supabase.from('refunds').insert([
               {
                 user_id: metadata.user_id,
                 session_id: session_id,
-                amount_money: item.amount_total / 100,
-                quantity: item.quantity,
+                payment_intent: session.payment_intent.id,
+                customer_email: customerEmail,
+                refunded_amount: item.amount_total / 100,
                 currency: session.currency,
-                pay_status: session.payment_status,
-                delivery_address: metadata.delivery_address,
-                delivery_status: 'pending',
+                status: 'processed',
+                reason: 'Order was not saved',
                 product: metadata[item.price.id],
+                created_at: new Date().toISOString(),
+                processed_at: new Date().toISOString(),
               }
-            ]),
-            supabase.from('Cart').delete().eq('user_ID', metadata.user_id)
-          ]);
-          const [stockError, orderError, cartError] = [stockResult.error, orderResult.error, cartResult.error];
-          if (cartError) throw new Error(`Error deleting cart items: ${cartError.message}`);
-          if (orderError) throw new Error(`Error creating order: ${orderError.message}`);
-          if (stockError) throw new Error(`Error updating stock for ${item.price.id}: ${stockError.message}`);
-
-          return { stockResult, orderResult, cartResult };
-        })
-      );
-      console.log('Updated stock:', results);
-    } catch (error) {
-      console.error('Error updating stock:', error);
-      return redirect('/');
+              ]);
+              logError(orderError, "writing order to table", "Success", 87, metadata.user_id);
+            }
+          } catch (error) {
+            logError(error, "decrementing stock", "Success", 100, metadata.user_id);
+          }
+        }
+        if (stockError) {
+           logError(stockError, "decrementing stock", "Success", 100, metadata.user_id);
+        }
+      } catch (error) {
+        logError(error, "decrementing stock", "Success", 100, metadata.user_id);
+      }
     }
     return (
       <section id="success">
@@ -82,6 +112,11 @@ export default async function Success({ searchParams }) {
         <ul>
           {line_items.data.map((item) => (
             <li key={item.id}>
+
+              {
+                notAdded[item.price.id] &&
+                <p style={{color: "red"}}>product was not purchase money will be refunded</p>
+              }
               {item.quantity} x {item.description} - {item.amount_total / 100} {session.currency.toUpperCase()}
             </li>
           ))}
