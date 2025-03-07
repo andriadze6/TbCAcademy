@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
         price: item.priceId,
         quantity: item.quantity,
       })),
-      payment_method_types: ["card", "google_pay"],
+      payment_method_types: ["card"],
       mode: 'payment',
       success_url: `${origin}/Success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/?canceled=true`,
