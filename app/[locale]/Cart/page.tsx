@@ -131,16 +131,18 @@ export default function Cart() {
                                                             <p>size: {item.size}</p>
                                                         </div>
                                                     </div>
-                                                    <div style={{display:"flex", alignItems:"center", gap:"20px"}}>
-                                                        <p>${item.price_lari}</p>
+                                                    <div style={{display:"flex", alignItems:"center", gap:"20px",width:"100%", justifyContent:"center"}}>
+                                                        <p>₾{item.price_lari}</p>
                                                     </div>
-                                                    <div className='select-Amount-Div'>
-                                                        <button onClick={()=>{changeAmount(-1, index)}} className='select-Amount-Button'>-</button>
-                                                        <h5 className='select-Amount-Number'>{item.amount}</h5>
-                                                        <button onClick={()=>{changeAmount(1, index)}} className='select-Amount-Button'>+</button>
+                                                    <div style={{display:"flex", alignItems:"center", gap:"20px", width:"100%", justifyContent:"center"}} >
+                                                            <div className='select-Amount-Div'>
+                                                                <button onClick={()=>{changeAmount(-1, index)}} className='select-Amount-Button'>-</button>
+                                                                <h5 className='select-Amount-Number'>{item.amount}</h5>
+                                                                <button onClick={()=>{changeAmount(1, index)}} className='select-Amount-Button'>+</button>
+                                                            </div>
                                                     </div>
-                                                    <div style={{display:"flex", alignItems:"center", gap:"20px"}}>
-                                                        <p>${item.price_lari * item.amount}</p>
+                                                    <div style={{display:"flex", alignItems:"center", gap:"20px", width:"100%", justifyContent:"center"}}>
+                                                        <p>₾{item.price_lari * item.amount}</p>
                                                     </div>
                                                     {tooltip && <Tooltip text={tooltip.text} position={tooltip.position} />}
                                                 </div>
@@ -152,7 +154,7 @@ export default function Cart() {
                                     <div className='cart-footer'>
                                         <button onClick={handleCheckout} className='to-checkout-button'>To check out</button>
                                         <div className='price-sum-div'>
-                                            <h3>Total Price: ${data.cartItems.reduce((acc, item) => acc + item.price_lari * item.amount, 0).toFixed(2)}</h3>
+                                            <h3>Total Price: ₾{data.cartItems.reduce((acc, item) => acc + item.price_lari * item.amount, 0).toFixed(2)}</h3>
                                         </div>
                                     </div>
                                 }
@@ -161,7 +163,6 @@ export default function Cart() {
                                 data.cartItems.length > 0 &&
                                 <AddressFormCart setDeliveryAddress={setDeliveryAddress}></AddressFormCart>
                             }
-
                         </div>
                     </div>
             }

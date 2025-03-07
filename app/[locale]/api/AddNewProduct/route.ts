@@ -78,8 +78,8 @@ async function processCatalogSizes(catalog, stripe, supabase, globalInfo, produc
           name: globalInfo.title_en,
           images: [imageUrl],
           default_price_data: {
-            unit_amount: 2000,
-            currency: 'usd',
+            unit_amount: sizeValue.price * 100,
+            currency: 'gel',
           },
           expand: ['default_price'],
           metadata: {
@@ -92,7 +92,7 @@ async function processCatalogSizes(catalog, stripe, supabase, globalInfo, produc
         const stripePrice = await stripe.prices.create({
           product: stripeProduct.id,
           unit_amount: sizeValue.price * 100,
-          currency: 'usd',
+          currency: 'gel',
         });
 
         // Insert into Supabase productStock
@@ -170,9 +170,9 @@ export async function POST(request) {
     const formData = await request.formData();
 
     // Fetch exchange rate
-    const response = await fetch(`https://v6.exchangerate-api.com/v6/${process.env.EXCHANGE_RATE_API_KEY}/latest/USD`);
-    const exchangeRateData = await response.json();
-    const usdToGelRate = exchangeRateData.conversion_rates.GEL;
+    // const response = await fetch(`https://v6.exchangerate-api.com/v6/${process.env.EXCHANGE_RATE_API_KEY}/latest/USD`);
+    // const exchangeRateData = await response.json();
+    // const usdToGelRate = exchangeRateData.conversion_rates.GEL;
 
     const globalInfo = JSON.parse(formData.get('globalInfo'));
     const catalogArray = JSON.parse(formData.get('catalogArray'));
@@ -198,7 +198,7 @@ export async function POST(request) {
     }
 
     const productId = productData[0].product_id;
-    let result = await processCatalogArray(catalogArray, supabase, stripe, globalInfo, productId, usdToGelRate)
+    let result = await processCatalogArray(catalogArray, supabase, stripe, globalInfo, productId, 1)
     const productColorID = result[0].productColorID;
     return NextResponse.json(
       { message: 'Product added successfully', id:  productId},

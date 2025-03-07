@@ -26,10 +26,11 @@ export async function POST(request: NextRequest) {
     // Create Checkout Sessions from body params.
     const session = await stripe.checkout.sessions.create({
       line_items: lineItems.map((item) => ({
+        // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
         price: item.priceId,
         quantity: item.quantity,
-        currency: 'gel',
       })),
+      payment_method_types: ["card", "google_pay"],
       mode: 'payment',
       success_url: `${origin}/Success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/?canceled=true`,
