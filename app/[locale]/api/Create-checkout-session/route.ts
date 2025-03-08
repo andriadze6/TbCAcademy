@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     let lineItems = [];
     cartItems.forEach(item => {
       metadata[item.stripe_ProductID] = JSON.stringify({
-        product_id:item.product_id,
+        product_ID:item.product_id,
         product_ColorID : item.product_ColorID,
         productStockID : item.productStockID})
       lineItems.push({priceId: item.stripe_ProductID, quantity: item.amount})

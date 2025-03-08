@@ -5,7 +5,7 @@ import useSlider from '../../hooks/changeSlider'
 import Image from "next/image";
 import {useAuth} from "../../../providers/UserSessionProvider";
 
-
+//
 
 export default function Slider({data,sliderToShow}) {
     const {user, AddToWishList}  = useAuth();

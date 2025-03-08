@@ -9,7 +9,6 @@ import { useAuth } from '../../../../providers/UserSessionProvider';
 import{useParams} from 'next/navigation'
 import {productStockType, productColorsType, globalInfoType, ImagesType} from '../../../../Type/type'
 import Tooltip from '../../../components/Tooltip';
-import { set } from '@auth0/nextjs-auth0/dist/session';
 
 const initialState = {
     globalProductInfo: {} as globalInfoType,
@@ -24,18 +23,18 @@ export default function ProductPage() {
     const [tooltip, setTooltip] = useState(null);
     const [productData, setProductData] = useState(initialState);
     const { sliderState, changeSlider, skipSlider } = useSlider();
-    const { ID, colorID } = useParams<{ ID: string, colorID: string}>();
+    const { ID, product_ColorID } = useParams<{ ID: string, product_ColorID: string}>();
     const [amount, setAmount] = useState(1);
     const [selectedItem, setSelectedItem] = useState({
         productStockID: null,
-        colorID:colorID as string,
+        product_ColorID:product_ColorID as string,
         size: null,
         amount: 1,
         wishListID: null,
         cartID: null
     });
     const currentLanguage = useLocale();
-    const {  user, setUser, wishList, AddToWishList, cart, AddToCart, DeleteItemFromWishList, DeleteItemFromCart  } = useAuth();
+    const { wishList, AddToWishList, cart, AddToCart, DeleteItemFromWishList, DeleteItemFromCart  } = useAuth();
 
     useEffect(() => {
         (async function fetchProductData() {
@@ -46,7 +45,7 @@ export default function ProductPage() {
                 });
                 const data = await response.json();
                 if(!data.error){
-                    const { navImages, sliderImages, imageAmount, } = createSlider(data.images,colorID);
+                    const { navImages, sliderImages, imageAmount, } = createSlider(data.images,product_ColorID);
                     console.log(data)
                     setProductData({
                         globalProductInfo: data.globalProductInfo[0],
@@ -63,7 +62,7 @@ export default function ProductPage() {
                 console.log(error)
             }
         })();
-    },[ID,colorID]); ///ID უნდა იყოს დამოკიდებული
+    },[ID,product_ColorID]); ///ID უნდა იყოს დამოკიდებული
 
     useEffect(()=>{
         if(selectedItem.productStockID){
@@ -120,13 +119,13 @@ export default function ProductPage() {
         return { navImages, sliderImages, imageAmount};
     }
 
-    function changeColor(colorID){
-        const { navImages, sliderImages, imageAmount } = createSlider(productData.images, colorID);
+    function changeColor(product_ColorID){
+        const { navImages, sliderImages, imageAmount } = createSlider(productData.images, product_ColorID);
         debugger
         setSelectedItem({
             ...selectedItem,
             productStockID: null,
-            colorID: colorID
+            product_ColorID: product_ColorID
         })
         setProductData({
             ...productData,
@@ -176,18 +175,18 @@ export default function ProductPage() {
 
    async function WisList(){
         if(selectedItem.productStockID){
-           await AddToWishList(ID,selectedItem.colorID, selectedItem.productStockID, amount)
+           await AddToWishList(ID,selectedItem.product_ColorID, selectedItem.productStockID, amount)
         }
     }
    async function DeleteWishList(){
         if(selectedItem.wishListID){
-          await  DeleteItemFromCart(selectedItem.wishListID, selectedItem.productStockID)
+          await  DeleteItemFromWishList(selectedItem.wishListID, selectedItem.productStockID)
         }
     }
 
     async function Cart(){
         if(selectedItem.productStockID){
-            await AddToCart(ID,selectedItem.colorID, selectedItem.productStockID, amount)
+            await AddToCart(ID,selectedItem.product_ColorID, selectedItem.productStockID, amount)
         }
     }
     async function DeleteCart(){
@@ -265,7 +264,7 @@ export default function ProductPage() {
                                 selectedItem.productStockID != null ?
                                 <div className='current-Price' style={{display:"flex"}}>
                                     <h3 className='product-currency'>₾</h3>
-                                    <h3 className='product-Price'>{ productData.productStock[selectedItem.colorID][selectedItem.productStockID].price_lari}</h3>
+                                    <h3 className='product-Price'>{ productData.productStock[selectedItem.product_ColorID][selectedItem.productStockID].price_lari}</h3>
                                 </div>
                                 : <h4 style={{marginBottom:"10px"}}>To see price choose size</h4>
                             }
@@ -281,7 +280,7 @@ export default function ProductPage() {
                                         <button
                                         onClick={()=>changeColor(item.productColorID)} key={item.productColorID} className='color_Img_Button'>
                                             <Image
-                                            style={selectedItem.colorID != item.productColorID ? {border:"1px solid rgba(163, 192, 200, 0.771)"}:{border:"2px solid rgba(178,1,14,0.6671043417366946)"}}
+                                            style={selectedItem.product_ColorID != item.productColorID ? {border:"1px solid rgba(163, 192, 200, 0.771)"}:{border:"2px solid rgba(178,1,14,0.6671043417366946)"}}
                                             className={`color_Img ${index === sliderState.clickAmount ? "border" : ""}`} width={500} height={500} src={item.isPrimary} alt="" />
                                         </button>
                                     )
@@ -292,7 +291,7 @@ export default function ProductPage() {
                     <div className='bottom_Margin size_Div'>
                             <div className='size-Container'>
                                 {
-                                    Object.entries(productData.productStock[selectedItem.colorID]).map(([key, value]:[string, productStockType], index)=>{
+                                    Object.entries(productData.productStock[selectedItem.product_ColorID]).map(([key, value]:[string, productStockType], index)=>{
                                         return (
                                             <button
                                             style={selectedItem.productStockID != key ? {border:"1px solid rgba(163, 192, 200, 0.771)"}:{border:"2px solid rgba(178,1,14,0.6671043417366946)"}}
@@ -335,8 +334,8 @@ export default function ProductPage() {
                                     background: selectedItem.wishListID ? "radial-gradient(circle, rgba(230,139,0,1) 9%, rgba(230,123,0,1) 50%, rgba(230,92,0,1) 100%)" : "radial-gradient(circle, rgba(76,129,144,1) 28%, rgba(40,24,52,0.9360119047619048) 100%)"
                                 }}
                                 >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"></path>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" strokeWidth="1" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"></path>
                                 </svg>
                             </button>
                         </div>

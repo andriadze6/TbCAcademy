@@ -49,10 +49,12 @@ export default async function Success({ searchParams }) {
               delivery_address: metadata.delivery_address,
               delivery_status: 'pending',
               user_id: metadata.user_id,
-              product: metadata[item.price.id],
+              product: JSON.parse(metadata[item.price.id]),
               up_date: new Date().toISOString(),
             }
           ]),
+          console.log("metadata:",metadata[item.price.id]),
+          console.log("metadata parse:",JSON.parse(metadata[item.price.id])),
           supabase.from('Cart').delete().eq('user_ID', metadata.user_id)
         ]);
         const [stockError, orderError, cartError] = [stockResult.error, orderResult.error, cartResult.error];
@@ -112,7 +114,6 @@ export default async function Success({ searchParams }) {
         <ul>
           {line_items.data.map((item) => (
             <li key={item.id}>
-
               {
                 notAdded[item.price.id] &&
                 <p style={{color: "red"}}>product was not purchase money will be refunded</p>

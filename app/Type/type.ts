@@ -84,12 +84,13 @@ export type ItemListType = {
     id:string;
     user_ID:string;
     product_ID:string;
-    color_ID:string;
+    product_ColorID:string;
     productStockID:string;
     amount:number;
 }
 
 export type OrderType = {
+    id:string;
     user_id:string;
     session_id:string;
     product:string;
@@ -102,7 +103,6 @@ export type OrderType = {
     up_date:string;
 }
 export type Refund = {
-
     user_id: string | null;     // მომხმარებლის ID (UUID), შეიძლება იყოს null
     session_id: string;         // Stripe Checkout Session ID
     payment_intent?: string;    // Payment Intent ID (nullable)

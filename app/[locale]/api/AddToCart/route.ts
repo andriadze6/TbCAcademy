@@ -4,12 +4,12 @@ import { createClient } from '../../../../utils/supabase/server'
 export async function POST(request:NextRequest){
 
     const body = await request.json();
-    const{ user_ID, product_ID, color_ID, productStockID, amount} = body;
+    const{ user_ID, product_ID, product_ColorID, productStockID, amount} = body;
     const supabase = await createClient();
     const { data, error } = await supabase
     .from('Cart')
     .insert([
-      { user_ID: user_ID, product_ID: product_ID, color_ID: color_ID, productStockID: productStockID, amount: amount},
+      { user_ID: user_ID, product_ID: product_ID, product_ColorID: product_ColorID, productStockID: productStockID, amount: amount},
     ])
     .select("id");
 

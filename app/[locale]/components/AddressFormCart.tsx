@@ -3,12 +3,18 @@ import './style/AddressForm.css'
 import { useAuth } from "../../providers/UserSessionProvider";
 import {useTranslations, useLocale } from 'next-intl';
 import { useAddressForm } from "../hooks/useAddressForm";
+import { useEffect } from "react";
 import Popup from './Popup';
 
 export default function AddressFormCart({ setDeliveryAddress }: { setDeliveryAddress: React.Dispatch<React.SetStateAction<any>> }) {
   const { user } = useAuth();
   const t = useTranslations('MyAccount');
   const { emptyAddress , data, setData, checker, CreateNewAddress, UpdateAddress, DeleteAddress } = useAddressForm();
+  useEffect(() => {
+    if (data.deliveryAddress.length > 0) {
+        setDeliveryAddress(data.deliveryAddress[0]);
+    }
+}, [data.deliveryAddress]); // Runs when deliveryAddress changes
   return (
       <div style={{display:"flex", gap:"20px"}}>
         <div style={{display:"flex",flexDirection:"column", gap:"10px", marginTop:"20px", alignItems:"center"}}>

@@ -4,7 +4,7 @@ import AddressFormCart from '../components/AddressFormCart'
 import Tooltip from '../components/Tooltip'
 import Loading from './loading'
 import { useAuth } from '../../providers/UserSessionProvider';
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, } from 'react';
 import Link from 'next/link';
 import Image from "next/image";
 import {useTranslations, useLocale } from 'next-intl';

@@ -2,7 +2,7 @@ import { createClient } from "../../../utils/supabase/server";
 
 export async function logError(error: Error, functionName?: string, fileName?: string, lineNumber?: number, user_ID?: string) {
     const supabase = await createClient();
-    const { data, error: insertError } = await supabase
+    supabase
       .from('errors')
       .insert([{
         user_id: user_ID, // თუ იუზერი ცნობილია, აქ შეგიძლია `user_id` ჩაწერო
@@ -13,9 +13,5 @@ export async function logError(error: Error, functionName?: string, fileName?: s
         line_number: lineNumber || null,
         status: 'unresolved'
       }]);
-  
-    if (insertError) {
-      console.error('Failed to log error:', insertError);
-    }
   }
   

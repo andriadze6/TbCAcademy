@@ -51,7 +51,7 @@ export async function updateSession(request: NextRequest) {
   const role = user?.user_metadata?.role || 'guest';
 
   // Redirect to the login page if the user is not authenticated and tries to access the AdminPanel
-  if (!user && role !== 'admin' && request.nextUrl.pathname.endsWith(`/AdminPanel`) ) {
+  if (!user && role !== 'admin' && request.nextUrl.pathname.includes(`/AdminPanel`) ) {
     const url = request.nextUrl.clone();
     url.pathname = `/${locale}/Login`; // Redirect to localized Login page
     return NextResponse.redirect(url);
@@ -69,7 +69,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(new URL(request.headers.get("referer") || `/${locale}`, request.url));
   }
 
-  if (!user &&  request.nextUrl.pathname.endsWith(`/MyAccount`) ) {
+  if (!user &&  request.nextUrl.pathname.includes(`/MyAccount`) ) {
     const url = request.nextUrl.clone();
     url.pathname = `/${locale}/Login`; // Redirect to localized Login page
     return NextResponse.redirect(url);
