@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     try{
         const supabase = await createClient();
         const { userID } = await req.json();
-        const { data, error } = await supabase.from<'Orders', OrderType[]>('Orders').select('*').eq('user_id', userID);
+        const { data, error } = await supabase.from<'Orders', OrderType[]>('Orders').select('*').eq('user_ID', userID);
         if (error) {
             console.log(error);
         }
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
         });
         let info = await response.json();
         let result = data.map((order)=>{
-            return {...order, product: info.find((item) => item.productStockID === order.product.productStockID)};
+            return {...order, product: info.find((item) => item.product_StockID === order.product.product_StockID)};
         })
         return NextResponse.json(result);
     }catch(error){

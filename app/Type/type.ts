@@ -35,15 +35,15 @@ export type sizeType = {
 }
 
 export type  productColorsType = {
-    productColorID:string;
-    product_id:string;
+    product_ColorID:string;
+    product_ID:string;
     color_en:string;
     color_ge:string;
-    color_Code:string;
+    color_code:string;
 }
 
 export type productStockType = {
-    productStockID:string;
+    product_StockID:string;
     size:string;
     price_lari:number;
     price_usd:number;
@@ -53,7 +53,7 @@ export type productStockType = {
 
 export type ImagesType = {
     imageURL: string[];
-    productColorID: string;
+    product_ColorID: string;
     isPrimary: string
 }
 
@@ -85,14 +85,14 @@ export type ItemListType = {
     user_ID:string;
     product_ID:string;
     product_ColorID:string;
-    productStockID:string;
+    product_StockID:string;
     amount:number;
 }
 
 export type OrderType = {
     id:string;
-    user_id:string;
-    session_id:string;
+    user_ID:string;
+    session_ID:string;
     product:string;
     amount_money:number;
     quantity:number;
@@ -103,10 +103,10 @@ export type OrderType = {
     up_date:string;
 }
 export type Refund = {
-    user_id: string | null;     // მომხმარებლის ID (UUID), შეიძლება იყოს null
-    session_id: string;         // Stripe Checkout Session ID
+    user_ID: string | null;     // მომხმარებლის ID (UUID), შეიძლება იყოს null
+    session_ID: string;         // Stripe Checkout Session ID
     payment_intent?: string;    // Payment Intent ID (nullable)
-    refund_id?: string;         // Stripe-ის Refund ID (nullable)
+    refund_ID?: string;         // Stripe-ის Refund ID (nullable)
     customer_email: string;     // მომხმარებლის Email
     refunded_amount: number;    // დაბრუნებული თანხა (DECIMAL)
     currency: string;           // ვალუტა (USD, EUR, GEL და ა.შ.)
@@ -118,8 +118,8 @@ export type Refund = {
   };
   export type ErrorLog = {
     id: number;
-    user_id?: string | null;   // მომხმარებლის UUID (NULL თუ არ არის მომხმარებელთან დაკავშირებული)
-    session_id?: string | null; // Stripe-ის სესიის ID (NULL თუ არაა გადახდასთან დაკავშირებული)
+    user_ID?: string | null;   // მომხმარებლის UUID (NULL თუ არ არის მომხმარებელთან დაკავშირებული)
+    session_ID?: string | null; // Stripe-ის სესიის ID (NULL თუ არაა გადახდასთან დაკავშირებული)
     error_message: string;      // შეცდომის ტექსტი
     stack_trace?: string | null;// Stack Trace (თუ არის ხელმისაწვდომი)
     function_name?: string | null; // რომელი ფუნქციიდან წარმოიშვა

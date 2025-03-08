@@ -92,24 +92,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
     }, []);
 
-    const AddToWishList = useCallback(async (productID: string, product_ColorID: string, productStockID?: string, amount?: number) => {
+    const AddToWishList = useCallback(async (product_ID: string, product_ColorID: string, product_StockID?: string, amount?: number) => {
         try {
-            let checkItemExist = saveItems.wishList.find((item) => item.product_ID === productID && item.product_ColorID === product_ColorID && item.productStockID === productStockID);
+            let checkItemExist = saveItems.wishList.find((item) => item.product_ID === product_ID && item.product_ColorID === product_ColorID && item.product_StockID === product_StockID);
             if (!checkItemExist) {
-                if (!productID || !product_ColorID || !productStockID) return;
+                if (!product_ID || !product_ColorID || !product_StockID) return;
                 if (user) {
                     const response = await fetch("/api/AddToWishList", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ user_ID: user.id, product_ID: productID, product_ColorID: product_ColorID, productStockID, amount }),
+                        body: JSON.stringify({ user_ID: user.id, product_ID: product_ID, product_ColorID: product_ColorID,product_StockID: product_StockID, amount }),
                     });
                     if (!response.ok) {
                         throw new Error("Failed to add to wishlist");
                     }
                     let result = await response.json();
-                    var newWishList = [...saveItems.wishList, { id: result.id, user_ID: user.id, product_ID: productID, product_ColorID: product_ColorID, productStockID, amount }];
+                    var newWishList = [...saveItems.wishList, { id: result.id, user_ID: user.id, product_ID: product_ID, product_ColorID: product_ColorID, product_StockID: product_StockID, amount }];
                 } else {
-                    newWishList = [...saveItems.wishList, { id: "", user_ID: "", product_ID: productID, product_ColorID: product_ColorID, productStockID, amount }];
+                    newWishList = [...saveItems.wishList, { id: "", user_ID: "", product_ID: product_ID, product_ColorID: product_ColorID, product_StockID: product_StockID, amount }];
                     localStorage.setItem("wishList", JSON.stringify(newWishList));
                 }
                 setSavedItems((pre) => ({ ...pre, wishList: newWishList }));
@@ -120,24 +120,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
     }, [user, saveItems.wishList]);
 
-    const AddToCart = useCallback(async (productID: string, colorID: string, productStockID?: string, amount?: number) => {
+    const AddToCart = useCallback(async (productID: string, product_ColorID: string, product_StockID?: string, amount?: number) => {
         try {
-            let checkItemExist = saveItems.cart.find((item) => item.product_ID === productID && item.product_ColorID === colorID && item.productStockID === productStockID);
+            let checkItemExist = saveItems.cart.find((item) => item.product_ID === productID && item.product_ColorID === product_ColorID && item.product_StockID === product_StockID);
             if (!checkItemExist) {
-                if (!productID || !colorID || !productStockID) return;
+                if (!productID || !product_ColorID || !product_StockID) return;
                 if (user) {
                     const response = await fetch("/api/AddToCart", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ user_ID: user.id, product_ID: productID, product_ColorID: colorID, productStockID, amount }),
+                        body: JSON.stringify({ user_ID: user.id, product_ID: productID, product_ColorID: product_ColorID, product_StockID: product_StockID, amount }),
                     });
                     if (!response.ok) {
                         throw new Error("Failed to add to wishlist");
                     }
                     let result = await response.json();
-                    var newCart = [...saveItems.cart, { id: result.id, user_ID: user.id, product_ID: productID, product_ColorID: colorID, productStockID, amount }];
+                    var newCart = [...saveItems.cart, { id: result.id, user_ID: user.id, product_ID: productID, product_ColorID: product_ColorID, product_StockID: product_StockID, amount }];
                 } else {
-                    newCart = [...saveItems.cart, { id: "", user_ID: "", product_ID: productID, product_ColorID: colorID, productStockID, amount }];
+                    newCart = [...saveItems.cart, { id: "", user_ID: "", product_ID: productID, product_ColorID: product_ColorID, product_StockID: product_StockID, amount }];
                     localStorage.setItem("wishList", JSON.stringify(newCart));
                 }
                 setSavedItems((pre) => ({ ...pre, cart: newCart }));
@@ -165,7 +165,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 var newWishList = saveItems.wishList.filter((item) => item.id !== id);
                 setSavedItems((pre) => ({ ...pre, wishList: newWishList }));
             } else {
-                newWishList = saveItems.wishList.filter((item) => item.productStockID !== productStockID);
+                newWishList = saveItems.wishList.filter((item) => item.product_StockID !== productStockID);
                 localStorage.setItem("wishList", JSON.stringify(newWishList));
             }
             setSavedItems((pre) => ({ ...pre, wishList: newWishList }));
@@ -191,7 +191,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 var newCart = saveItems.cart.filter((item) => item.id !== id);
                 setSavedItems((pre) => ({ ...pre, cart: newCart }));
             } else {
-                newCart = saveItems.cart.filter((item) => item.productStockID !== productStockID);
+                newCart = saveItems.cart.filter((item) => item.product_StockID !== productStockID);
                 localStorage.setItem("wishList", JSON.stringify(newCart));
             }
             setSavedItems((pre) => ({ ...pre, cart: newCart }));

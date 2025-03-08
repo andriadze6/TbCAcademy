@@ -8,7 +8,7 @@ import { globalInfoType, catalogType, sizeType } from '../../../Type/type';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 
-async function processCatalogArray(catalogArray, supabase, stripe, globalInfo, productId, usdToGelRate) {
+async function processCatalogArray(catalogArray, supabase, stripe, globalInfo, product_ID, usdToGelRate) {
   try {
     // Map catalog processing into Promises
     const catalogPromises = catalogArray.map(async (catalog) => {
@@ -16,12 +16,12 @@ async function processCatalogArray(catalogArray, supabase, stripe, globalInfo, p
       const { data: catalogData, error: catalogError } = await supabase
         .from('productColors')
         .insert({
-          product_id: productId,
-          color_Code: catalog.color,
+          product_ID: product_ID,
+          color_code: catalog.color,
           color_ge: catalog.color_ge,
           color_en: catalog.color_en,
         })
-        .select('productColorID');
+        .select('product_ColorID');
 
       if (catalogError) {
         throw new Error(`Error inserting productColors: ${catalogError.message}`);
@@ -33,7 +33,7 @@ async function processCatalogArray(catalogArray, supabase, stripe, globalInfo, p
 
 
       // Process sizes and create Stripe products and prices
-      await processCatalogSizes(catalog, stripe, supabase, globalInfo, productId, productColorID, usdToGelRate, imageUrls[0]);
+      await processCatalogSizes(catalog, stripe, supabase, globalInfo, product_ID, productColorID, usdToGelRate, imageUrls[0]);
 
       // Upload images
 
@@ -44,7 +44,7 @@ async function processCatalogArray(catalogArray, supabase, stripe, globalInfo, p
           productColorID,
           imageURL: imageUrls,
           isPrimary: imageUrls[0],
-          product_id: productId
+          product_id: product_ID
         });
 
       if (imageError) {
@@ -67,7 +67,7 @@ async function processCatalogArray(catalogArray, supabase, stripe, globalInfo, p
 
 
 
-async function processCatalogSizes(catalog, stripe, supabase, globalInfo, productId, productColorID, usdToGelRate, imageUrl) {
+async function processCatalogSizes(catalog, stripe, supabase, globalInfo, product_ID, product_ColorID, usdToGelRate, imageUrl) {
   try {
     const sizePromises = Object.entries(catalog.sizeObj) // Filter sizes with count and price
       .map(async ([size, value]) => {
@@ -83,8 +83,8 @@ async function processCatalogSizes(catalog, stripe, supabase, globalInfo, produc
           },
           expand: ['default_price'],
           metadata: {
-            productID: productId,
-            colorID: productColorID,
+            product_ID: product_ID,
+            colorID: product_ColorID,
             size,
           },
         });
@@ -102,10 +102,10 @@ async function processCatalogSizes(catalog, stripe, supabase, globalInfo, produc
             size,
             count: sizeValue.count,
             stripe_ProductID: stripePrice.id,
-            product_ColorID: productColorID,
+            product_ColorID: product_ColorID,
             price_usd: sizeValue.price,
             price_lari: parseFloat((sizeValue.price * usdToGelRate).toFixed(0)),
-            product_id: productId,
+            product_id: product_ID,
           });
 
         if (stockError) {
@@ -191,13 +191,13 @@ export async function POST(request) {
         details_en: globalInfo.details_en,
         details_ge: globalInfo.details_ge
       })
-      .select('product_id');
+      .select('product_ID');
 
     if (productError) {
       throw new Error(`Error inserting GlobalProductInfo: ${productError.message}`);
     }
 
-    const productId = productData[0].product_id;
+    const productId = productData[0].product_ID;
     let result = await processCatalogArray(catalogArray, supabase, stripe, globalInfo, productId, 1)
     const productColorID = result[0].productColorID;
     return NextResponse.json(

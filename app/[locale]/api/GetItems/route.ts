@@ -15,19 +15,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         // მონაცემების ერთიანად წამოღება
         const [globalProductInfo, images, productColors, productStock] = await Promise.all([
             supabase.from('GlobalProductInfo')
-                .select('description_en, description_ge, details_en, details_ge, gender, title_en, title_ge, product_id')
-                .in('product_id', productIDs),
+                .select('product_ID, description_en, description_ge, details_en, details_ge, gender, title_en, title_ge')
+                .in('product_ID', productIDs),
             supabase.from('Images')
-                .select('productColorID, isPrimary')
-                .in("productColorID", colorIDs),
+                .select('product_ColorID,isPrimary')
+                .in("product_ColorID", colorIDs),
                 supabase.from('productColors')
-                .select('productColorID, color_en, color_ge')
-                .in('product_id', productIDs),
+                .select('product_ColorID, color_en, color_ge')
+                .in('product_ID', productIDs),
 
             productStockIDs.length ?
                 supabase.from('productStock')
-                    .select("productStockID, product_ColorID, size, stripe_ProductID,price_lari, price_usd, count")
-                    .in('productStockID', productStockIDs)
+                    .select("product_StockID, product_ColorID, size, stripe_ProductID,price_lari, price_usd, count")
+                    .in('product_StockID', productStockIDs)
                 : { data: [] as productStockType[], error: null }
         ]);
 
@@ -37,9 +37,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         if (productColors.error) throw new Error(productColors.error.message);
 
         // მონაცემების `map`-ში გადაყვანა სწრაფი წვდომისთვის
-        const productMap = new Map(globalProductInfo.data.map(item => [item.product_id, item]));
-        const imagesMap = new Map(images.data.map(img => [img.productColorID, img]));
-        const colorsMap = new Map(productColors.data.map(color => [color.productColorID, color]));
+        const productMap = new Map(globalProductInfo.data.map(item => [item.product_ID, item]));
+        const imagesMap = new Map(images.data.map(img => [img.product_ColorID, img]));
+        const colorsMap = new Map(productColors.data.map(color => [color.product_ColorID, color]));
         const stockMap = new Map(
             (productStock.data || []).map(stock => [stock.productStockID, stock] as [string, productStockType])
         );

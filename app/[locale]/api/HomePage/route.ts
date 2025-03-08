@@ -15,18 +15,18 @@ export async function GET(request) {
             supabase
             .from('GlobalProductInfo')
             .select('*')
-            .eq('product_id', Trending[i].product_id),
+            .eq('product_ID', Trending[i].product_ID),
             supabase.from('productColors')
             .select('*')
-            .eq('product_id', Trending[i].product_id),
+            .eq('product_ID', Trending[i].product_ID),
             supabase
                 .from('productStock')
                 .select("*")
-                .eq('product_id', Trending[i].product_id),
+                .eq('product_ID', Trending[i].product_ID),
             supabase
                 .from('Images')
-                .select('imageURL, productColorID, isPrimary')
-                .eq("product_id", Trending[i].product_id)
+                .select('imageURL, product_ColorID, isPrimary')
+                .eq("product_ID", Trending[i].product_ID)
         ]);
 
         if (GlobalProductInfoResult.error) {
