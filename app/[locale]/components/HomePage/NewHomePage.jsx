@@ -38,14 +38,14 @@ async function getProduct() {
             supabase
             .from('GlobalProductInfo')
             .select('*')
-            .eq('product_id', Trending[i].product_ID),
+            .eq('product_ID', Trending[i].product_ID),
             supabase
                 .from('Images')
                 .select('imageURL, isPrimary')
-                .eq("productColorID", Trending[i].color_ID)
+                .eq("product_ColorID", Trending[i].product_ColorID)
         ]);
         if (imagesResult.error) {
-            throw new Error(imagesResult.error.message);
+            console.log(imagesResult.error);
         }
         if(GlobalProductInfoResult.data[0].gender === "man"){
             result.man.push({...Trending[i], ...imagesResult.data[0]})

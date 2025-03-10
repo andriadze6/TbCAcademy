@@ -26,7 +26,7 @@ export default function ProductPage() {
     const { ID, product_ColorID } = useParams<{ ID: string, product_ColorID: string}>();
     const [amount, setAmount] = useState(1);
     const [selectedItem, setSelectedItem] = useState({
-        productStockID: null,
+        product_StockID: null,
         product_ColorID:product_ColorID as string,
         size: null,
         amount: 1,
@@ -65,9 +65,10 @@ export default function ProductPage() {
     },[ID,product_ColorID]); ///ID უნდა იყოს დამოკიდებული
 
     useEffect(()=>{
-        if(selectedItem.productStockID){
-            const checkWishList = wishList.find(item=>item.productStockID === selectedItem.productStockID)
-            const checkCart = cart.find(item=>item.productStockID === selectedItem.productStockID)
+
+        if(selectedItem.product_StockID){
+            const checkWishList = wishList.find(item=>item.product_StockID === selectedItem.product_StockID)
+            const checkCart = cart.find(item=>item.product_StockID === selectedItem.product_StockID)
             setSelectedItem({...selectedItem, wishListID: checkWishList?.id, cartID: checkCart?.id})
         }
     },[wishList, cart])
@@ -80,12 +81,12 @@ export default function ProductPage() {
         const colorImages = [];
         let imageAmount = 0;
         imagesArray.forEach((color) => {
-            if (color.productColorID === cID) {
+            if (color.product_ColorID === cID) {
                 imageAmount = color.imageURL.length
                 color.imageURL.forEach((url, imgIndex) => {
                     navImages.push(
                         <div
-                            key={`${color.productColorID}-nav-${imgIndex}`}
+                            key={`${color.product_ColorID}-nav-${imgIndex}`}
                             onClick={() => skipSlider(imgIndex, 1)}
                             className="navImgDiv">
                             <Image
@@ -100,7 +101,7 @@ export default function ProductPage() {
                     );
                     sliderImages.push(
                         <div
-                            key={`${color.productColorID}-slider-${imgIndex}`}
+                            key={`${color.product_ColorID}-slider-${imgIndex}`}
                             className="SliderDiv"
                             style={{ flex: `0 0 100%` }}>
                             <Image
@@ -124,7 +125,7 @@ export default function ProductPage() {
         debugger
         setSelectedItem({
             ...selectedItem,
-            productStockID: null,
+            product_StockID: null,
             product_ColorID: product_ColorID
         })
         setProductData({
@@ -174,34 +175,34 @@ export default function ProductPage() {
 
 
    async function WisList(){
-        if(selectedItem.productStockID){
-           await AddToWishList(ID,selectedItem.product_ColorID, selectedItem.productStockID, amount)
+        if(selectedItem.product_StockID){
+           await AddToWishList(ID,selectedItem.product_ColorID, selectedItem.product_StockID, amount)
         }
     }
    async function DeleteWishList(){
         if(selectedItem.wishListID){
-          await  DeleteItemFromWishList(selectedItem.wishListID, selectedItem.productStockID)
+          await  DeleteItemFromWishList(selectedItem.wishListID, selectedItem.product_StockID)
         }
     }
 
     async function Cart(){
-        if(selectedItem.productStockID){
-            await AddToCart(ID,selectedItem.product_ColorID, selectedItem.productStockID, amount)
+        if(selectedItem.product_StockID){
+            await AddToCart(ID,selectedItem.product_ColorID, selectedItem.product_StockID, amount)
         }
     }
     async function DeleteCart(){
         if(selectedItem.cartID){
-            await DeleteItemFromCart(selectedItem.cartID, selectedItem.productStockID)
+            await DeleteItemFromCart(selectedItem.cartID, selectedItem.product_StockID)
         }
     }
 
     function changeSize(productStockID:string){
-        const checkWishList = wishList.find(item=>item.productStockID === productStockID)
-        const checkCart = cart.find(item=>item.productStockID === productStockID)
+        const checkWishList = wishList.find(item=>item.product_StockID === productStockID)
+        const checkCart = cart.find(item=>item.product_StockID === productStockID)
         if(checkWishList || checkCart){
             setSelectedItem({
                 ...selectedItem,
-                productStockID: productStockID,
+                product_StockID: productStockID,
                 wishListID: checkWishList?.id,
                 cartID: checkCart?.id
             })
@@ -209,7 +210,7 @@ export default function ProductPage() {
         else{
             setSelectedItem({
                 ...selectedItem,
-                productStockID: productStockID,
+                product_StockID: productStockID,
                 wishListID: null,
                 cartID: null
             })
@@ -261,10 +262,10 @@ export default function ProductPage() {
                         <h4 style={{marginBottom:"10px"}}>price:</h4>
                         <div className='bottom_Margin' style={{display:"flex",gap:"20px"}}>
                             {
-                                selectedItem.productStockID != null ?
+                                selectedItem.product_StockID != null ?
                                 <div className='current-Price' style={{display:"flex"}}>
                                     <h3 className='product-currency'>₾</h3>
-                                    <h3 className='product-Price'>{ productData.productStock[selectedItem.product_ColorID][selectedItem.productStockID].price_lari}</h3>
+                                    <h3 className='product-Price'>{ productData.productStock[selectedItem.product_ColorID][selectedItem.product_StockID].price_lari}</h3>
                                 </div>
                                 : <h4 style={{marginBottom:"10px"}}>To see price choose size</h4>
                             }
@@ -278,9 +279,9 @@ export default function ProductPage() {
                                 productData.images.map((item, index) => {
                                     return (
                                         <button
-                                        onClick={()=>changeColor(item.productColorID)} key={item.productColorID} className='color_Img_Button'>
+                                        onClick={()=>changeColor(item.product_ColorID)} key={item.product_ColorID} className='color_Img_Button'>
                                             <Image
-                                            style={selectedItem.product_ColorID != item.productColorID ? {border:"1px solid rgba(163, 192, 200, 0.771)"}:{border:"2px solid rgba(178,1,14,0.6671043417366946)"}}
+                                            style={selectedItem.product_ColorID != item.product_ColorID ? {border:"1px solid rgba(163, 192, 200, 0.771)"}:{border:"2px solid rgba(178,1,14,0.6671043417366946)"}}
                                             className={`color_Img ${index === sliderState.clickAmount ? "border" : ""}`} width={500} height={500} src={item.isPrimary} alt="" />
                                         </button>
                                     )
@@ -294,9 +295,9 @@ export default function ProductPage() {
                                     Object.entries(productData.productStock[selectedItem.product_ColorID]).map(([key, value]:[string, productStockType], index)=>{
                                         return (
                                             <button
-                                            style={selectedItem.productStockID != key ? {border:"1px solid rgba(163, 192, 200, 0.771)"}:{border:"2px solid rgba(178,1,14,0.6671043417366946)"}}
-                                             onClick={()=>{changeSize(value.productStockID)}}
-                                            className='size_Button' key={`${value.productStockID}`}>{value.size}</button>
+                                            style={selectedItem.product_StockID != key ? {border:"1px solid rgba(163, 192, 200, 0.771)"}:{border:"2px solid rgba(178,1,14,0.6671043417366946)"}}
+                                             onClick={()=>{changeSize(value.product_StockID)}}
+                                            className='size_Button' key={`${value.product_StockID}`}>{value.size}</button>
                                         )
                                     })
                                 }
@@ -325,7 +326,7 @@ export default function ProductPage() {
                             {selectedItem.cartID ? "Remove from cart" : "Add to cart"}</button>
                         </div>
                         <div
-                            onMouseEnter={(e) => showTooltip(e,selectedItem.productStockID? (selectedItem.wishListID ? "Remove from wish list" : "Add to wish list") : "Choose size")}
+                            onMouseEnter={(e) => showTooltip(e,selectedItem.product_StockID? (selectedItem.wishListID ? "Remove from wish list" : "Add to wish list") : "Choose size")}
                             onMouseLeave={hideTooltip}>
                             <button
                                 className='addWishList-Button'

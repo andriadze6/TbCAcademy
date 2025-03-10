@@ -28,7 +28,7 @@ export default function Slider({man, woman, kid, sliderToShow}){
                     {
                         data.length > 0 && data.map((item, index) =>{
                             return(
-                                <Link href={`/ProductPage/${item.product_ID}/${item.color_ID}`} key={item.color_ID} style={{flex: `0 0 calc(100% / ${3})`}} className="Item">
+                                <Link href={`/ProductPage/${item.product_ID}/${item.product_ColorID}`} key={item.id} style={{flex: `0 0 calc(100% / ${3})`}} className="Item">
                                     <div style={{position:"relative",borderRadius:"10px"}}>
                                         {
                                             item.imageURL && item.imageURL.length > 0 &&
