@@ -1,6 +1,6 @@
 .myAccount-wrapper{
     margin: 20px auto;
-    max-width: 80%;
+    width: 70%;
 }
 .nav-MyAccount{
     display: grid;
@@ -16,9 +16,6 @@ h1{
 main{
     display: flex;
     gap: 20px;
-}
-.header-MyAccount{
-    width: 20%;
 }
 .myAccount-Page{
     padding: 18px 0px;

@@ -1,6 +1,5 @@
 'use client'
 import '../../assets/css/NewHeader.css'
-import { useEffect, useState } from "react";
 import {useTranslations, useLocale } from 'next-intl';
 import { LanguagePicker } from '../Header/languageSwitcher';
 import { ThemeProvider } from '../../../providers/ThemeProvider';
@@ -19,7 +18,6 @@ function Header(){
     let {theme, changeTheme} = useTheme();
     const { user, wishList, cart } = useAuth();
     const t = useTranslations('HomePage');
-    const router = useRouter();
     const currentLanguage = useLocale();
 
 

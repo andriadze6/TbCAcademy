@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
         });
         let info = await response.json();
         let result = data.map((order)=>{
-            return {...order, product: info.find((item) => item.product_StockID === order.product.product_StockID)};
+            return {...order,delivery_address: JSON.parse(order.delivery_address), product: info.find((item) => item.product_StockID === order.product.product_StockID)};
         })
         return NextResponse.json(result);
     }catch(error){
