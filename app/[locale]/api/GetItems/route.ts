@@ -9,7 +9,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const productIDs = Array.from(new Set(list.map(item => item.product_ID)));
     const colorIDs = Array.from(new Set(list.map(item => item.product_ColorID ).filter((id): id is string => id !== null)));
-    const productStockIDs = Array.from(new Set(list.map(item => item.productStockID).filter((id): id is string => id !== null)));
+    const productStockIDs = Array.from(new Set(list.map(item => item.product_StockID).filter((id): id is string => id !== null)));
 
     try {
         // მონაცემების ერთიანად წამოღება
@@ -41,14 +41,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         const imagesMap = new Map(images.data.map(img => [img.product_ColorID, img]));
         const colorsMap = new Map(productColors.data.map(color => [color.product_ColorID, color]));
         const stockMap = new Map(
-            (productStock.data || []).map(stock => [stock.productStockID, stock] as [string, productStockType])
+            (productStock.data || []).map(stock => [stock.product_StockID, stock] as [string, productStockType])
         );
         // საბოლოო შედეგის ფორმატირება
-        const results = list.map(({id, product_ID, product_ColorID , productStockID, amount }) => ({
+        const results = list.map(({id, product_ID, product_ColorID , product_StockID, amount }) => ({
             id: id,
             ...colorsMap.get(product_ColorID ),
             ...productMap.get(product_ID),
-            ...stockMap.get(productStockID),
+            ...stockMap.get(product_StockID),
             ...imagesMap.get(product_ColorID ),
             amount: amount
         }));

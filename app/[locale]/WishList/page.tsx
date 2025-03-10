@@ -29,7 +29,7 @@ export default function WishListPage() {
                     body: JSON.stringify( wishList ),
                 });
                 const result = await response.json();
-
+                console.log(result);
                 setTimeout(() =>setData(result)
                 , 400);
             } catch (error) {
@@ -61,13 +61,13 @@ export default function WishListPage() {
     setTooltip(null);
     };
 
-    function AddCart(productID, colorID, productStockID, amount){
-        let checkItemExist = cart.find((item) => item.product_ID === productID && item.color_ID === colorID && item.productStockID === productStockID);
+    function AddCart(productID, colorID, product_StockID, amount){
+        let checkItemExist = cart.find((item) => item.product_ID === productID && item.product_ColorID === colorID && item.product_StockID === product_StockID);
         if(!checkItemExist){
-            AddToCart(productID, colorID, productStockID, amount);
+            AddToCart(productID, colorID, product_StockID, amount);
             setMessage("Item added to cart");
         }else{
-            DeleteItemFromCart(checkItemExist.id, productStockID);
+            DeleteItemFromCart(checkItemExist.id, product_StockID);
             setMessage("Item Deleted from cart");
         }
         setTimeout(() => {
@@ -124,12 +124,12 @@ export default function WishListPage() {
                             data.length > 0 &&
                             data.map((item, index) =>{
                                 return(
-                                    <div className="product-card-grid" key={item.productStock.productStockID + "grid"}>
-                                        <Link  href={`/ProductPage/${item.product.product_id}/${item.images.productColorID}`} >
+                                    <div className="product-card-grid" key={item.product_StockID + "grid"}>
+                                        <Link  href={`/ProductPage/${item.product_ID}/${item.product_ColorID}`} >
                                             {
-                                                item?.images &&
+                                                item.isPrimary &&
                                                 <>
-                                                    <Image style={{borderRadius:"10px",border:"1px solid #ccc", overflow:"hidden"}} className={`Image animation-grid ${showElements ? "showGrid" : ""}`} alt="" height={500} width={500} src={item.images.isPrimary}/>
+                                                    <Image style={{borderRadius:"10px",border:"1px solid #ccc", overflow:"hidden"}} className={`Image animation-grid ${showElements ? "showGrid" : ""}`} alt="" height={500} width={500} src={item.isPrimary}/>
                                                 </>
                                             }
                                         </Link>
@@ -137,19 +137,19 @@ export default function WishListPage() {
                                             <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
                                                 <div style={{display:"flex", alignItems:"center", justifyContent:"center"}}>
                                                     <p className={`animation-grid ${showElements ? "showGrid" : ""}`} style={{padding:"10px"}}>
-                                                        ₾{item.productStock.price_lari}
+                                                        ₾{item.price_lari}
                                                     </p>
                                                 </div>
                                                 {
-                                                    item.productStock.size &&
+                                                    item.size &&
                                                     <div style={{display:"flex", alignItems:"center", justifyContent:"center"}}>
                                                         <p className={`animation-grid ${showElements ? "showGrid" : ""}`} style={{padding:"10px"}}>
-                                                            Size:{item.productStock.size}
+                                                            Size:{item.size}
                                                         </p>
                                                     </div>
                                                 }
                                                 <div className={`animation-grid ${showElements ? "showGrid" : ""}`}
-                                                    onClick={() => DeleteItemFromWishList(item.id,item.productStock.productStockID)}>
+                                                    onClick={() => DeleteItemFromWishList(item.id,item.product_StockID)}>
                                                     <svg
                                                         style={{cursor:"pointer"}}
                                                         onMouseEnter={(e) => showTooltip(e, "Delete")}
@@ -167,11 +167,11 @@ export default function WishListPage() {
                                                 className="addToCart-Button"
                                                 style={{
                                                     background:`${
-                                                    cart.find((cartItem) => cartItem.productStockID === item.productStock.productStockID) ?
+                                                    cart.find((cartItem) => cartItem.product_StockID === item.product_StockID) ?
                                                     "radial-gradient(circle, rgba(230,139,0,1) 9%, rgba(230,123,0,1) 50%, rgba(230,92,0,1) 100%)":
                                                     "radial-gradient(circle, rgba(76,129,144,1) 28%, rgba(40,24,52,0.9360119047619048) 100%)"}`
                                                 }}
-                                                    onClick={() => AddCart(item.product.product_id, item.images.productColorID, item.productStock.productStockID, item.amount)} >
+                                                    onClick={() => AddCart(item.product_ID, item.product_ColorID, item.product_StockID, item.amount)} >
                                                     <svg xmlns="http://www.w3.org/2000/svg" width={24} fill="none" viewBox="0 0 24 24" strokeWidth="1" stroke="currentColor">
                                                         <path strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"></path>
                                                     </svg>
@@ -189,32 +189,28 @@ export default function WishListPage() {
                             data.length > 0 &&
                             data.map((item, index) =>{
                                 return(
-                                    <div className='product-card-line' key={item.productStock.productStockID + "line"}>
-                                        <Link  href={`/ProductPage/${item.product.product_ID}/${item.images.productColorID}`} >
+                                    <div className='product-card-line' key={item.productStockID + "line"}>
+                                        <Link  href={`/ProductPage/${item.product_ID}/${item.product_ColorID}`} >
                                                 {
-                                                    item?.images &&
+                                                    item?.isPrimary &&
                                                     <>
-                                                        <Image style={{borderRadius:"10px",border:"1px solid #ccc", overflow:"hidden"}} className={`animation-line Image ${showElements ? "showLine" : ""}`} alt="" height={500} width={500} src={item.images.isPrimary}/>
+                                                        <Image style={{borderRadius:"10px",border:"1px solid #ccc", overflow:"hidden"}} className={`animation-line Image ${showElements ? "showLine" : ""}`} alt="" height={500} width={500} src={item.isPrimary}/>
                                                     </>
                                                 }
                                         </Link>
                                         <div style={{padding:"10px", width:"86%", display:"flex", flexDirection:"column", justifyContent:"center"}}>
-                                            <h3 className={`animation-line ${showElements ? "showLine" : ""}`} style={{padding:"10px 0px"}}>{currentLanguage === "en" ? item.product.title_en : item.product.title_ge}</h3>
-                                            <p  className={`animation-line ${showElements ? "showLine" : ""}`}>{currentLanguage === "en" ? item.product.description_en : item.product.description_ge}</p>
+                                            <h3 className={`animation-line ${showElements ? "showLine" : ""}`} style={{padding:"10px 0px"}}>{currentLanguage === "en" ? item.title_en : item.title_ge}</h3>
+                                            <p  className={`animation-line ${showElements ? "showLine" : ""}`}>{currentLanguage === "en" ? item.description_en : item.description_ge}</p>
                                             <div style={{ padding:"10px 0px"}}>
-                                                {
-                                                    item.productStock &&
-                                                    <p className={`animation-line ${showElements ? "showLine" : ""}`}>
-                                                        ₾{item.productStock.price_lari}
-                                                    </p>
-                                                }
-
+                                                <p className={`animation-line ${showElements ? "showLine" : ""}`}>
+                                                    ₾{item.price_lari}
+                                                </p>
                                             </div>
                                             <div style={{ padding:"10px 0px"}}>
                                             {
-                                                item.productStock.size &&
+                                                item.size &&
                                                 <p className={`animation-grid ${showElements ? "showGrid" : ""}`}>
-                                                    Size:{item.productStock.size}
+                                                    Size:{item.size}
                                                 </p>
                                             }
                                             </div>
@@ -223,11 +219,11 @@ export default function WishListPage() {
                                                     <button 
                                                     style={{
                                                         background:`${
-                                                        cart.find((cartItem) => cartItem.productStockID === item.productStock.productStockID) ?
+                                                        cart.find((cartItem) => cartItem.product_StockID === item.product_StockID) ?
                                                         "radial-gradient(circle, rgba(230,139,0,1) 9%, rgba(230,123,0,1) 50%, rgba(230,92,0,1) 100%)":
                                                         "radial-gradient(circle, rgba(76,129,144,1) 28%, rgba(40,24,52,0.9360119047619048) 100%)"}`
                                                     }}
-                                                    onClick={() => AddCart(item.product.product_id, item.images.productColorID, item.productStock.productStockID, item.amount)}
+                                                    onClick={() => AddCart(item.product_ID, item.product_ColorID, item.product_StockID, item.amount)}
                                                     className='addToCart-Button'>
                                                         <svg xmlns="http://www.w3.org/2000/svg" width={24} fill="none" viewBox="0 0 24 24" strokeWidth="1" stroke="currentColor">
                                                             <path strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"></path>
@@ -235,7 +231,7 @@ export default function WishListPage() {
                                                     </button>
                                                 </div>
                                                 <div
-                                                    onClick={() => DeleteItemFromWishList(item.id,item.productStock.productStockID)}>
+                                                    onClick={() => DeleteItemFromWishList(item.id,item.product_StockID)}>
                                                     <svg
                                                         style={{cursor:"pointer"}}
                                                         onMouseEnter={(e) => showTooltip(e, "Delete")}
