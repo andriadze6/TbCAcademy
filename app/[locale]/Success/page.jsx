@@ -23,7 +23,7 @@ export default async function Success({ searchParams }) {
   const { data: existingOrder, error: checkError } = await supabase
     .from('Orders')
     .select('id')
-    .eq('session_id', session_id)
+    .eq('session_ID', session_id)
     .single();
   if (checkError && checkError.code !== 'PGRST116') {
     console.error('Error checking order:', checkError);
@@ -36,19 +36,18 @@ export default async function Success({ searchParams }) {
   if (status === 'complete') {
     let supabase = await createClient();
     for (const [index, item] of line_items.data.entries()) {
-      try {
         const [stockResult, orderResult, cartResult] = await Promise.all([
           supabase.rpc('decrement_stock', { sid: item.price.id, quantity: item.quantity }),
           supabase.from('Orders').insert([
             {
-              session_id: session_id,
+              session_ID: session_id,
               amount_money: item.amount_total / 100,
               quantity: item.quantity,
               currency: session.currency,
               pay_status: session.payment_status,
               delivery_address: metadata.delivery_address,
               delivery_status: 'pending',
-              user_id: metadata.user_id,
+              user_ID: metadata.user_id,
               product: JSON.parse(metadata[item.price.id]),
               up_date: new Date().toISOString(),
             }
@@ -62,7 +61,6 @@ export default async function Success({ searchParams }) {
           logError(cartError, "deleting cart", "Success", 65, metadata.user_id);
         }
         if (orderError) {
-
           try {
             notAdded[item.price.id] = true
             const refund = await stripe.refunds.create({
@@ -99,9 +97,6 @@ export default async function Success({ searchParams }) {
         if (stockError) {
            logError(stockError, "decrementing stock", "Success", 100, metadata.user_id);
         }
-      } catch (error) {
-        logError(error, "decrementing stock", "Success", 100, metadata.user_id);
-      }
     }
     return (
       <section id="success">

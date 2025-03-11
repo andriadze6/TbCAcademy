@@ -17,16 +17,6 @@
     line-height: 1.4;
 }
 
-.tooltip-close {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: transparent;
-    border: none;
-    font-size: 14px;
-    cursor: pointer;
-}
-
 .tooltip-arrow {
     position: absolute;
     top: -6px;

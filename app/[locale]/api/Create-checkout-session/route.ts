@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
       metadata[item.stripe_ProductID] = JSON.stringify({
         product_ID:item.product_ID,
         product_ColorID : item.product_ColorID,
-        productStockID : item.product_StockID})
+        product_StockID : item.product_StockID})
       lineItems.push({priceId: item.stripe_ProductID, quantity: item.amount})
     })
     // Create Checkout Sessions from body params.

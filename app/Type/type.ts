@@ -68,18 +68,19 @@ export type GlobalProductInfoType = {
 
 
 export type DeliveryAddressType = {
-  id: string;
-  user_ID: string;
-  first_Name: string;
-  last_Name: string;
-  phone: string;
-  city: string;
-  region: string;
-  street_Address: string;
-  apartment_Number: string;
-  zip_Code: string;
-  default: boolean
-};
+    apartment_Number: string;
+    city: string;
+    created_at: string;
+    default: boolean | null;
+    first_Name: string;
+    id: string;
+    last_Name: string;
+    phone: string;
+    region: string;
+    street_Address: string;
+    user_ID: string;
+    zip_Code: string;
+  };
 export type ItemListType = {
     id:string;
     user_ID:string;
@@ -130,3 +131,39 @@ export type Refund = {
     resolved_at?: string | null;// როდის გამოსწორდა (NULL თუ ჯერ არ გამოსწორებულა)
   };
   
+  export type ProductType = {
+    color_en: string;
+    color_ge: string;
+    count: number;
+    description_en: string;
+    description_ge: string;
+    details_en: string[];
+    details_ge: string[];
+    gender: string;
+    isPrimary: boolean;
+    price_lari: number;
+    price_usd: number;
+    product_ColorId: string;
+    product_ID: string;
+    product_StockID: string;
+    sizes: string[];
+    stripe_ProductID: string;
+    title_en: string;
+    title_ge: string;
+  };
+  
+  export type orderType = {
+    amount_money: number;
+    created_at: string;
+    currency: string;
+    delivered_at: string | null;
+    delivery_address: DeliveryAddressType;
+    delivery_status: string;
+    id: string;
+    pay_status: string;
+    product: ProductType;
+    quantity: number;
+    user_ID: string;
+    session_id: string;
+    updated_at: string;
+  };
