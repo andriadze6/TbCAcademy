@@ -3,7 +3,7 @@
 import { useEffect, useState, } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/providers/UserSessionProvider';
-import Tooltip from '../../components/Tooltip';
+import Tooltip from '../../components/ToolTip2';
 import {useTranslations, useLocale } from 'next-intl';
 
 export default function MyOrders() {
@@ -39,13 +39,20 @@ export default function MyOrders() {
             day: 'numeric'
         }).format(date);
     }
-    const showTooltip = (event, text) => {
+    const showTooltip = (event, delivery_address) => {
         const rect = event.target.getBoundingClientRect();
         setTooltip({
-          text,
+          text:(
+                <>
+                    <p>{delivery_address.first_Name + " " + delivery_address.last_Name}</p>
+                    <p>{delivery_address.city}</p>
+                    <p>{delivery_address.street_Address}</p>
+                    <p>{delivery_address.zip_Code}</p>
+                </>
+          ),
           position: {
-            top: rect.top + window.scrollY - 30,
-            left: rect.left + window.scrollX + rect.width / 2,
+            top: rect.bottom + window.scrollY + 10,
+            left: rect.left + window.scrollX - 10,
           },
         });
     };
@@ -70,12 +77,10 @@ export default function MyOrders() {
                                 <div>
                                     <p>SHIP TO</p>
                                     <p style={{display:"flex", alignItems:"center", gap:"5px", cursor:"pointer",textDecoration:"underline"}}
-                                    onMouseEnter={(e) => showTooltip(e, order.delivery_address.first_Name + " " + order.delivery_address.last_Name)}
+                                    onMouseEnter={(e) => showTooltip(e, order.delivery_address)}
                                     onMouseLeave={() => {hideTooltip()}}>
                                         {order.delivery_address.first_Name + " " + order.delivery_address.last_Name}
-                                        <svg width={"20px"} height={"20px"} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                        </svg>
+                                        &#x2B9F;
                                     </p>
                                 </div>
                             </div>
