@@ -1,4 +1,4 @@
-.tooltip {
+.tooltip2 {
     position: absolute;
     background: white;
     color: black;
@@ -12,12 +12,12 @@
     white-space: normal;
 }
 
-.tooltip-content {
+.tooltip-content2 {
     font-weight: normal;
     line-height: 1.4;
 }
 
-.tooltip-arrow {
+.tooltip-arrow2 {
     position: absolute;
     top: -6px;
     left: 50%;

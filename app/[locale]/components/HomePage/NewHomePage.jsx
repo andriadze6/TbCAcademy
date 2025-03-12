@@ -51,7 +51,6 @@ async function getProduct() {
             result.man.push({...Trending[i], ...imagesResult.data[0]})
         }
         else if(GlobalProductInfoResult.data[0].gender === "woman"){
-
             result.woman.push({...Trending[i], ...imagesResult.data[0]})
         }
         else{
@@ -125,7 +124,6 @@ async function HomePage(){
                         </div>
                     </div>
                 </div>
-
             </div>
             <TrendingSlider man={result.man} woman={result.woman} kid={result.kid} sliderToShow={3}></TrendingSlider>
             <div className="BannerWrapper">
@@ -139,8 +137,9 @@ async function HomePage(){
                 <div style={{display:"flex", gap:"20px", alignItems:"center", width:"70%"}}>
                     <Slider data={result.woman} sliderToShow={3}></Slider>
                 </div>
-                </div>
             </div>
+            </div>
+
         </>
     )
 }

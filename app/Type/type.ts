@@ -140,25 +140,30 @@ export type Refund = {
     details_en: string[];
     details_ge: string[];
     gender: string;
-    isPrimary: boolean;
+    isPrimary: string;
     price_lari: number;
     price_usd: number;
-    product_ColorId: string;
+    product_ColorID: string;
     product_ID: string;
     product_StockID: string;
-    sizes: string[];
+    size: string[];
     stripe_ProductID: string;
     title_en: string;
     title_ge: string;
   };
-  
+  export enum delivery_status {
+    pending = 1,
+    shipped = 2,
+    out_for_delivery = 3,
+    delivered = 4
+}
   export type orderType = {
     amount_money: number;
     created_at: string;
     currency: string;
     delivered_at: string | null;
     delivery_address: DeliveryAddressType;
-    delivery_status: string;
+    delivery_status: delivery_status;
     id: string;
     pay_status: string;
     product: ProductType;

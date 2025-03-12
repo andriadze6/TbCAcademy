@@ -1,4 +1,28 @@
 .header{
     display: grid;
     grid-template-columns: repeat(3,1fr);
+    background-color: #98cddf;
+    padding: 10px;
+    border-radius: 6px;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.tracking-container{
+    list-style-type: none;
+}
+.tracking-step{
+    display: flex;
+    gap: 10px;
+}
+.v1_dotted_line{
+    border-left: 3px dotted #4e90a7;
+    height: 30px;
+    position: relative;
+    left: 40%;
+}
+.v1_solid_line{
+    border-left: 3px solid #4e90a7;
+    height: 30px;
+    position: relative;
+    left: 40%;
 }
